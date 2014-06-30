@@ -1,0 +1,25 @@
+body{
+	min-height:100%;
+	height:100%;
+	margin:0px;
+	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+	
+	
+}
+.content{
+	font-size:12px;
+	text-align:center;
+}
+table{
+	border-collapse:collapse;
+	border:none;
+	align:center;	
+	font-size:12px;
+	margin:10px auto;
+}
+th,td{
+	border:1px solid #ccc;
+}
+div table th{
+	background-color:#E0ECFF;	
+}

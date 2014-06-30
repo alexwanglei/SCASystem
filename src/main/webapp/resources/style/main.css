@@ -1,0 +1,100 @@
+html { 
+	min-height:100%;
+	height:100%; 
+}
+body { 
+	min-height:100%;
+	height:100%;
+	margin:0px;
+	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+}
+#content {
+	min-height:100%;
+	height:100%;
+}
+#menubar { 
+	height:30px;
+	background:#fafafa;
+	border:1px solid #ccc;
+/*	padding:5px;
+	width:100%;
+	
+	margin: 0 0 1px; */
+}
+#toolbar {
+	height:30px;
+	background:#fafafa;
+	border:1px solid #ccc;
+/*	width:100%;
+	padding:5px;*/
+	
+}
+
+#container {
+	width:100%;
+
+	height:820px;
+}
+#footer {
+       position:absolute;
+       bottom:0;
+       left:0;
+       width:100%;  
+       padding:5px;  
+       border-top:solid 1px #ccc;    
+       background-color:#fafafa; 
+       overflow: auto !important; 
+}
+/*#left {
+	width:200px;
+	height:100%;
+	position:relative;
+	float: left;
+	overflow: hidden;
+	padding: 0px;
+	background: #AEE;
+	border:1px solid #ccc;
+}
+
+#right {
+	border:1px solid #ccc;
+	border-left:0;
+	height:100%;
+	
+}
+*/
+.childdiv{
+	width:100px;
+	height:100px;
+	background-color: #ccc;
+}
+
+#chart {
+    height: 500px;
+  }
+ 
+  .node rect {
+    cursor: move;
+    fill-opacity: .9;
+    shape-rendering: crispEdges;
+  }
+ .node.circle.nodestyle {
+  stroke-width: 1.5px;
+  cursor: pointer;
+}
+  .node text {
+    pointer-events: none;
+    text-shadow: 0 1px 0 #fff;
+  }
+ 
+  .link {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .2;
+    fill-opacity: .2;
+  }
+ 
+  .link:hover {
+    fill-opacity: .5;
+  }
+</style>

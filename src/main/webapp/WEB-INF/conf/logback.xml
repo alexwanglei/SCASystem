@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>
+				[%d{HH:mm:ss}] [%-5level] [%-30logger{0}][%-3L] [SeqId:%X{SeqId}] - %msg%n
+			</pattern>
+		</layout>
+	</appender>
+	
+	<appender name="main"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${SCAS}/main.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>
+				${SCAS}/main%i.log
+			</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>50</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>100MB</MaxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<Pattern>[%d{yyyyMMdd HH:mm:ss}] [%-5level] [%-30logger{0}][%-3L] [SeqId:%X{SeqId}] - %msg%n</Pattern>
+		</encoder>
+	</appender>
+
+	<logger name="cn.edu.buaa.act" additivity="false" level="info">
+		<appender-ref ref="stdout" />
+	</logger>
+    
+	<root level="info">
+		<appender-ref ref="stdout" />
+		<!-- <appender-ref ref="main" /> -->
+	</root>
+</configuration>

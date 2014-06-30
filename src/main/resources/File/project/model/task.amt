@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SATask ID="SA_T_1" Name="testTask">
+	<Stack>400</Stack>
+	<Priorty></Priorty>
+	<Period></Period>
+	<TimeCapacity></TimeCapacity>
+	<Deadline></Deadline>
+	<TaskInputs>
+		<IO ID=" " Name=" " datatype=" " type=" " Ref=" "></IO>
+	</TaskInputs>
+	<TaskOutputs>
+		<IO ID=" " Name=" " datatype=" " type=" " Ref=" "></IO>
+	</TaskOutputs>
+	<Functions>
+		<HLR ID="HLR_01" Name="Periodic_Send_Process"/>
+	</Functions>
+	<SafetyArchitecture/>
+</SATask>

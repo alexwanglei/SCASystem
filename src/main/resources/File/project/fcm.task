@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formulas>
+	<formula id="4" name="4.xml">
+		<input>C60.Gyroscope</input>
+		<output>C38.Body Roll Rate</output>
+	</formula>
+	<formula id="25" name="25.xml">
+		<input>C37.Roll Attitude</input>
+		<input>C38.Body Roll Rate</input>
+		<input>C8.CWS Force Roll Input</input>
+		<output>Roll Servo Command Output</output>
+	</formula>
+	<formula id="9" name="9.xml">
+		<input>C71.Attitude Matrix</input>
+		<output>C37.Roll Attitude</output>
+	</formula>
+	<formula id="11" name="11.xml">
+		<input>C69.Earth Rotation Angular Velocity</input>
+		<input>C70.Attitude Matrix Initial</input>
+		<input>C61.Gyroscope Geo</input>
+		<input>C63.Geo Angular Velocity</input>
+		<output>C71.Attitude Matrix</output>
+	</formula>
+	<formula id="12" name="12.xml">
+		<input>C60.Gyroscope</input>
+		<output>C61.Gyroscope Geo</output>
+	</formula>
+	<formula id="13" name="13.xml">
+		<input>C62.Geo Velocity</input>
+		<output>C63.Geo Angular Velocity</output>
+	</formula>
+	<formula id="37" name="37.xml">
+		<input>C59.Geo Force</input>
+		<output>C62.Geo Velocity</output>
+	</formula>
+	<formula id="36" name="36.xml">
+		<input>C27.Specific Force Input</input>
+		<output>C59.Geo Force</output>
+	</formula>
+	<formula id="3" name="3.xml">
+		<input>C37.Roll Attitude</input>
+		<output>CO1.Pitch Servo Command Output</output>
+	</formula>
+	<formula id="9" name="9.xml">
+		<input>C71.Attitude Matrix</input>
+		<output>C37.Roll Attitude</output>
+	</formula>
+	<formula id="11" name="11.xml">
+		<input>C69.Earth Rotation Angular Velocity</input>
+		<input>C70.Attitude Matrix Initial</input>
+		<input>C61.Gyroscope Geo</input>
+		<input>C63.Geo Angular Velocity</input>
+		<output>C71.Attitude Matrix</output>
+	</formula>
+	<formula id="12" name="12.xml">
+		<input>C60.Gyroscope</input>
+		<output>C61.Gyroscope Geo</output>
+	</formula>
+	<formula id="13" name="13.xml">
+		<input>C62.Geo Velocity</input>
+		<output>C63.Geo Angular Velocity</output>
+	</formula>
+	<formula id="37" name="37.xml">
+		<input>C59.Geo Force</input>
+		<output>C62.Geo Velocity</output>
+	</formula>
+	<formula id="36" name="36.xml">
+		<input>C27.Specific Force Input</input>
+		<output>C59.Geo Force</output>
+	</formula>
+</formulas>

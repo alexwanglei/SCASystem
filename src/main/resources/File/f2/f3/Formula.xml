@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formulas>
+	<formula id="4" name="4.xml">
+		<input>C60</input>
+		<output>C38</output>
+	</formula>
+	<formula id="25" name="25.xml">
+		<input>C38</input>
+		<input>C37</input>
+		<input>C8</input>
+		<output>Roll Servo Command Output</output>
+	</formula>
+	<formula id="9" name="9.xml">
+		<input>C71</input>
+		<output>C37</output>
+	</formula>
+	<formula id="11" name="11.xml">
+		<input>C69</input>
+		<input>C70</input>
+		<input>C63</input>
+		<input>C61</input>
+		<output>C71</output>
+	</formula>
+	<formula id="12" name="12.xml">
+		<input>C60</input>
+		<output>C61</output>
+	</formula>
+	<formula id="13" name="13.xml">
+		<input>C62</input>
+		<output>C63</output>
+	</formula>
+	<formula id="37" name="37.xml">
+		<input>C59</input>
+		<output>C62</output>
+	</formula>
+	<formula id="36" name="36.xml">
+		<input>C27</input>
+		<output>C59</output>
+	</formula>
+	<formula id="1" name="1.xml">
+		<input>C1</input>
+		<output>C3</output>
+	</formula>
+	<formula id="2" name="2.xml">
+		<input>C2</input>
+		<output>C5</output>
+	</formula>
+	<formula id="3" name="3.xml">
+		<input>C3</input>
+		<output>C4</output>
+	</formula>
+	<formula id="5" name="5.xml">
+		<input>C4</input>
+		<input>C5</input>
+		<input>C63</input>
+		<output>C6</output>
+	</formula>
+	<formula id="6" name="6.xml">
+		<input>C6</input>
+		<output>C8</output>
+	</formula>
+	<formula id="7" name="7.xml">
+		<input>C8</input>
+		<output>C9</output>
+	</formula>
+	<formula id="8" name="8.xml">
+		<input>C9</input>
+		<output>Test</output>
+	</formula>
+</formulas>
