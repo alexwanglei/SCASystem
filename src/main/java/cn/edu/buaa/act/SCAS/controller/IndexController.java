@@ -42,12 +42,20 @@ public class IndexController {
 	@RequestMapping(value = "/showTaskModel",method=RequestMethod.GET)
 	public ModelAndView showTaskModel(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
-	//	MappingJacksonJsonView view = new MappingJacksonJsonView();
-	//	HashMap<String,Process> attributes = new HashMap<String, Process>();
+		ModelAndView mav = new ModelAndView("task");
 		Process process = fileManageService.getProcess(filename);
-	//	attributes.put("process", process);
-	//	view.setAttributesMap(attributes);
+		mav.addObject("process", process);
+		
+		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");
-		return new ModelAndView("task","process",process);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/saveTaskByXml", method=RequestMethod.POST)
+	public void saveTaskByXml(HttpServletRequest request,HttpServletResponse response, String taskXml,String filename) throws IOException{
+		logger.info(filename);
+		logger.info(taskXml);
+		fileManageService.saveTaskByXml(taskXml, filename);
+		
 	}
 }

@@ -3,6 +3,8 @@ package cn.edu.buaa.act.SCAS.service;
 
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -14,6 +16,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
 
 
 
@@ -85,9 +89,11 @@ public class FileManageService {
 //		System.out.println(process.getXmlProcess());
 		process.setId(Integer.parseInt(root.attributeValue("ID")));
 		process.setName(root.attributeValue("Name"));
+
 		if(stack.getText() != ""){
 			process.setStack(Integer.parseInt(stack.getText()));
 		}
+//		System.out.println("run:"+priorty.getText());
 		if(priorty.getText() != ""){
 			process.setPriorty(Integer.parseInt(priorty.getText()));
 		}
@@ -104,5 +110,13 @@ public class FileManageService {
 		
 		return process;
 		
+	}
+	
+	public void saveTaskByXml(String taskXml, String filename) throws IOException{
+//		File file = new File(rootPath+"/"+filename);
+		FileWriter writer = new FileWriter(rootPath+"/"+filename);
+		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		writer.write(taskXml);
+		writer.close();
 	}
 }
