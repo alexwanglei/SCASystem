@@ -187,12 +187,8 @@
 				var pastfix = filename.substr(filename.indexOf(".")+1, filename.length);
 
 				//打开一个tab
-				var tabId = node.text.replace(".","");
-				$("#tt").tabs('add',{
-					id:tabId,
-					title:node.text,
-					closable:true,	
-				});
+				var title = node.text;
+				
 				
 				switch(pastfix)
 				{
@@ -206,7 +202,7 @@
 					alert("分区表文件");
 					break;
 				case "amt":
-					parseAmt(filename, tabId);
+					parseAmt(filename, title);
 					break;
 				}
 			}
@@ -214,15 +210,26 @@
 	});
 	
 	//解析任务模型的文件
-	function parseAmt(filename, tabId){
-		$.ajax({
+	function parseAmt(filename, title){
+		var href = "showTaskModel?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+/*		$.ajax({
 			type: "POST",
 			url: "showTaskModel",
 			data:{filename: filename},
 			success:function(data){
-				alert("hello");
+				alert(data);
+				
+				
 			}
-		});
+		});*/
 	}
 </script>
 </html>

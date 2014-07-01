@@ -64,12 +64,45 @@ public class FileManageService {
 		Process process = new Process();
 		File file = new File(rootPath+"/"+filename);
 		SAXReader saxReader = new SAXReader();
-		Document doc = saxReader.read(new File(filename));
+		Document doc = saxReader.read(file);
 		Element root = doc.getRootElement();
-		System.out.println(root.attributeValue("ID"));
-		System.out.println(root.attributeValue("Name"));
+
+		Element stack = root.element("Stack");
+
+		Element priorty = root.element("Priorty");
+
+		Element period = root.element("Period");
+
+		Element timeCapacity = root.element("TimeCapacity");
+		Element deadline = root.element("Deadline");
+		
+		String xml = root.asXML();
+		xml = "\""+xml.replace("\"","\\\"" )+"\"";
+		xml = xml.replace("\n", "\\n");
+		xml = xml.replace("\t","\\t");
+		
+		process.setXmlProcess(xml);
+//		System.out.println(process.getXmlProcess());
+		process.setId(Integer.parseInt(root.attributeValue("ID")));
+		process.setName(root.attributeValue("Name"));
+		if(stack.getText() != ""){
+			process.setStack(Integer.parseInt(stack.getText()));
+		}
+		if(priorty.getText() != ""){
+			process.setPriorty(Integer.parseInt(priorty.getText()));
+		}
+		if(period.getText() != ""){
+			process.setPeriod(Double.parseDouble(period.getText()));
+		}
+		if(timeCapacity.getText() != ""){
+			process.setCapacity(Double.parseDouble(timeCapacity.getText()));
+		}
+		if(deadline.getText() != ""){
+			process.setDeadline(deadline.getText());
+		}
 		
 		
-		return new Process();
+		return process;
+		
 	}
 }

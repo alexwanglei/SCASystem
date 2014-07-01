@@ -1,7 +1,11 @@
 
 package cn.edu.buaa.act.SCAS.controller;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.DocumentException;
 import org.json.JSONException;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 import cn.edu.buaa.act.SCAS.service.FileManageService;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
@@ -34,11 +39,15 @@ public class IndexController {
 		return view;
 	}
 	
-	@RequestMapping(value = "/showTaskModel",method=RequestMethod.POST)
-	public ModelAndView showTaskModel(HttpServletRequest request, String filename) throws DocumentException{
+	@RequestMapping(value = "/showTaskModel",method=RequestMethod.GET)
+	public ModelAndView showTaskModel(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
-		ModelAndView view = new ModelAndView();
+	//	MappingJacksonJsonView view = new MappingJacksonJsonView();
+	//	HashMap<String,Process> attributes = new HashMap<String, Process>();
 		Process process = fileManageService.getProcess(filename);
-		return view;
+	//	attributes.put("process", process);
+	//	view.setAttributesMap(attributes);
+//		response.getWriter().println("hello");
+		return new ModelAndView("task","process",process);
 	}
 }

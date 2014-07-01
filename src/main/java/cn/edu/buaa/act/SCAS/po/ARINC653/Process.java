@@ -17,6 +17,8 @@ public class Process {
 	private double capacity;
 	
 	private String deadline;
+	
+	private String xmlProcess;
 
 	public int getId() {
 		return id;
@@ -72,6 +74,14 @@ public class Process {
 
 	public void setDeadline(String deadline) {
 		this.deadline = deadline;
+	}
+
+	public String getXmlProcess() {
+		return xmlProcess;
+	}
+
+	public void setXmlProcess(String xmlProcess) {
+		this.xmlProcess = xmlProcess;
 	}
 	
 //	private ArrayList<IOput> inputs = new ArrayList<IOput>();
