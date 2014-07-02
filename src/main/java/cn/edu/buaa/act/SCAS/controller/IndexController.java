@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
+import cn.edu.buaa.act.SCAS.service.CodeGenerationService;
 import cn.edu.buaa.act.SCAS.service.FileManageService;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
 @Controller
@@ -27,6 +28,8 @@ public class IndexController {
 	
 	@Autowired
 	private FileManageService fileManageService;
+	@Autowired
+	private CodeGenerationService codeGenerationService;
 	
 	@RequestMapping(value = "/", method= RequestMethod.GET)
 	public ModelAndView index(HttpServletRequest request) throws JSONException{
@@ -56,6 +59,12 @@ public class IndexController {
 		logger.info(filename);
 		logger.info(taskXml);
 		fileManageService.saveTaskByXml(taskXml, filename);
+		
+	}
+	
+	@RequestMapping(value="/generateCCode",method=RequestMethod.POST)
+	public void generateCCode(HttpServletRequest request,HttpServletResponse response, String filename){
+		logger.info(filename);
 		
 	}
 }

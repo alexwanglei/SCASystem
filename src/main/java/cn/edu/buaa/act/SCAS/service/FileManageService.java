@@ -5,6 +5,7 @@ package cn.edu.buaa.act.SCAS.service;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -22,6 +23,13 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
+
+
+import cn.edu.buaa.act.SCAS.po.ARINC653.InterPartitionCom;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
 
 @Service
@@ -62,6 +70,48 @@ public class FileManageService {
 				jsonObject.put("children", ja);
 			}
 		}
+	}
+	
+	public Module getModule(String filename) throws DocumentException{
+		Module module = new Module();
+		File file = new File(rootPath+"/"+filename);
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		module.setId(Integer.parseInt(root.attributeValue("ID")));
+		module.setName(root.attributeValue("Name"));
+		
+		List<Element> partitionList = root.element("SAPartitions").elements("SAPartition");
+		for(Element partition : partitionList){
+			String pfilename = filename.substring(0,filename.lastIndexOf('/')+1)+partition.attributeValue("Name")+".amp";
+			module.getPartitions().add(getPartition(pfilename));
+		}
+		
+		List<Element> interCommList = root.element("InterCommunications").elements("Communication");
+		for(Element interCom : interCommList){
+			InterPartitionCom interPartitionCom = new InterPartitionCom();
+			interPartitionCom.setSrcPartition(interCom.attributeValue("SrcPart"));
+			interPartitionCom.setDstPartition(interCom.attributeValue("DstPart"));
+			interPartitionCom.setSrcPort(interCom.attributeValue("SrcPort"));
+			interPartitionCom.setDstPort(interCom.attributeValue("DstPort"));
+			interPartitionCom.setMode(interCom.attributeValue("Mode"));
+			interPartitionCom.setConcept(interCom.getText());
+			module.getInterCom().add(interPartitionCom);
+		}
+		
+		
+		return module;
+	}
+	
+	public Partition getPartition(String filename) throws DocumentException{
+		Partition partition = new Partition();
+		File file = new File(rootPath+"/"+filename);
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		
+		
+		return partition;
 	}
 	
 	public Process getProcess(String filename) throws DocumentException{

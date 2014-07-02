@@ -41,6 +41,8 @@
 				<a id="genPart" href="#" class="easyui-linkbutton" plain="true" >CreatPartition</a>
 				<a id="save" href="#" class="easyui-linkbutton" plain="true" >Save</a>
 				<a id="refresh" href="#" class="easyui-linkbutton" plain="true" >Refresh</a>
+				<a id="genCCode" href="#" class="easyui-linkbutton" plain="true" >GenCCode</a>
+				<a id="genConf" href="#" class="easyui-linkbutton" plain="true" >GenConf</a>
 			</div>
 		</div>
 		
@@ -157,6 +159,33 @@
     </div>
 </body>
 <script type="text/javascript">
+	$("#genCCode").click(function(){
+		var node = $("#directory").tree('getSelected');
+		if(node == null ||node.text != "model" ){
+			alert("don't select the model folder");
+		}
+		else {
+			//获取文件在File文件的完整路径
+			var filename =node.text;
+			var parentnode;
+			var curnode = node;
+			while(parentnode=$("#directory").tree('getParent',curnode.target))
+			{
+				filename = parentnode.text+"/"+ filename;
+				curnode = parentnode;
+			}
+			$.ajax({
+				type:"POST",
+				url:"generateCCode",
+				data:{filename:filename},
+				success:function(data){
+					alert("success");
+				}
+			});
+		}
+		
+		
+	});
 	//初始化目录树
 	$("#directory").tree({
 		data: ${directory}
