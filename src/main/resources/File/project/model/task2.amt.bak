@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SATask Id='1' Name='task_a'>
 	<Stack>400</Stack>
-	<Priorty>200</Priorty>
-	<Period>20</Period>
-	<TimeCapacity>20</TimeCapacity>
+	<Priorty>201</Priorty>
+	<Period>10</Period>
+	<TimeCapacity>10</TimeCapacity>
 	<Deadline>SOFT</Deadline>
 	<TaskInputs>
-		<IO Id='1' ConceptName='a' DataType='double' Type='InterPartition' Connect='s1'></IO>
+		<IO Id='3' ConceptName='b' DataType='double' Type='IntraPartition' Connect=''></IO>
 	</TaskInputs>
 	<TaskOutputs>
-		<IO Id='2' ConceptName='b' Datatype='double' Type='IntraPartition' Connect='b1'></IO>
+		<IO Id='4' ConceptName='c' Datatype='double' Type='InterPartition' Connect=''></IO>
 	</TaskOutputs>
 	<Functions>
 		<HLR Id='HLR_01' Name='Periodic_Send_Process'/>

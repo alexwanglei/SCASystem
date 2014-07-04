@@ -7,6 +7,8 @@ public class Module {
 	
 	private String name;
 	
+	private String xmlModule;
+	
 	private ArrayList<Partition> partitions = new ArrayList<Partition>();
 	
 	private ArrayList<InterPartitionCom> interCom = new ArrayList<InterPartitionCom>();
@@ -61,6 +63,14 @@ public class Module {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getXmlModule() {
+		return xmlModule;
+	}
+
+	public void setXmlModule(String xmlModule) {
+		this.xmlModule = xmlModule;
 	}
 
 }

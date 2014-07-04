@@ -20,14 +20,14 @@ public class Blackboard extends MsgContainer{
 	
 	public String revContainerMsg(IOput i, int n){
 		StringBuffer code = new StringBuffer();
-		code.append("		READ_BLACKBOARD(blackboard_"+super.getId()+", INFINITE_TIME_VALUE, (MESSAGE_ADDR_TYPE)&"+i.getName().replaceAll(" ", "")+", &lendata"+n+", &retCode);\n" +
+		code.append("		READ_BLACKBOARD(blackboard_"+super.getId()+", INFINITE_TIME_VALUE, (MESSAGE_ADDR_TYPE)&"+i.getConceptName().replaceAll(" ", "")+", &lendata"+n+", &retCode);\n" +
 		"		CHECK_CODE (\"READ_BLACKBOARD\", retCode);\n");
 		return code.toString();
 	}
 	
 	public String sendContainerMsg(IOput o, int n){
 		StringBuffer code = new StringBuffer();
-		code.append("		DISPLAY_BLACKBOARD(blackboard_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getName().replaceAll(" ", "")+", lenMsgData"+n+", &retCode);\n" +
+		code.append("		DISPLAY_BLACKBOARD(blackboard_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getConceptName().replaceAll(" ", "")+", lenMsgData"+n+", &retCode);\n" +
 		"		CHECK_CODE (\"DISPLAY_BLACKBOARD\", retCode);\n");
 		return code.toString();
 	}

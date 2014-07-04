@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SAPartition Id="1" Name="partition">
+	<SATasks xmlns:xi="http://www.w3.org/2003/XInclude">
+		<xi:include href="task.amt"/>
+		<xi:include href="task2.amt"/>
+	</SATasks>
+	<IntraCommunications>
+		<Communication SrcTask="task_a" DstTask="task_b" MessageContainerNameRef="m1">b</Communication>
+	</IntraCommunications>
+	<MessageContainers>
+		<MessageContainer Name="m1">
+			<Buffer Id="1" Name="b1" MessageSize="10" BufferLength="5" Discipline="FIFO"/>
+		</MessageContainer>
+	</MessageContainers>
+	<Ports>
+		<SamplePort Id="1" Name="s1" Direction="DESTINATION" MessageSize="10" RefreshPeriod="2"></SamplePort>
+		<QueuePort Id="2" Name="q1" Direction="SOURCE" MessageSize="5" QueueLength="5" Protocol="NOT_APPLICABLE" Discipline="FIFO"></QueuePort>
+	</Ports>
+</SAPartition>

@@ -159,10 +159,26 @@
     </div>
 </body>
 <script type="text/javascript">
+	$("#refresh").click(function(){
+		$.ajax({
+			type:"GET",
+			url:"refreshDirectory",
+			success:function(data){
+				$("#directory").tree('reload');
+				$("#directory").tree({
+					data:eval("("+data.directory+")")
+				})
+			}
+		});
+	});
+	
 	$("#genCCode").click(function(){
 		var node = $("#directory").tree('getSelected');
-		if(node == null ||node.text != "model" ){
-			alert("don't select the model folder");
+		var filename = node.text;
+		//获取文件扩展名
+		var pastfix = filename.substr(filename.indexOf(".")+1, filename.length);
+		if(node == null ||pastfix != "amm" ){
+			alert("don't select the module file!");
 		}
 		else {
 			//获取文件在File文件的完整路径
@@ -183,9 +199,8 @@
 				}
 			});
 		}
-		
-		
 	});
+	
 	//初始化目录树
 	$("#directory").tree({
 		data: ${directory}
@@ -218,7 +233,7 @@
 				//打开一个tab
 				var title = node.text;
 				
-				
+				alert(pastfix);
 				switch(pastfix)
 				{
 				case "f":
@@ -232,6 +247,15 @@
 					break;
 				case "amt":
 					parseAmt(filename, title);
+					break;
+				case "amp":
+					parseAmp(filename, title);
+					break;
+				case "amm":
+					parseAmm(filename, title);
+					break;
+				case "c":
+					parseC(filename, title);
 					break;
 				}
 			}
@@ -249,16 +273,46 @@
 			closable:true,
 			content:content,
 		});
-/*		$.ajax({
-			type: "POST",
-			url: "showTaskModel",
-			data:{filename: filename},
-			success:function(data){
-				alert(data);
-				
-				
-			}
-		});*/
 	}
+	
+	//解析模块模型的文件
+	function parseAmm(filename, title){
+		var href = "showModuleModel?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
+	//解析模块模型的文件
+	function parseAmp(filename, title){
+		var href = "showPartitionModel?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
+	//解析C文件
+	function parseC(filename, title){
+		var href = "showCCode?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
 </script>
 </html>

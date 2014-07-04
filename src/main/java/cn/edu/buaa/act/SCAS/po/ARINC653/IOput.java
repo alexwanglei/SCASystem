@@ -2,21 +2,15 @@ package cn.edu.buaa.act.SCAS.po.ARINC653;
 
 public class IOput {
 	private int id;
-	private String name;
+	private String conceptName;
 	
-	private Port port;
-	private MsgContainer msgContainer;
+	private Port port=null;
+	private MsgContainer msgContainer=null;
 
 	private String type;
 	private String dataType;
 	
-	public IOput(int id , String name,String dataType,  String type){
-		this.id = id;
-		this.name = name;
-
-		this.type = type;
-		this.dataType = dataType;
-	}
+	private String connect;
 
 	public int getId() {
 		return id;
@@ -26,13 +20,7 @@ public class IOput {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
 
 	public String getType() {
@@ -64,5 +52,21 @@ public class IOput {
 
 	public void setMsgContainer(MsgContainer msgContainer) {
 		this.msgContainer = msgContainer;
+	}
+
+	public String getConceptName() {
+		return conceptName;
+	}
+
+	public void setConceptName(String conceptName) {
+		this.conceptName = conceptName;
+	}
+
+	public String getConnect() {
+		return connect;
+	}
+
+	public void setConnect(String connect) {
+		this.connect = connect;
 	}
 }

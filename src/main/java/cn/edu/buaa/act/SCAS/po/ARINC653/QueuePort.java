@@ -19,14 +19,14 @@ public class QueuePort extends Port{
 	}
 	public String revPortMsg(IOput i, int n){
 		StringBuffer code = new StringBuffer();
-		code.append("		RECEIVE_QUEUING_MESSAGE(queuePort_"+super.getId()+", INFINITE_TIME_VALUE, (MESSAGE_ADDR_TYPE)&"+i.getName().replaceAll(" ", "")+", &lendata"+n+", &retCode);\n" +
+		code.append("		RECEIVE_QUEUING_MESSAGE(queuePort_"+super.getId()+", INFINITE_TIME_VALUE, (MESSAGE_ADDR_TYPE)&"+i.getConceptName().replaceAll(" ", "")+", &lendata"+n+", &retCode);\n" +
 		"		CHECK_CODE(\"READ_QUEUING_MESSAGE\", retCode);\n");
 		return code.toString();
 	}
 	
 	public String sendPortMsg(IOput o, int n){
 		StringBuffer code = new StringBuffer();
-		code.append("		SEND_QUEUING_MESSAGE(queuePort_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getName().replaceAll(" ", "")+", lenMsgData"+n+", INFINITE_TIME_VALUE, &retCode);\n" +
+		code.append("		SEND_QUEUING_MESSAGE(queuePort_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getConceptName().replaceAll(" ", "")+", lenMsgData"+n+", INFINITE_TIME_VALUE, &retCode);\n" +
 		"		CHECK_CODE (\"WRITE_QUEUING_MESSAGE\", retCode);\n");
 		return code.toString();
 	}

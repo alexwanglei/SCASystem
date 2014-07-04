@@ -20,6 +20,7 @@ public class Process {
 	
 	private String xmlProcess;
 	
+	
 	private ArrayList<IOput> inputs = new  ArrayList<IOput>();
 	private ArrayList<IOput> outputs = new  ArrayList<IOput>();
 
@@ -123,7 +124,7 @@ public class Process {
 		StringBuffer code = new StringBuffer("void "+this.name+"(void)\n{\n");
 		//接受队列，采样，黑板，缓冲区的变量，变量长度，有效参数
 		for(IOput i: this.inputs){
-			code.append("	"+i.getDataType()+" "+i.getName().replaceAll(" ", "")+";\n");
+			code.append("	"+i.getDataType()+" "+i.getConceptName().replaceAll(" ", "")+";\n");
 			int sn = i.getId();
 			code.append("	MESSAGE_SIZE_TYPE lendata"+sn+";\n");
 			if(i.getType()!=null&&i.getType().equals("Sample"))
@@ -135,9 +136,9 @@ public class Process {
 		
 		//发送队列、采样、黑板、缓冲区的变量，变量长度
 		for(IOput o : this.outputs){
-			code.append("	"+o.getDataType()+ " "+o.getName().replaceAll(" ", "")+"=0;\n");
+			code.append("	"+o.getDataType()+ " "+o.getConceptName().replaceAll(" ", "")+"=0;\n");
 			int sn = o.getId();
-			code.append("	int lenMsgData"+ sn + "= sizeof("+o.getName()+");\n");
+			code.append("	int lenMsgData"+ sn + "= sizeof("+o.getConceptName()+");\n");
 		}
 		
 		//判断任务是否为周期任务
@@ -160,7 +161,7 @@ public class Process {
 			}
 	
 			//打印接受的数据
-			code.append("		printf(\""+this.name+" "+i.getType()+" receive %d\\n\","+i.getName().replaceAll(" ", "")+");\n");
+			code.append("		printf(\""+this.name+" "+i.getType()+" receive %d\\n\","+i.getConceptName().replaceAll(" ", "")+");\n");
 		}
 		
 		//生成任务发送队列和采样消息
@@ -178,7 +179,7 @@ public class Process {
 
 			
 			//打印发送的数据
-			code.append("		printf(\""+this.name+" "+o.getType()+" send %d\\n\","+o.getName().replaceAll(" ", "")+"++);\n");
+			code.append("		printf(\""+this.name+" "+o.getType()+" send %d\\n\","+o.getConceptName().replaceAll(" ", "")+"++);\n");
 		}
 		
 		//判断任务是否为周期任务
@@ -188,5 +189,6 @@ public class Process {
 		code.append("}\n");
 		return code.toString();
 	}
+
 	
 }

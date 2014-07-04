@@ -17,6 +17,8 @@ import cn.edu.buaa.act.SCAS.po.ARINC653.Port;
 public class CodeGenerationService {
 	private static Logger logger = LoggerFactory.getLogger(CodeGenerationService.class);
 	
+	private String rootPath = this.getClass().getResource("/File").getPath();
+	
 	private final String headFileCode = "#include \"copyright_wrs.h\"\n" +
 			"#include \"vxWorks.h\"\n" +
 			"#include \"apex/apexLib.h\"\n" +
@@ -58,11 +60,13 @@ public class CodeGenerationService {
 	
 	
 	public void generateCCode(Module module, String filepath) throws IOException{
-		File codeFolder = new File(filepath + "\\Code");
+		logger.info(filepath);
+		File codeFolder = new File(rootPath+"/"+filepath.substring(0,filepath.indexOf('/')) + "/Code");
+		logger.info(codeFolder.getPath());
 		if(!codeFolder.exists())
 			codeFolder.mkdir();
 		for(Partition p : module.getPartitions()){
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(codeFolder.getPath()+"\\"+p.getName()+".c")));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(codeFolder.getPath()+"/"+p.getName()+".c")));
 			bw.write(headFileCode);
 			bw.write(codeToStr);
 			bw.write(p.defLocals());

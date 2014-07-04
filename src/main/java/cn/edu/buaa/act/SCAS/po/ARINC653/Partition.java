@@ -7,6 +7,8 @@ public class Partition {
 	
 	private String name;
 	
+	private String xmlPartition;
+	
 	private ArrayList<Process> processes = new ArrayList<Process>();
 	
 	private ArrayList<Port> ports = new ArrayList<Port>();
@@ -125,5 +127,11 @@ public class Partition {
 	}
 	public void setIntraComs(ArrayList<IntraPartitionCom> intraComs) {
 		this.intraComs = intraComs;
+	}
+	public String getXmlPartition() {
+		return xmlPartition;
+	}
+	public void setXmlPartition(String xmlPartition) {
+		this.xmlPartition = xmlPartition;
 	}
 }

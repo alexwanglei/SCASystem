@@ -2,9 +2,15 @@ package cn.edu.buaa.act.SCAS.service;
 
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -27,10 +33,31 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
+import cn.edu.buaa.act.SCAS.po.ARINC653.IOput;
 import cn.edu.buaa.act.SCAS.po.ARINC653.InterPartitionCom;
+import cn.edu.buaa.act.SCAS.po.ARINC653.IntraPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Port;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
+import cn.edu.buaa.act.SCAS.po.ARINC653.MsgContainer;
+import cn.edu.buaa.act.SCAS.po.ARINC653.QueuePort;
+import cn.edu.buaa.act.SCAS.po.ARINC653.SamplePort;
 
 @Service
 public class FileManageService {
@@ -78,26 +105,40 @@ public class FileManageService {
 		SAXReader saxReader = new SAXReader();
 		Document doc = saxReader.read(file);
 		Element root = doc.getRootElement();
-		module.setId(Integer.parseInt(root.attributeValue("ID")));
+		
+		String xml = root.asXML();
+		xml = "\""+xml.replace("\"","\\\"" )+"\"";
+		xml = xml.replace("\n", "\\n");
+		xml = xml.replace("\t","\\t");
+		
+		module.setXmlModule(xml);
+		
+		module.setId(Integer.parseInt(root.attributeValue("Id")));
 		module.setName(root.attributeValue("Name"));
 		
-		List<Element> partitionList = root.element("SAPartitions").elements("SAPartition");
-		for(Element partition : partitionList){
-			String pfilename = filename.substring(0,filename.lastIndexOf('/')+1)+partition.attributeValue("Name")+".amp";
+
+		List<Element> includeList = root.element("SAPartitions").elements("include");
+		
+		for(Element include : includeList){
+			String pfilename = filename.substring(0,filename.lastIndexOf('/')+1)+include.attributeValue("href");
+			logger.info(pfilename);
 			module.getPartitions().add(getPartition(pfilename));
 		}
 		
 		List<Element> interCommList = root.element("InterCommunications").elements("Communication");
-		for(Element interCom : interCommList){
-			InterPartitionCom interPartitionCom = new InterPartitionCom();
-			interPartitionCom.setSrcPartition(interCom.attributeValue("SrcPart"));
-			interPartitionCom.setDstPartition(interCom.attributeValue("DstPart"));
-			interPartitionCom.setSrcPort(interCom.attributeValue("SrcPort"));
-			interPartitionCom.setDstPort(interCom.attributeValue("DstPort"));
-			interPartitionCom.setMode(interCom.attributeValue("Mode"));
-			interPartitionCom.setConcept(interCom.getText());
-			module.getInterCom().add(interPartitionCom);
+		if(interCommList != null){
+			for(Element interCom : interCommList){
+				InterPartitionCom interPartitionCom = new InterPartitionCom();
+				interPartitionCom.setSrcPartition(interCom.attributeValue("SrcPart"));
+				interPartitionCom.setDstPartition(interCom.attributeValue("DstPart"));
+				interPartitionCom.setSrcPort(interCom.attributeValue("SrcPort"));
+				interPartitionCom.setDstPort(interCom.attributeValue("DstPort"));
+				interPartitionCom.setMode(interCom.attributeValue("Mode"));
+				interPartitionCom.setConcept(interCom.getText());
+				module.getInterCom().add(interPartitionCom);
+			}
 		}
+		
 		
 		
 		return module;
@@ -109,6 +150,105 @@ public class FileManageService {
 		SAXReader saxReader = new SAXReader();
 		Document doc = saxReader.read(file);
 		Element root = doc.getRootElement();
+		
+		String xml = root.asXML();
+		xml = "\""+xml.replace("\"","\\\"" )+"\"";
+		xml = xml.replace("\n", "\\n");
+		xml = xml.replace("\t","\\t");
+		
+		partition.setXmlPartition(xml);
+		
+		partition.setId(Integer.parseInt(root.attributeValue("Id")));
+		partition.setName(root.attributeValue("Name"));
+		
+		
+		List<Element> msgContainerList = root.element("MessageContainers").elements("MessageContainer");
+		HashMap<String,MsgContainer> msgContainerMap = new HashMap<String,MsgContainer>();
+		for(Element messageContainer : msgContainerList){
+			String key = messageContainer.attributeValue("Name");
+			for(Element e: (List<Element>)messageContainer.elements()){
+				if(e.getName().equals("Buffer")){
+					Buffer buffer = new Buffer();
+					buffer.setId(Integer.parseInt(e.attributeValue("Id")));
+					buffer.setName(e.attributeValue("Name"));
+					buffer.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					buffer.setBufferLength(Integer.parseInt(e.attributeValue("BufferLength")));
+					buffer.setDiscipline(e.attributeValue("Discipline"));
+					msgContainerMap.put(key, buffer);
+				}
+				else if(e.getName().equals("Blackboard")){
+					Blackboard blackboard = new Blackboard();
+					blackboard.setId(Integer.parseInt(e.attributeValue("Id")));
+					blackboard.setName(e.attributeValue("Name"));
+					blackboard.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					msgContainerMap.put(key, blackboard);
+				}
+			}
+		}
+		
+		
+		List<Element> intraCommList = root.element("IntraCommunications").elements("Communication");
+		for(Element e: intraCommList){
+			IntraPartitionCom intraPartitionCom = new IntraPartitionCom();
+			intraPartitionCom.setSrcTask(e.attributeValue("SrcTask"));
+			intraPartitionCom.setDstTask(e.attributeValue("DstTask"));
+			intraPartitionCom.setMsgContainer(msgContainerMap.get(e.attributeValue("MessageContainerNameRef")));
+			intraPartitionCom.setConceptName(e.getText());
+			partition.getIntraComs().add(intraPartitionCom);
+		}
+		
+		HashMap<String,Port> portMap = new HashMap<String,Port>();
+		List<Element> portList = root.element("Ports").elements();
+		for(Element e: portList){
+			if(e.getName().equals("SamplePort")){
+				SamplePort samplePort = new SamplePort();
+				samplePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				samplePort.setName(e.attributeValue("Name"));
+				samplePort.setDirection(e.attributeValue("Direction"));
+				samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				partition.getPorts().add(samplePort);
+				portMap.put(samplePort.getName(), samplePort);
+			}
+			else if(e.getName().equals("QueuePort")){
+				QueuePort queuePort = new QueuePort();
+				queuePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				queuePort.setName(e.attributeValue("Name"));
+				queuePort.setDirection(e.attributeValue("Direction"));
+				queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				queuePort.setProtocol(e.attributeValue("Protocol"));
+				queuePort.setDiscipline(e.attributeValue("Discipline"));
+				partition.getPorts().add(queuePort);
+				portMap.put(queuePort.getName(), queuePort);
+			}
+		}
+		
+		List<Element> includeList = root.element("SATasks").elements("include");
+		for(Element include : includeList){
+			String tfilename = filename.substring(0,filename.lastIndexOf('/')+1)+include.attributeValue("href");
+			logger.info(tfilename);
+			Process process = getProcess(tfilename);
+			for(IOput in : process.getInputs()){
+				if(in.getType().equals("IntraPartition")){
+					in.setMsgContainer(msgContainerMap.get(in.getConnect()));
+				}
+				else if(in.getType().equals("InterPartition")){
+					in.setPort(portMap.get(in.getConnect()));
+				}
+			}
+			
+			for(IOput out : process.getOutputs()){
+				if(out.getType().equals("IntraPartition")){
+					out.setMsgContainer(msgContainerMap.get(out.getConnect()));
+				}
+				else if(out.getType().equals("InterPartition")){
+					out.setPort(portMap.get(out.getConnect()));
+				}
+			}
+			partition.getProcesses().add(process);
+		}
+		
 		
 		
 		return partition;
@@ -137,7 +277,7 @@ public class FileManageService {
 		
 		process.setXmlProcess(xml);
 //		System.out.println(process.getXmlProcess());
-		process.setId(Integer.parseInt(root.attributeValue("ID")));
+		process.setId(Integer.parseInt(root.attributeValue("Id")));
 		process.setName(root.attributeValue("Name"));
 
 		if(stack.getText() != ""){
@@ -156,7 +296,28 @@ public class FileManageService {
 		if(deadline.getText() != ""){
 			process.setDeadline(deadline.getText());
 		}
-		
+		//解析进程的输入
+		List<Element> inputList = root.element("TaskInputs").elements("IO");
+		for(Element e: inputList){
+			IOput input = new IOput();
+			input.setId(Integer.parseInt(e.attributeValue("Id")));
+			input.setConceptName(e.attributeValue("ConceptName"));
+			input.setDataType(e.attributeValue("DataType"));
+			input.setType(e.attributeValue("Type"));
+			input.setConnect(e.attributeValue("Connect"));
+			process.getInputs().add(input);
+		}
+		//解析进程的输出
+		List<Element> outputList = root.element("TaskOutputs").elements("IO");
+		for(Element e: inputList){
+			IOput output = new IOput();
+			output.setId(Integer.parseInt(e.attributeValue("Id")));
+			output.setConceptName(e.attributeValue("ConceptName"));
+			output.setDataType(e.attributeValue("DataType"));
+			output.setType(e.attributeValue("Type"));
+			output.setConnect(e.attributeValue("Connect"));
+			process.getOutputs().add(output);
+		}
 		
 		return process;
 		
@@ -168,5 +329,23 @@ public class FileManageService {
 		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		writer.write(taskXml);
 		writer.close();
+	}
+	
+	public String getCCode(String filename) throws IOException{
+		File file = new File(rootPath+"/"+filename);
+		Long fileLength = file.length();
+		byte[] filecontent = new byte[fileLength.intValue()];
+		FileInputStream in = new FileInputStream(file);
+		in.read(filecontent);
+		in.close();
+		String code = new String(filecontent, "utf-8");
+		code = code.replace("\\", "\\\\");
+		code = "\""+code.replace("\"","\\\"" )+"\"";
+		code = code.replace("\n", "\\n");
+		code = code.replace("\t","\\t");
+		logger.info(code);
+		
+		return code;
+		
 	}
 }
