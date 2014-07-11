@@ -68,10 +68,12 @@ public class IndexController {
 		logger.info(filename);
 		ModelAndView mav = new ModelAndView("formula");
 		List<Formula> formulas  = fileManageService.getFormula(filename);
+		String formulasXML = fileManageService.getFormulaXML(filename);
 		mav.addObject("formulas", formulas);
-		for(Formula f : formulas){
-			logger.info(f.toString());
-		}
+		mav.addObject("formulasXML",formulasXML);
+//		for(Formula f : formulas){
+//			logger.info(f.toString());
+//		}
 		
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");

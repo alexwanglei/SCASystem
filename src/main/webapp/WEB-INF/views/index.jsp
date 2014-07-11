@@ -264,7 +264,7 @@
 				//打开一个tab
 				var title = node.text;
 				
-				alert(pastfix);
+				//alert(pastfix);
 				switch(pastfix)
 				{
 				case "formular":
@@ -298,7 +298,7 @@
 	
 	//解析公式文件
 	function parseFormula(filename, title){
-		alert(filename);
+		//alert(filename);
 		var href = "showFormula?filename="+filename;
 		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
 		var tabId = title.replace(".","");

@@ -28,13 +28,39 @@
 		</div>
 		
 		<div title="design">
-			<div>
-				<select name="formula[]" id="formula" multiple="multiple">
+			<div style="float:left">
+				<table id="formula" class="easyui-datagrid" title="Formulas" data-options="rownumbers:true,fitColumns:true" style="width:250px">
+					<thead>	
+						<tr>
+							<th data-options="field:'ck',checkbox:true" ></th>
+							<th data-options="field:'name'">Name</th>
+						</tr>
+					</thead>
+					<tbody>
 					<c:forEach items="${formulas}" var="formula">
-						<option value="${formula.id}">${formula.name}</option>
+						<tr>
+							<td>${formula.id}</td>
+							<td>${formula.name}</td>
+						</tr>
 					</c:forEach>
-				</select>
-			</div>
+					</tbody>
+				</table>
+			</div>	
+			
+			<input id="creatTask" type="button" value="Creat a Task" style="float:left;margin:30px 10px"/>
+			
+			<div style="float:left">
+				<table id="task" class="easyui-datagrid" title="Tasks" data-options="rownumbers:true,fitColumns:true,nowrap:false,onClickCell: onClickCell,singleSelect: true" style="width:400px">
+					<thead>
+						<tr>
+							<th data-options="field:'name',width:100,editor:'text'" >Name</th>
+							<th data-options="field:'ids',width:100">Formulas ids</th> 
+							<th data-options="field:'formulas',width:200" >Formulas in the task</th>
+						</tr>
+					</thead>
+				
+				</table>
+			</div>	
 		</div>
 		
 	</div>
@@ -44,18 +70,69 @@
 <script src="resources/script/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
-	$(function(){ 
-	   $("#formula").multiselect2side({ 
-	        selectedPosition: 'right', 
-	        moveOptions: false, 
-	        labelsx: '待选区', 
-	        labeldx: '已选区' 
-	   }); 
+	$("#creatTask").click(function(){
+		var checkrows = $("#formula").datagrid("getChecked");
+
+		var names="";
+		var ids="";
+		for(var i=0; i<checkrows.length;i++){
+			ids=ids+checkrows[i].ck+";";
+			names=names+checkrows[i].name+";";
+		}
+		
+		$("#task").datagrid('appendRow',{
+			name:"new task",
+			ids:ids,
+			formulas:names,
+		});
+		
+		$("#formula").datagrid('clearChecked');
+		
 	}); 
-/*	var editor = ace.edit("editor");
+	
+	 $.extend($.fn.datagrid.methods, {
+         editCell: function(jq,param){
+             return jq.each(function(){
+                 var opts = $(this).datagrid('options');
+                 var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+                 for(var i=0; i<fields.length; i++){
+                     var col = $(this).datagrid('getColumnOption', fields[i]);
+                     col.editor1 = col.editor;
+                     if (fields[i] != param.field){
+                         col.editor = null;
+                     }
+                 }
+                 $(this).datagrid('beginEdit', param.index);
+                 for(var i=0; i<fields.length; i++){
+                     var col = $(this).datagrid('getColumnOption', fields[i]);
+                     col.editor = col.editor1;
+                 }
+             });
+         }
+     });
+     
+     var editIndex = undefined;
+     function endEditing(){
+         if (editIndex == undefined){return true}
+         if ($('#task').datagrid('validateRow', editIndex)){
+             $('#task').datagrid('endEdit', editIndex);
+             editIndex = undefined;
+             return true;
+         } else {
+             return false;
+         }
+     }
+     function onClickCell(index, field){
+         if (endEditing()){
+             $('#task').datagrid('selectRow', index)
+                     .datagrid('editCell', {index:index,field:field});
+             editIndex = index;
+         }
+     }
+	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
-	editor.setValue(${conf});
+	editor.setValue(${formulasXML});
 	
 	function saveTask(){
 		var tab = $('#subtt').tabs('getSelected');
@@ -77,7 +154,7 @@
 			
 		}
 		
-	}*/
+	}
 </script>
 </body>
 </html>

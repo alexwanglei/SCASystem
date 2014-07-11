@@ -149,6 +149,19 @@ public class FileManageService {
 		return formulas;
 	}
 	
+	public String getFormulaXML(String filename) throws DocumentException{
+		File file = new File(rootPath+"/"+filename);
+		//	logger.info(file.getPath());
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		String xml = root.asXML();
+		xml = "\""+xml.replace("\"","\\\"" )+"\"";
+		xml = xml.replace("\n", "\\n");
+		xml = xml.replace("\t","\\t");
+		return xml;
+	}
+	
 	public Module getModule(String filename) throws DocumentException{
 		Module module = new Module();
 		File file = new File(rootPath+"/"+filename);
