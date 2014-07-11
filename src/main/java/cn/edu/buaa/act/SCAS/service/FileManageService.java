@@ -9,9 +9,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -46,13 +49,24 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
+
+
+
+
+
+import cn.edu.buaa.act.SCAS.po.Formula;
+import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Channel;
 import cn.edu.buaa.act.SCAS.po.ARINC653.IOput;
 import cn.edu.buaa.act.SCAS.po.ARINC653.InterPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.IntraPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
+import cn.edu.buaa.act.SCAS.po.ARINC653.PartitionWindow;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Port;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
 import cn.edu.buaa.act.SCAS.po.ARINC653.MsgContainer;
@@ -99,6 +113,42 @@ public class FileManageService {
 		}
 	}
 	
+	public List<Formula> getFormula(String filename) throws DocumentException{
+		List<Formula> formulas = new ArrayList<Formula>();
+		File file = new File(rootPath+"/"+filename);
+	//	logger.info(file.getPath());
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+
+		List<Element> formulaList = root.elements("Formula");
+
+		for(Element e: formulaList){
+			Formula formula = new Formula();
+			formula.setId(Integer.parseInt(e.attributeValue("Id")));
+			formula.setName(e.attributeValue("Name"));
+			List<Element> variableList = e.elements("Variable");
+			for(Element var: variableList){
+				Variable variable = new Variable();
+				variable.setName(var.attributeValue("Name"));
+				variable.setType(var.attributeValue("Type"));
+				if(var.attributeValue("Unit")!=null){
+					variable.setUnit(var.attributeValue("Unit"));
+				}
+				formula.getVars().add(variable);
+			}
+			Element resultEle = e.element("Result");
+			Variable result = new Variable();
+			result.setName(resultEle.attributeValue("Name"));
+			result.setType(resultEle.attributeValue("Type"));
+			if(resultEle.attributeValue("Unit")!=null){
+				result.setUnit(resultEle.attributeValue("Unit"));
+			}
+			formulas.add(formula);
+		}
+		return formulas;
+	}
+	
 	public Module getModule(String filename) throws DocumentException{
 		Module module = new Module();
 		File file = new File(rootPath+"/"+filename);
@@ -139,10 +189,44 @@ public class FileManageService {
 			}
 		}
 		
+		List<Element> scheduleList = root.element("Schedule").elements("window");
+		if(scheduleList != null){
+			for(Element e : scheduleList){
+				PartitionWindow partitionWindow = new PartitionWindow();
+				partitionWindow.setId(Integer.parseInt(e.attributeValue("Id")));
+				partitionWindow.setPartName(e.attributeValue("PartitonNameRef"));
+				partitionWindow.setDuration(Double.parseDouble(e.attributeValue("Duration")));
+				partitionWindow.setReleasePoint(Double.parseDouble(e.attributeValue("ReleasePoint")));
+				module.getSchedule().add(partitionWindow);
+			}
+		}
 		
+		//生成schedule成员变量
+		HashMap<String,String> srcMap = new HashMap<String,String>();
+		for(InterPartitionCom ipc : module.getInterCom()){
+			srcMap.put(ipc.getSrcPort(), ipc.getSrcPartition());
+		}
+		int cid=1;
+		Iterator iter= srcMap.entrySet().iterator();
+		while(iter.hasNext()){
+			Entry<String,String> entry = (Entry)iter.next();
+			Channel c = new Channel(cid++, entry.getValue(), entry.getKey());
+			module.getChannels().add(c);
+		}
+		
+		for(Channel c: module.getChannels()){
+			for(InterPartitionCom ipc : module.getInterCom()){
+				if(ipc.getSrcPort().equals(c.getSrcPort())){
+					c.getDstPartitions().add(ipc.getDstPartition());
+					c.getDstPorts().add(ipc.getDstPort());
+				}
+			}
+		}	
 		
 		return module;
 	}
+	
+	
 	
 	public Partition getPartition(String filename) throws DocumentException{
 		Partition partition = new Partition();
@@ -309,7 +393,7 @@ public class FileManageService {
 		}
 		//解析进程的输出
 		List<Element> outputList = root.element("TaskOutputs").elements("IO");
-		for(Element e: inputList){
+		for(Element e: outputList){
 			IOput output = new IOput();
 			output.setId(Integer.parseInt(e.attributeValue("Id")));
 			output.setConceptName(e.attributeValue("ConceptName"));
@@ -346,6 +430,21 @@ public class FileManageService {
 		logger.info(code);
 		
 		return code;
+		
+	}
+	
+	public String getConf(String filename) throws IOException, DocumentException{
+		File file = new File(rootPath+"/"+filename);
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		
+		String xml = root.asXML();
+		xml = "\""+xml.replace("\"","\\\"" )+"\"";
+		xml = xml.replace("\n", "\\n");
+		xml = xml.replace("\t","\\t");
+		
+		return xml;
 		
 	}
 }

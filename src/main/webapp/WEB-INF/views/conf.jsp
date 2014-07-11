@@ -34,8 +34,8 @@
 
 	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/eclipse");
-	editor.getSession().setMode("ace/mode/c_cpp");
-	editor.setValue(${ccode});
+	editor.getSession().setMode("ace/mode/xml");
+	editor.setValue(${conf});
 	
 	function saveTask(){
 		var tab = $('#subtt').tabs('getSelected');
@@ -44,7 +44,7 @@
 			//alert(editor.getValue());
 			$.ajax({
 				type: "POST",
-				url: "saveCCode",
+				url: "saveConf",
 				data:{taskXml: editor.getValue(),
 					filename:${filename},
 				},

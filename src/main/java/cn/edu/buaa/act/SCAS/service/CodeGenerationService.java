@@ -4,7 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -84,6 +91,41 @@ public class CodeGenerationService {
 			bw.close();
 			
 		}
+	}
+	
+	
+	public void generateConf(Module module, String filepath) throws DocumentException, IOException{
+		File codeFolder = new File(rootPath+"/"+filepath.substring(0,filepath.indexOf('/')) + "/Code");
+		logger.info(codeFolder.getPath());
+		if(!codeFolder.exists())
+			codeFolder.mkdir();
+		
+		String confTemplate = this.getClass().getResource("/Conf/wrSbc834x_default_template.xml").getPath();
+		SAXReader saxReader = new SAXReader();
+		Document document = saxReader.read(new File(confTemplate));
+		Element root = document.getRootElement();
+		List<Element> content = root.elements();
+		
+		content.add(1,module.generateAppEle(root));
+		
+		content.add(4,module.generatePartsEle(root));
+
+		content.add(5,module.generateScheduleEle(root));
+
+		content.add(5,module.generateConnectionEle(root));
+
+		content.add(module.generatePayloadsEle(root));
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(codeFolder.getPath()+"/wrSbc834x_default.xml"));
+		
+		XMLWriter out = null;
+		OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("UTF-8");
+        out = new XMLWriter(bw, format);
+        out.write(document);
+        
+        bw.close();
+		
 	}
 	
 

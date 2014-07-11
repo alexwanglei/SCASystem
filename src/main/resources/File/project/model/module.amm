@@ -5,6 +5,6 @@
 	</SAPartitions>
 	<InterCommunications/>
 	<Schedule>
-		<window Id=" " PartitonNameRef=" " Duration=" " ReleasePoint=" "></window>
+		<window Id="1" PartitonNameRef="partition" Duration="2" ReleasePoint="2"></window>
 	</Schedule>
 </SAModule>

@@ -6,7 +6,7 @@
 	<TimeCapacity>10</TimeCapacity>
 	<Deadline>SOFT</Deadline>
 	<TaskInputs>
-		<IO Id='3' ConceptName='b' DataType='double' Type='IntraPartition' Connect='b1'></IO>
+		<IO Id='3' ConceptName='b' DataType='double' Type='IntraPartition' Connect='m1'></IO>
 	</TaskInputs>
 	<TaskOutputs>
 		<IO Id='4' ConceptName='c' Datatype='double' Type='InterPartition' Connect='q1'></IO>

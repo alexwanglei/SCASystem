@@ -3,8 +3,8 @@ package cn.edu.buaa.act.SCAS.po.ARINC653;
 public class PartitionWindow {
 	private int id;
 	private String partName;
-	private String duration;
-	private String releasePoint;
+	private double duration;
+	private double releasePoint;
 	
 	public int getId() {
 		return id;
@@ -22,19 +22,19 @@ public class PartitionWindow {
 		this.partName = partName;
 	}
 
-	public String getDuration() {
+	public double getDuration() {
 		return duration;
 	}
 
-	public void setDuration(String duration) {
+	public void setDuration(double duration) {
 		this.duration = duration;
 	}
 
-	public String getReleasePoint() {
+	public double getReleasePoint() {
 		return releasePoint;
 	}
 
-	public void setReleasePoint(String releasePoint) {
+	public void setReleasePoint(double releasePoint) {
 		this.releasePoint = releasePoint;
 	}
 }

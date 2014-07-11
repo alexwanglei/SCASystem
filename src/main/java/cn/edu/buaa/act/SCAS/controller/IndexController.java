@@ -4,6 +4,7 @@ package cn.edu.buaa.act.SCAS.controller;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 import cn.edu.buaa.act.SCAS.service.CodeGenerationService;
 import cn.edu.buaa.act.SCAS.service.FileManageService;
+import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
@@ -30,6 +32,7 @@ public class IndexController {
 
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 	
+
 	@Autowired
 	private FileManageService fileManageService;
 	@Autowired
@@ -42,7 +45,7 @@ public class IndexController {
 		String directory = fileManageService.getDirectory();
 		logger.info("工程目录："+directory);
 		view.addObject("directory", directory);
-		
+
 		return view;
 	}
 	
@@ -56,7 +59,23 @@ public class IndexController {
 		view.setAttributesMap(attributes);
 		
 		logger.info("刷新工程目录："+directory);
+
 		return new ModelAndView(view);
+	}
+	
+	@RequestMapping(value = "/showFormula",method=RequestMethod.GET)
+	public ModelAndView showFormula(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
+		logger.info(filename);
+		ModelAndView mav = new ModelAndView("formula");
+		List<Formula> formulas  = fileManageService.getFormula(filename);
+		mav.addObject("formulas", formulas);
+		for(Formula f : formulas){
+			logger.info(f.toString());
+		}
+		
+		mav.addObject("filename", "\""+filename+"\"");
+//		response.getWriter().println("hello");
+		return mav;
 	}
 	
 	@RequestMapping(value = "/showModuleModel",method=RequestMethod.GET)
@@ -115,11 +134,29 @@ public class IndexController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "/showConf",method=RequestMethod.GET)
+	public ModelAndView showConf(HttpServletRequest request, String filename) throws IOException, DocumentException{
+		logger.info(filename);
+		ModelAndView mav = new ModelAndView("conf");
+		String conf = fileManageService.getConf(filename);
+		mav.addObject("conf",conf);
+		mav.addObject("filename","\""+filename+"\"");
+		return mav;
+	}
+	
 	@RequestMapping(value="/generateCCode",method=RequestMethod.POST)
 	public void generateCCode(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
 		Module module = fileManageService.getModule(filename);
 		codeGenerationService.generateCCode(module, filename);
+		
+	}
+	
+	@RequestMapping(value="/generateConf",method=RequestMethod.POST)
+	public void generateConf(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
+		logger.info(filename);
+		Module module = fileManageService.getModule(filename);
+		codeGenerationService.generateConf(module, filename);
 		
 	}
 	

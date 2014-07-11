@@ -15,6 +15,15 @@ public class Partition {
 	
 	private ArrayList<IntraPartitionCom> intraComs = new ArrayList<IntraPartitionCom>();
 	
+	private int MemorySizeBss = 0x1000;
+	private int MemorySizeData= 0x1000;
+	private int MemorySizePersistentBss = 0x1000;
+	private int MemorySizePersistentData = 0x1000;
+	private int MemorySizeRoData = 0x1000;
+	private int MemorySizeText =0x4000;
+	
+
+	
 	public int getId() {
 		return id;
 	}
@@ -133,5 +142,41 @@ public class Partition {
 	}
 	public void setXmlPartition(String xmlPartition) {
 		this.xmlPartition = xmlPartition;
+	}
+	public int getMemorySizeBss() {
+		return MemorySizeBss;
+	}
+	public void setMemorySizeBss(int memorySizeBss) {
+		MemorySizeBss = memorySizeBss;
+	}
+	public int getMemorySizeData() {
+		return MemorySizeData;
+	}
+	public void setMemorySizeData(int memorySizeData) {
+		MemorySizeData = memorySizeData;
+	}
+	public int getMemorySizePersistentBss() {
+		return MemorySizePersistentBss;
+	}
+	public void setMemorySizePersistentBss(int memorySizePersistentBss) {
+		MemorySizePersistentBss = memorySizePersistentBss;
+	}
+	public int getMemorySizePersistentData() {
+		return MemorySizePersistentData;
+	}
+	public void setMemorySizePersistentData(int memorySizePersistentData) {
+		MemorySizePersistentData = memorySizePersistentData;
+	}
+	public int getMemorySizeRoData() {
+		return MemorySizeRoData;
+	}
+	public void setMemorySizeRoData(int memorySizeRoData) {
+		MemorySizeRoData = memorySizeRoData;
+	}
+	public int getMemorySizeText() {
+		return MemorySizeText;
+	}
+	public void setMemorySizeText(int memorySizeText) {
+		MemorySizeText = memorySizeText;
 	}
 }

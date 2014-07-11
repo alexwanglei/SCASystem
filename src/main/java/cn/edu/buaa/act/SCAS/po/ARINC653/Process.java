@@ -151,11 +151,11 @@ public class Process {
 		//生成任务接受队列或采样消息
 		for(IOput i : this.inputs){
 			int n = i.getId();
-			if(i.getType()!=null&&(i.getType().equals("queue")||i.getType().equals("sample")))
+			if(i.getType()!=null&&(i.getType().equals("InterPartition")))
 			{
 				code.append(i.getPort().revPortMsg(i, n));
 			}
-			else if(i.getType()!=null&&(i.getType().equals("blackboard")||i.getType().equals("buffer")))
+			else if(i.getType()!=null&&(i.getType().equals("IntraPartition")))
 			{
 				code.append(i.getMsgContainer().revContainerMsg(i, n));
 			}
@@ -168,11 +168,11 @@ public class Process {
 		for(IOput o: this.outputs)
 		{		
 			int n = o.getId();
-			if(o.getType()!=null&&(o.getType().equals("queue")||o.getType().equals("sample")))
+			if(o.getType()!=null&&(o.getType().equals("InterPartition")))
 			{
 				code.append(o.getPort().sendPortMsg(o, n));
 			}
-			else if(o.getType()!=null&&(o.getType().equals("blackboard")||o.getType().equals("buffer")))
+			else if(o.getType()!=null&&(o.getType().equals("IntraPartition")))
 			{
 				code.append(o.getMsgContainer().sendContainerMsg(o, n));
 			}

@@ -172,6 +172,7 @@
 		});
 	});
 	
+	//生成C代码
 	$("#genCCode").click(function(){
 		var node = $("#directory").tree('getSelected');
 		var filename = node.text;
@@ -193,6 +194,36 @@
 			$.ajax({
 				type:"POST",
 				url:"generateCCode",
+				data:{filename:filename},
+				success:function(data){
+					alert("success");
+				}
+			});
+		}
+	});
+	
+	//生成配置文件
+	$("#genConf").click(function(){
+		var node = $("#directory").tree('getSelected');
+		var filename = node.text;
+		//获取文件扩展名
+		var pastfix = filename.substr(filename.indexOf(".")+1, filename.length);
+		if(node == null ||pastfix != "amm" ){
+			alert("don't select the module file!");
+		}
+		else {
+			//获取文件在File文件的完整路径
+			var filename =node.text;
+			var parentnode;
+			var curnode = node;
+			while(parentnode=$("#directory").tree('getParent',curnode.target))
+			{
+				filename = parentnode.text+"/"+ filename;
+				curnode = parentnode;
+			}
+			$.ajax({
+				type:"POST",
+				url:"generateConf",
 				data:{filename:filename},
 				success:function(data){
 					alert("success");
@@ -236,8 +267,8 @@
 				alert(pastfix);
 				switch(pastfix)
 				{
-				case "f":
-					alert("公式图文件");
+				case "formular":
+					parseFormula(filename, title);
 					break;
 				case "t":
 					alert("任务图文件");
@@ -257,10 +288,28 @@
 				case "c":
 					parseC(filename, title);
 					break;
+				case "xml":
+					parseConf(filename, title);
+					break;
 				}
 			}
 		}
 	});
+	
+	//解析公式文件
+	function parseFormula(filename, title){
+		alert(filename);
+		var href = "showFormula?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
 	
 	//解析任务模型的文件
 	function parseAmt(filename, title){
@@ -304,6 +353,19 @@
 	//解析C文件
 	function parseC(filename, title){
 		var href = "showCCode?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
+	//解析conf文件
+	function parseConf(filename, title){
+		var href = "showConf?filename="+filename;
 		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
 		var tabId = title.replace(".","");
 		$("#tt").tabs('add',{

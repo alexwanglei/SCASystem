@@ -19,7 +19,7 @@
 		<Result Name="delta e2" Type="double"/>
 	</Formula>
 	<Formula Id="4" Name="delta e3 calculation">
-		<Variable Name="delta e3 delta f" Type="double"/>
+		<Variable Name="delta e3 delta f" Type="double""/>
 		<Variable Name="sat uh2" Type="double"/>
 		<Result Name="delta e2" Type="double"/>
 	</Formula>

@@ -9,7 +9,7 @@
 		<IO Id='1' ConceptName='a' DataType='double' Type='InterPartition' Connect='s1'></IO>
 	</TaskInputs>
 	<TaskOutputs>
-		<IO Id='2' ConceptName='b' Datatype='double' Type='IntraPartition' Connect='b1'></IO>
+		<IO Id='2' ConceptName='b' Datatype='double' Type='IntraPartition' Connect='m1'></IO>
 	</TaskOutputs>
 	<Functions>
 		<HLR Id='HLR_01' Name='Periodic_Send_Process'/>
