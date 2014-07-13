@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	<div id="tab-tools">
-        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-save'" onclick="saveTask()"></a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-save'" onclick="save()"></a>
     </div>
 <script src="resources/script/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
@@ -41,7 +41,7 @@
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${partition.xmlPartition});
 	
-	function saveTask(){
+	function save(){
 		var tab = $('#subtt').tabs('getSelected');
 		var index = $('#subtt').tabs('getTabIndex',tab);
 		if(index == 0){

@@ -55,21 +55,27 @@
 						<tr>
 							<th data-options="field:'name',width:100,editor:'text'" >Name</th>
 							<th data-options="field:'ids',width:100">Formulas ids</th> 
-							<th data-options="field:'formulas',width:200" >Formulas in the task</th>
+							<th data-options="field:'formulas',width:200">Formulas in the task</th>
 						</tr>
 					</thead>
-				
 				</table>
 			</div>	
 		</div>
 		
 	</div>
 	<div id="tab-tools">
-        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-save'" onclick="saveTask()"></a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-save'" onclick="save()"></a>
     </div>
 <script src="resources/script/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
+	//初始化代码编辑器的内容
+	var editor = ace.edit("editor");
+	editor.setTheme("ace/theme/eclipse");
+	editor.getSession().setMode("ace/mode/xml");
+	editor.setValue(${formulasXml});
+
+	//创建任务按钮点击处理函数
 	$("#creatTask").click(function(){
 		var checkrows = $("#formula").datagrid("getChecked");
 
@@ -90,6 +96,7 @@
 		
 	}); 
 	
+	//单击编辑单元格
 	 $.extend($.fn.datagrid.methods, {
          editCell: function(jq,param){
              return jq.each(function(){
@@ -129,31 +136,58 @@
              editIndex = index;
          }
      }
-	var editor = ace.edit("editor");
-	editor.setTheme("ace/theme/eclipse");
-	editor.getSession().setMode("ace/mode/xml");
-	editor.setValue(${formulasXML});
-	
-	function saveTask(){
+     
+     
+
+	//保存文件和生成任务文件
+	function save(){
 		var tab = $('#subtt').tabs('getSelected');
 		var index = $('#subtt').tabs('getTabIndex',tab);
+		//保存文件
 		if(index == 0){
 			//alert(editor.getValue());
 			$.ajax({
 				type: "POST",
-				url: "saveConf",
-				data:{taskXml: editor.getValue(),
+				url: "saveFormula",
+				data:{formulasXml: editor.getValue(),
 					filename:${filename},
 				},
 				success:function(data){
-					alert("save success!");
+					if(data.equals("success"))
+						alert("save success!");
+					else
+						alert("save fail!");
 				}
 			});
 		}
+		//生成任务
 		else{
-			
+			var rows = $('#task').datagrid('getRows');
+			var taskNames = [];
+			var formulaIds = [];
+			for(var i=0; i<rows.length;i++){
+				taskNames[i]=rows[i].name;
+				formulaIds[i] = rows[i].ids;
+			}
+			$.ajax({
+				type:"POST",
+				url:"generateTask",
+				traditional: true,
+				data:{taskNames:taskNames,
+					formulaIds:formulaIds,
+					filename:${filename},
+				},
+				success:function(data){
+					if(data=="success"){
+						alert("Generate task file success!");
+					}
+					else{
+						alert("Generate task file fail!");
+					}
+					
+				}
+			});
 		}
-		
 	}
 </script>
 </body>

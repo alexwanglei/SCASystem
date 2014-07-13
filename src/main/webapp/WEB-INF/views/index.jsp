@@ -270,11 +270,13 @@
 				case "formular":
 					parseFormula(filename, title);
 					break;
-				case "t":
+				case "task":
 					alert("任务图文件");
+					parseTask(filename, title);
 					break;
-				case "p":
+				case "partition":
 					alert("分区表文件");
+					parsePartition(filename, title);
 					break;
 				case "amt":
 					parseAmt(filename, title);
@@ -299,7 +301,33 @@
 	//解析公式文件
 	function parseFormula(filename, title){
 		//alert(filename);
-		var href = "showFormula?filename="+filename;
+		var href = "showFormulas?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
+	//解析任务文件
+	function parseTask(filename, title){
+		var href = "showTasks?filename="+filename;
+		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
+		var tabId = title.replace(".","");
+		$("#tt").tabs('add',{
+			id:tabId,
+			title:title,
+			closable:true,
+			content:content,
+		});
+	}
+	
+	//解析分区文件
+	function parsePartition(filename, title){
+		var href = "showPartitions?filename="+filename;
 		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
 		var tabId = title.replace(".","");
 		$("#tt").tabs('add',{

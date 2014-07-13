@@ -56,7 +56,10 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 import cn.edu.buaa.act.SCAS.po.Formula;
+import cn.edu.buaa.act.SCAS.po.Task;
 import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
@@ -77,7 +80,7 @@ import cn.edu.buaa.act.SCAS.po.ARINC653.SamplePort;
 public class FileManageService {
 	
 	
-
+	
 	private static Logger logger = LoggerFactory.getLogger(FileManageService.class);
 	
 	private String rootPath = this.getClass().getResource("/File").getPath();
@@ -124,32 +127,28 @@ public class FileManageService {
 		List<Element> formulaList = root.elements("Formula");
 
 		for(Element e: formulaList){
-			Formula formula = new Formula();
-			formula.setId(Integer.parseInt(e.attributeValue("Id")));
-			formula.setName(e.attributeValue("Name"));
-			List<Element> variableList = e.elements("Variable");
-			for(Element var: variableList){
-				Variable variable = new Variable();
-				variable.setName(var.attributeValue("Name"));
-				variable.setType(var.attributeValue("Type"));
-				if(var.attributeValue("Unit")!=null){
-					variable.setUnit(var.attributeValue("Unit"));
-				}
-				formula.getVars().add(variable);
-			}
-			Element resultEle = e.element("Result");
-			Variable result = new Variable();
-			result.setName(resultEle.attributeValue("Name"));
-			result.setType(resultEle.attributeValue("Type"));
-			if(resultEle.attributeValue("Unit")!=null){
-				result.setUnit(resultEle.attributeValue("Unit"));
-			}
+			Formula formula = new Formula(e);
 			formulas.add(formula);
 		}
 		return formulas;
 	}
 	
-	public String getFormulaXML(String filename) throws DocumentException{
+	public List<Task> getTask(String filename) throws DocumentException{
+		List<Task> tasks = new ArrayList<Task>();
+		File file = new File(rootPath+"/"+filename);
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		
+		List<Element> taskEleList = root.elements("Task");
+		for(Element e : taskEleList){
+			Task task = new Task(e);
+			tasks.add(task);
+		}
+		return tasks;
+	}
+	
+	public String getXmlString(String filename) throws DocumentException{
 		File file = new File(rootPath+"/"+filename);
 		//	logger.info(file.getPath());
 		SAXReader saxReader = new SAXReader();
@@ -161,6 +160,9 @@ public class FileManageService {
 		xml = xml.replace("\t","\\t");
 		return xml;
 	}
+	
+	
+	
 	
 	public Module getModule(String filename) throws DocumentException{
 		Module module = new Module();
@@ -420,13 +422,49 @@ public class FileManageService {
 		
 	}
 	
-	public void saveTaskByXml(String taskXml, String filename) throws IOException{
-//		File file = new File(rootPath+"/"+filename);
-		FileWriter writer = new FileWriter(rootPath+"/"+filename);
-		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		writer.write(taskXml);
-		writer.close();
+	public boolean saveByXml(String xml, String filename){
+		FileWriter writer;
+		try {
+			writer = new FileWriter(rootPath+"/"+filename);
+			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			writer.write(xml);
+			writer.close();
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
 	}
+//	public boolean saveModuleByXml(String moduleXml, String filename){
+//		FileWriter writer;
+//		try {
+//			writer = new FileWriter(rootPath+"/"+filename);
+//			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//			writer.write(moduleXml);
+//			writer.close();
+//			return true;
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return false;
+//		}
+//	}
+//	
+//	public boolean saveTaskByXml(String taskXml, String filename){
+//		FileWriter writer;
+//		try {
+//			writer = new FileWriter(rootPath+"/"+filename);
+//			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+//			writer.write(taskXml);
+//			writer.close();
+//			return true;
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return false;
+//		}
+//	}
 	
 	public String getCCode(String filename) throws IOException{
 		File file = new File(rootPath+"/"+filename);

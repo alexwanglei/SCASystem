@@ -1,6 +1,9 @@
 package cn.edu.buaa.act.SCAS.po;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.dom4j.Element;
 
 public class Formula {
 	private int id;
@@ -13,6 +16,22 @@ public class Formula {
 	
 	private String description;
 
+	public Formula(){
+		
+	}
+	
+	public Formula(Element e){
+		this.id = Integer.parseInt(e.attributeValue("Id"));
+		this.name = e.attributeValue("Name");
+		List<Element> variableList = e.elements("Variable");
+		for(Element var: variableList){
+			Variable variable = new Variable(var);
+			this.vars.add(variable);
+		}
+		Element resultEle = e.element("Result");
+		Variable result = new Variable(resultEle);
+		this.result = result;
+	}
 	public int getId() {
 		return id;
 	}

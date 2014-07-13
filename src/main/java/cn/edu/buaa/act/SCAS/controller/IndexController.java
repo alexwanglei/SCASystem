@@ -1,11 +1,13 @@
-
 package cn.edu.buaa.act.SCAS.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,10 +25,31 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 import cn.edu.buaa.act.SCAS.service.CodeGenerationService;
 import cn.edu.buaa.act.SCAS.service.FileManageService;
+import cn.edu.buaa.act.SCAS.service.ModelGenerationService;
+import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
+import cn.edu.buaa.act.SCAS.po.Task;
+import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
+/**
+ * @Description 首页控制器
+ * @author wanglei
+ * @date 2014年7月12日
+ */
+/** 
+ * @Description 
+ * @author wanglei
+ * @date 2014年7月12日 
+ */ 
+  	
+/** 
+ * @Description 
+ * @author wanglei
+ * @date 2014年7月12日 
+ */ 
+  	
 @Controller
 public class IndexController {
 
@@ -37,7 +60,18 @@ public class IndexController {
 	private FileManageService fileManageService;
 	@Autowired
 	private CodeGenerationService codeGenerationService;
+	@Autowired
+	private ModelGenerationService modelGenerationService;
 	
+	/**
+	 * 
+	 * @Description 首页
+	 * @param request
+	 * @return 
+	 * @throws JSONException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/", method= RequestMethod.GET)
 	public ModelAndView index(HttpServletRequest request) throws JSONException{
 		ModelAndView view = new ModelAndView();
@@ -49,37 +83,195 @@ public class IndexController {
 		return view;
 	}
 	
+	/**
+	 * @Description 刷新目录
+	 * @param request
+	 * @return
+	 * @throws JSONException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/refreshDirectory", method= RequestMethod.GET)
 	public ModelAndView refreshDirectory(HttpServletRequest request) throws JSONException{
 		MappingJacksonJsonView view = new MappingJacksonJsonView();
-		Map attributes = new HashMap();
+		Map<String,String> attributes = new HashMap<String,String>();
 		
 		String directory = fileManageService.getDirectory();
 		attributes.put("directory", directory);
 		view.setAttributesMap(attributes);
 		
 		logger.info("刷新工程目录："+directory);
-
 		return new ModelAndView(view);
 	}
 	
-	@RequestMapping(value = "/showFormula",method=RequestMethod.GET)
-	public ModelAndView showFormula(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
+	/**
+	 * @Description 打开公式文件
+	 * @param request
+	 * @param response
+	 * @param filename:公式文件在File下的路径
+	 * @return
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
+	@RequestMapping(value = "/showFormulas",method=RequestMethod.GET)
+	public ModelAndView showFormulas(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
 		ModelAndView mav = new ModelAndView("formula");
 		List<Formula> formulas  = fileManageService.getFormula(filename);
-		String formulasXML = fileManageService.getFormulaXML(filename);
+		String formulasXml = fileManageService.getXmlString(filename);
 		mav.addObject("formulas", formulas);
-		mav.addObject("formulasXML",formulasXML);
-//		for(Formula f : formulas){
-//			logger.info(f.toString());
-//		}
-		
+		mav.addObject("formulasXml",formulasXml);
 		mav.addObject("filename", "\""+filename+"\"");
-//		response.getWriter().println("hello");
 		return mav;
 	}
 	
+	@RequestMapping(value = "/showTasks",method=RequestMethod.GET)
+	public ModelAndView showTasks(HttpServletRequest request, String filename) throws DocumentException, IOException{
+		logger.info(filename);
+		ModelAndView mav = new ModelAndView("taskGraph");
+		List<Task> tasks  = fileManageService.getTask(filename);
+		String tasksXml = fileManageService.getXmlString(filename);
+		logger.info("任务数："+tasks.size());
+		mav.addObject("tasks", tasks);
+		mav.addObject("tasksXml",tasksXml);
+		mav.addObject("filename", "\""+filename+"\"");
+		return mav;
+	}
+	
+	@RequestMapping(value = "/showPartitions",method=RequestMethod.GET)
+	public ModelAndView showTask(HttpServletRequest request, String filename) throws DocumentException, IOException{
+		logger.info(filename);
+		ModelAndView mav = new ModelAndView("partitionGraph");
+		//List<Task> tasks  = fileManageService.getTask(filename);
+		String partitionsXml = fileManageService.getXmlString(filename);
+		//mav.addObject("formulas", formulas);
+		mav.addObject("partitionsXml",partitionsXml);
+		mav.addObject("filename", "\""+filename+"\"");
+		return mav;
+	}
+	
+	
+	/**
+	 * @Description 从公式生成任务
+	 * @param request
+	 * @param reponse
+	 * @param taskNames 任务名数组
+	 * @param formulaIds 任务中包含的公式id数组
+	 * @param filename
+	 * @author wanglei
+	 * @throws DocumentException 
+	 * @throws IOException 
+	 * @date 2014年7月12日
+	 */
+	@RequestMapping(value = "/generateTask",method=RequestMethod.POST)
+	public void generateTask(HttpServletRequest request, HttpServletResponse reponse, String[] taskNames, String[] formulaIds, String filename) throws IOException, DocumentException{
+//		logger.info(Arrays.toString(taskNames));
+//		logger.info(Arrays.toString(formulaIds));
+//		logger.info(filename);
+		List<Formula> formulas  = fileManageService.getFormula(filename);
+		HashMap<String,Formula> formulasMap = new HashMap<String,Formula>();
+		for(Formula e: formulas){
+			formulasMap.put(Integer.toString(e.getId()), e);
+		}
+		List<Task> tasks = new ArrayList<Task>();
+		for(int i=0; i<taskNames.length; i++){
+			Task task = new Task();
+			task.setId(i+1);
+			task.setName(taskNames[i]);
+			String[] id = formulaIds[i].split(";");
+			for(String e : id){
+				if(formulasMap.get(e)!=null){
+					task.getFormulas().add(formulasMap.get(e));
+				}
+			}
+			//除去任务中的其他公式
+			ArrayList<Formula> otherFormula = new ArrayList<Formula>();
+			for(Entry<String,Formula> entry : formulasMap.entrySet()){
+				if(!task.getFormulas().contains(entry.getValue())){
+					otherFormula.add(entry.getValue());
+				}
+			}
+			HashSet<Variable> otherInputs = new HashSet<Variable>();
+			for(Formula f: otherFormula){
+				for(Variable var : f.getVars()){
+					otherInputs.add(var);
+				}
+			}
+			task.findIOput(otherInputs);
+			tasks.add(task);
+		}
+		
+		//生成任务文件
+		if(modelGenerationService.generateTaskFile(tasks, filename)){
+			reponse.getWriter().print("success");
+		}else{
+			reponse.getWriter().print("fail");
+		}
+		
+	}
+	
+	@RequestMapping(value = "/generatePartition",method=RequestMethod.POST)
+	public void generatePartition(HttpServletRequest request, HttpServletResponse reponse, String[] partitionNames, String[] taskIds, String filename) throws DocumentException, IOException{
+		logger.info(Arrays.toString(partitionNames));
+		logger.info(Arrays.toString(taskIds));
+		logger.info(filename);
+		
+		List<Task> taskList = fileManageService.getTask(filename);
+		HashMap<String,Task> tasksMap = new HashMap<String,Task>();
+		for(Task t: taskList){
+			tasksMap.put(Integer.toString(t.getId()), t);
+		}
+		List<Application> applications = new ArrayList<Application>();
+		for(int i=0; i<partitionNames.length; i++){
+			Application application = new Application();
+			application.setId(i+1);
+			application.setName(partitionNames[i]);
+			String[] id = taskIds[i].split(";");
+			for(String e : id){
+				if(tasksMap.get(e)!=null){
+					application.getTasks().add(tasksMap.get(e));
+				}
+			}
+			//除去分区中的其他任务
+			ArrayList<Task> otherTask = new ArrayList<Task>();
+			for(Entry<String,Task> entry : tasksMap.entrySet()){
+				if(!application.getTasks().contains(entry.getValue())){
+					otherTask.add(entry.getValue());
+				}
+			}
+			HashSet<Variable> otherInputs = new HashSet<Variable>();
+			for(Task t: otherTask){
+				for(Variable var : t.getInputs()){
+					otherInputs.add(var);
+				}
+			}
+			application.findIOput(otherInputs);
+			applications.add(application);
+		}
+		
+		//生成分区应用文件
+		if(modelGenerationService.generatePartitionFile(applications, filename)){
+			reponse.getWriter().print("success");
+		}else{
+			reponse.getWriter().print("fail");
+		}
+		
+		
+	}
+	
+	/**
+	 * @Description 打开模块模型文件
+	 * @param request
+	 * @param response
+	 * @param filename
+	 * @return
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/showModuleModel",method=RequestMethod.GET)
 	public ModelAndView showModuleModel(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
@@ -93,6 +285,17 @@ public class IndexController {
 		return mav;
 	}
 	
+	/**
+	 * @Description 打开分区模型文件
+	 * @param request
+	 * @param response
+	 * @param filename
+	 * @return
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/showPartitionModel",method=RequestMethod.GET)
 	public ModelAndView showPartitionModel(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
@@ -106,6 +309,18 @@ public class IndexController {
 		return mav;
 	}
 	
+	
+	/**
+	 * @Description 打开任务模型文件
+	 * @param request
+	 * @param response
+	 * @param filename
+	 * @return
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/showTaskModel",method=RequestMethod.GET)
 	public ModelAndView showTaskModel(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
@@ -118,14 +333,122 @@ public class IndexController {
 		return mav;
 	}
 	
+	/**
+	 * @Description 保存公式文件
+	 * @param request
+	 * @param response
+	 * @param formulasXML
+	 * @param filename
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
+	@RequestMapping(value = "/saveFormula",method=RequestMethod.POST)
+	public void saveFormula(HttpServletRequest request, HttpServletResponse response,String formulasXml, String filename) throws IOException{
+		if(fileManageService.saveByXml(formulasXml,filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("false");
+		}
+	}
+	
+	@RequestMapping(value = "/saveTasks",method=RequestMethod.POST)
+	public void saveTasks(HttpServletRequest request, HttpServletResponse response,String tasksXml, String filename) throws IOException{
+		if(fileManageService.saveByXml(tasksXml,filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("false");
+		}
+	}
+	
+	@RequestMapping(value = "/savePartitions",method=RequestMethod.POST)
+	public void savePartitions(HttpServletRequest request, HttpServletResponse response,String partitionsXml, String filename) throws IOException{
+		if(fileManageService.saveByXml(partitionsXml,filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("false");
+		}
+	}
+	
+	/**
+	 * @Description 保存模块模型xml
+	 * @param request
+	 * @param response
+	 * @param moduleXml
+	 * @param filename
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
+	@RequestMapping(value = "/saveModuleByXml", method=RequestMethod.POST)
+	public void saveModuleByXml(HttpServletRequest request,HttpServletResponse response, String moduleXml,String filename) throws IOException{
+		logger.info(filename);
+		logger.info(moduleXml);
+		if(fileManageService.saveByXml(moduleXml, filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("fail");
+		}
+	}
+	
+	/**
+	 * @Description 保存分区模型xml
+	 * @param request
+	 * @param response
+	 * @param partitionXml
+	 * @param filename
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
+	@RequestMapping(value = "/savePartitionByXml", method=RequestMethod.POST)
+	public void savePartitionByXml(HttpServletRequest request,HttpServletResponse response, String partitionXml,String filename) throws IOException{
+		logger.info(filename);
+		logger.info(partitionXml);
+		if(fileManageService.saveByXml(partitionXml, filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("fail");
+		}
+	}
+	
+	/**
+	 * @Description 保存xml格式的任务模型
+	 * @param request
+	 * @param response
+	 * @param taskXml
+	 * @param filename
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/saveTaskByXml", method=RequestMethod.POST)
 	public void saveTaskByXml(HttpServletRequest request,HttpServletResponse response, String taskXml,String filename) throws IOException{
 		logger.info(filename);
 		logger.info(taskXml);
-		fileManageService.saveTaskByXml(taskXml, filename);
-		
+		if(fileManageService.saveByXml(taskXml, filename)){
+			response.getWriter().print("success");
+		}
+		else{
+			response.getWriter().print("fail");
+		}
 	}
 	
+	
+	/**
+	 * @Description 打开C文件
+	 * @param request
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/showCCode",method=RequestMethod.GET)
 	public ModelAndView showCCode(HttpServletRequest request, String filename) throws IOException{
 		logger.info(filename);
@@ -136,6 +459,16 @@ public class IndexController {
 		return mav;
 	}
 	
+	/**
+	 * @Description 打开配置文件
+	 * @param request
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 * @throws DocumentException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value = "/showConf",method=RequestMethod.GET)
 	public ModelAndView showConf(HttpServletRequest request, String filename) throws IOException, DocumentException{
 		logger.info(filename);
@@ -146,6 +479,17 @@ public class IndexController {
 		return mav;
 	}
 	
+	
+	/**
+	 * @Description 生成C文件
+	 * @param request
+	 * @param response
+	 * @param filename
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value="/generateCCode",method=RequestMethod.POST)
 	public void generateCCode(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
@@ -154,6 +498,17 @@ public class IndexController {
 		
 	}
 	
+	/**
+	 * 生成配置文件
+	 * @Description
+	 * @param request
+	 * @param response
+	 * @param filename
+	 * @throws DocumentException
+	 * @throws IOException
+	 * @author wanglei
+	 * @date 2014年7月12日
+	 */
 	@RequestMapping(value="/generateConf",method=RequestMethod.POST)
 	public void generateConf(HttpServletRequest request,HttpServletResponse response, String filename) throws DocumentException, IOException{
 		logger.info(filename);
@@ -161,6 +516,12 @@ public class IndexController {
 		codeGenerationService.generateConf(module, filename);
 		
 	}
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping(value="/test",method=RequestMethod.POST)
 	public void test(HttpServletRequest request,HttpServletResponse response) throws DocumentException, IOException{

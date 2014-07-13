@@ -1,71 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<formulas>
-	<formula id="4" name="4.xml">
-		<input>C60.Gyroscope</input>
-		<output>C38.Body Roll Rate</output>
-	</formula>
-	<formula id="25" name="25.xml">
-		<input>C37.Roll Attitude</input>
-		<input>C38.Body Roll Rate</input>
-		<input>C8.CWS Force Roll Input</input>
-		<output>Roll Servo Command Output</output>
-	</formula>
-	<formula id="9" name="9.xml">
-		<input>C71.Attitude Matrix</input>
-		<output>C37.Roll Attitude</output>
-	</formula>
-	<formula id="11" name="11.xml">
-		<input>C69.Earth Rotation Angular Velocity</input>
-		<input>C70.Attitude Matrix Initial</input>
-		<input>C61.Gyroscope Geo</input>
-		<input>C63.Geo Angular Velocity</input>
-		<output>C71.Attitude Matrix</output>
-	</formula>
-	<formula id="12" name="12.xml">
-		<input>C60.Gyroscope</input>
-		<output>C61.Gyroscope Geo</output>
-	</formula>
-	<formula id="13" name="13.xml">
-		<input>C62.Geo Velocity</input>
-		<output>C63.Geo Angular Velocity</output>
-	</formula>
-	<formula id="37" name="37.xml">
-		<input>C59.Geo Force</input>
-		<output>C62.Geo Velocity</output>
-	</formula>
-	<formula id="36" name="36.xml">
-		<input>C27.Specific Force Input</input>
-		<output>C59.Geo Force</output>
-	</formula>
-	<formula id="3" name="3.xml">
-		<input>C37.Roll Attitude</input>
-		<output>CO1.Pitch Servo Command Output</output>
-	</formula>
-	<formula id="9" name="9.xml">
-		<input>C71.Attitude Matrix</input>
-		<output>C37.Roll Attitude</output>
-	</formula>
-	<formula id="11" name="11.xml">
-		<input>C69.Earth Rotation Angular Velocity</input>
-		<input>C70.Attitude Matrix Initial</input>
-		<input>C61.Gyroscope Geo</input>
-		<input>C63.Geo Angular Velocity</input>
-		<output>C71.Attitude Matrix</output>
-	</formula>
-	<formula id="12" name="12.xml">
-		<input>C60.Gyroscope</input>
-		<output>C61.Gyroscope Geo</output>
-	</formula>
-	<formula id="13" name="13.xml">
-		<input>C62.Geo Velocity</input>
-		<output>C63.Geo Angular Velocity</output>
-	</formula>
-	<formula id="37" name="37.xml">
-		<input>C59.Geo Force</input>
-		<output>C62.Geo Velocity</output>
-	</formula>
-	<formula id="36" name="36.xml">
-		<input>C27.Specific Force Input</input>
-		<output>C59.Geo Force</output>
-	</formula>
-</formulas>
+<Tasks>
+  <Task Id="1" Name="task1">
+    <Formulas>
+      <Formula Id="1" Name="delta e calculation">
+        <Variable Name="delta e1" Type="double"/>
+        <Variable Name="delta e2" Type="double"/>
+        <Variable Name="delta e3" Type="double"/>
+        <Result Name="delta e" Type="double"/>
+      </Formula>
+      <Formula Id="2" Name="delta e1 calculation">
+        <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
+        <Variable Name="Uh1" Type="double"/>
+        <Variable Name="Uh2" Type="double"/>
+        <Variable Name="U0" Type="double"/>
+        <Result Name="delta e1" Type="double"/>
+      </Formula>
+      <Formula Id="3" Name="delta e2 calculation">
+        <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
+        <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
+        <Result Name="delta e2" Type="double"/>
+      </Formula>
+      <Formula Id="4" Name="delta e3 calculation">
+        <Variable Name="delta e3 delta f" Type="double"/>
+        <Variable Name="sat uh2" Type="double"/>
+        <Result Name="delta e3" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Uh2" Type="double"/>
+      <Variable Name="Uh1" Type="double"/>
+      <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
+      <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
+      <Variable Name="delta e3 delta f" Type="double"/>
+      <Variable Name="U0" Type="double"/>
+      <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
+      <Variable Name="sat uh2" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="delta e" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="2" Name="task2">
+    <Formulas>
+      <Formula Id="5" Name="Uh1 calculation">
+        <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+        <Result Name="Uh1" Type="double"/>
+      </Formula>
+      <Formula Id="8" Name="U0 calculation">
+        <Variable Name="bGS" Type="double"/>
+        <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
+        <Variable Name="Uh1" Type="double"/>
+        <Variable Name="theta" Type="double" Unit="deg"/>
+        <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
+        <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
+        <Result Name="U0" Type="double"/>
+      </Formula>
+      <Formula Id="9" Name="bGS calculation">
+        <Variable Name="GSCapt" Type="int"/>
+        <Result Name="bGS" Type="int"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
+      <Variable Name="theta" Type="double" Unit="deg"/>
+      <Variable Name="GSCapt" Type="int"/>
+      <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
+      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+      <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Uh1" Type="double"/>
+      <Variable Name="U0" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="3" Name="task3">
+    <Formulas>
+      <Formula Id="6" Name="Uh2 calculation">
+        <Variable Name="hsat" Type="double"/>
+        <Variable Name="hsat derivative" Type="double"/>
+        <Result Name="Uh2" Type="double"/>
+      </Formula>
+      <Formula Id="7" Name="hsat calculation">
+        <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+        <Result Name="hsat" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+      <Variable Name="hsat derivative" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Uh2" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="4" Name="task4">
+    <Formulas>
+      <Formula Id="10" Name="delta e3 delta f calculation">
+        <Variable Name="Pitch Rate" Type="double" Unit="deg/s"/>
+        <Variable Name="Flap state" Type="int" Unit="deg"/>
+        <Result Name="delta e3 delta f" Type="double"/>
+      </Formula>
+      <Formula Id="11" Name="sat Uh2 calculation">
+        <Variable Name="Uh2" Type="double"/>
+        <Result Name="sat Uh2" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Uh2" Type="double"/>
+      <Variable Name="Pitch Rate" Type="double" Unit="deg/s"/>
+      <Variable Name="Flap state" Type="int" Unit="deg"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="sat Uh2" Type="double"/>
+      <Variable Name="delta e3 delta f" Type="double"/>
+    </Outputs>
+  </Task>
+</Tasks>

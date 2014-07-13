@@ -1,5 +1,7 @@
 package cn.edu.buaa.act.SCAS.po;
 
+import org.dom4j.Element;
+
 public class Variable {
 	private String name;
 	
@@ -7,6 +9,18 @@ public class Variable {
 	
 	private String unit;
 
+	public Variable(){
+		
+	}
+	
+	public Variable(Element e){
+		this.name = e.attributeValue("Name");
+		this.type = e.attributeValue("Type");
+		if(e.attributeValue("Unit")!=null){
+			this.unit = e.attributeValue("Unit");
+		}
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -29,5 +43,25 @@ public class Variable {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		if(o == null){
+			return false;
+		}
+		else if(o==this){
+			return true;
+		}
+		else if(this.getClass() != o.getClass()){
+			return false;
+		}
+		Variable var = (Variable) o;
+		return this.name.equals(var.getName());
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.name.hashCode();
 	}
 }
