@@ -26,9 +26,11 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import cn.edu.buaa.act.SCAS.service.CodeGenerationService;
 import cn.edu.buaa.act.SCAS.service.FileManageService;
 import cn.edu.buaa.act.SCAS.service.ModelGenerationService;
+import cn.edu.buaa.act.SCAS.po.AppCommunication;
 import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
+import cn.edu.buaa.act.SCAS.po.TaskCommunication;
 import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
@@ -140,13 +142,90 @@ public class IndexController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/showPartitions",method=RequestMethod.GET)
-	public ModelAndView showTask(HttpServletRequest request, String filename) throws DocumentException, IOException{
+	@RequestMapping(value = "/showApplications",method=RequestMethod.GET)
+	public ModelAndView showApplications(HttpServletRequest request, String filename) throws DocumentException, IOException{
 		logger.info(filename);
 		ModelAndView mav = new ModelAndView("partitionGraph");
-		//List<Task> tasks  = fileManageService.getTask(filename);
+		List<Application> applications  = fileManageService.getApplication(filename);
+		mav.addObject("applications", applications);
+//		for(Application app : applications){
+//			logger.info("Application: Id="+app.getId()+" Name="+app.getName());
+//			for(TaskCommunication tc : app.getTaskCommunications()){
+//				logger.info(tc.toString());
+//			}
+//		}
+		
+		
+		//得到应用之间的通信
+		List<AppCommunication> appCommList = new ArrayList<AppCommunication>();
+		HashSet<Variable> appCommSet = new HashSet<Variable>();
+		for(int i=0; i<applications.size(); i++){
+			for(int j=0; j<applications.size(); j++){
+				if(j==i){
+					continue;
+				}
+				else{
+					for(Variable input : applications.get(i).getInputs()){
+						for(Variable output : applications.get(j).getOutputs()){
+							if(output.equals(input)){
+								AppCommunication ac = new AppCommunication();
+								ac.setSrcApp(applications.get(j));
+								ac.setDstApp(applications.get(i));
+								ac.setVariable(output);
+								appCommList.add(ac);
+								appCommSet.add(output);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		mav.addObject("appCommList", appCommList);
+		
+//		for(AppCommunication ac : appCommList){
+//			logger.info("应用之间的通信:\n"+ac.toString());
+//		}
+		
+		//表示系统外部的应用（模块）对应伪分区
+		Application externalApp = new Application();
+		externalApp.setId(0);
+		externalApp.setName("External Application");
+		
+		//得到外界和应用的通信
+		ArrayList<AppCommunication> exCommList = new ArrayList<AppCommunication>();
+		for(Application app : applications){
+			for(Variable input : app.getInputs()){
+				if(!appCommSet.contains(input)){
+					AppCommunication ac = new AppCommunication();
+					ac.setSrcApp(externalApp);
+					ac.setDstApp(app);
+					ac.setVariable(input);
+					externalApp.getOutputs().add((Variable)input.clone());
+					exCommList.add(ac);
+				}
+			}
+		}
+		for(Application app : applications){
+			for(Variable output : app.getOutputs()){
+				if(!appCommSet.contains(output)){
+					AppCommunication ac = new AppCommunication();
+					ac.setSrcApp(app);
+					ac.setDstApp(externalApp);
+					ac.setVariable(output);
+					externalApp.getInputs().add((Variable)output.clone());
+					exCommList.add(ac);
+				}
+			}
+		}
+		mav.addObject("exCommList", exCommList);
+//		for(AppCommunication ec : exCommList){
+//			logger.info("应用与外部的通信:\n"+ec.toString());
+//		}
+		
+		
 		String partitionsXml = fileManageService.getXmlString(filename);
-		//mav.addObject("formulas", formulas);
+		
 		mav.addObject("partitionsXml",partitionsXml);
 		mav.addObject("filename", "\""+filename+"\"");
 		return mav;
@@ -212,9 +291,9 @@ public class IndexController {
 		
 	}
 	
-	@RequestMapping(value = "/generatePartition",method=RequestMethod.POST)
-	public void generatePartition(HttpServletRequest request, HttpServletResponse reponse, String[] partitionNames, String[] taskIds, String filename) throws DocumentException, IOException{
-		logger.info(Arrays.toString(partitionNames));
+	@RequestMapping(value = "/generateApplication",method=RequestMethod.POST)
+	public void generateApplication(HttpServletRequest request, HttpServletResponse reponse, String[] applicationNames, String[] taskIds, String filename) throws DocumentException, IOException{
+		logger.info(Arrays.toString(applicationNames));
 		logger.info(Arrays.toString(taskIds));
 		logger.info(filename);
 		
@@ -224,10 +303,10 @@ public class IndexController {
 			tasksMap.put(Integer.toString(t.getId()), t);
 		}
 		List<Application> applications = new ArrayList<Application>();
-		for(int i=0; i<partitionNames.length; i++){
+		for(int i=0; i<applicationNames.length; i++){
 			Application application = new Application();
 			application.setId(i+1);
-			application.setName(partitionNames[i]);
+			application.setName(applicationNames[i]);
 			String[] id = taskIds[i].split(";");
 			for(String e : id){
 				if(tasksMap.get(e)!=null){
@@ -252,7 +331,7 @@ public class IndexController {
 		}
 		
 		//生成分区应用文件
-		if(modelGenerationService.generatePartitionFile(applications, filename)){
+		if(modelGenerationService.generateApplicationFile(applications, filename)){
 			reponse.getWriter().print("success");
 		}else{
 			reponse.getWriter().print("fail");

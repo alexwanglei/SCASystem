@@ -58,6 +58,8 @@ import org.springframework.stereotype.Service;
 
 
 
+
+import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
 import cn.edu.buaa.act.SCAS.po.Variable;
@@ -146,6 +148,48 @@ public class FileManageService {
 			tasks.add(task);
 		}
 		return tasks;
+	}
+	
+	public List<Application> getApplication(String filename) throws DocumentException{
+		List<Application> applications = new ArrayList<Application>();
+		File file = new File(rootPath+"/"+filename);
+		String taskFilename = filename.replace(".application", ".task");
+		List<Task> tasks = getTask(taskFilename);
+		HashMap<String,Task> taskMap = new HashMap<String,Task>();
+		for(Task t : tasks){
+			taskMap.put(Integer.toString(t.getId()), t);
+		}
+		
+		SAXReader saxReader = new SAXReader();
+		Document doc = saxReader.read(file);
+		Element root = doc.getRootElement();
+		
+		List<Element> appEleList = root.elements("Application");
+		for(Element e : appEleList){
+			Application application = new Application();
+			application.setId(Integer.parseInt(e.attributeValue("Id")));
+			application.setName(e.attributeValue("Name"));
+			List<Element> taskEleList = e.element("Tasks").elements("Task");
+			for(Element taskEle : taskEleList){
+				application.getTasks().add(taskMap.get(taskEle.attributeValue("Id")));
+			}
+			
+			List<Element> inputEleList = e.element("Inputs").elements("Variable");
+			for(Element ve : inputEleList){
+				application.getInputs().add(new Variable(ve));
+			}
+			List<Element> outputEleList = e.element("Outputs").elements("Variable");
+			for(Element ve : outputEleList){
+				application.getOutputs().add(new Variable(ve));
+			}
+			application.findTaskComm();
+			applications.add(application);
+		}
+		
+		
+		
+		return applications;
+		
 	}
 	
 	public String getXmlString(String filename) throws DocumentException{

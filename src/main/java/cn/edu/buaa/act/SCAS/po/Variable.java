@@ -2,7 +2,7 @@ package cn.edu.buaa.act.SCAS.po;
 
 import org.dom4j.Element;
 
-public class Variable {
+public class Variable implements Cloneable{
 	private String name;
 	
 	private String type;
@@ -19,6 +19,18 @@ public class Variable {
 		if(e.attributeValue("Unit")!=null){
 			this.unit = e.attributeValue("Unit");
 		}
+	}
+	
+	@Override
+	public Object clone(){
+		Variable var = null;
+		try {
+			var = (Variable)super.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return var;
 	}
 	
 	public String getName() {

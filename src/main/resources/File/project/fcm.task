@@ -22,7 +22,7 @@
       </Formula>
       <Formula Id="4" Name="delta e3 calculation">
         <Variable Name="delta e3 delta f" Type="double"/>
-        <Variable Name="sat uh2" Type="double"/>
+        <Variable Name="sat Uh2" Type="double"/>
         <Result Name="delta e3" Type="double"/>
       </Formula>
     </Formulas>
@@ -34,7 +34,7 @@
       <Variable Name="delta e3 delta f" Type="double"/>
       <Variable Name="U0" Type="double"/>
       <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
-      <Variable Name="sat uh2" Type="double"/>
+      <Variable Name="sat Uh2" Type="double"/>
     </Inputs>
     <Outputs>
       <Variable Name="delta e" Type="double"/>

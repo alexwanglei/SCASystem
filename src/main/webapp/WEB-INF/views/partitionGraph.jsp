@@ -25,7 +25,44 @@
 			<pre id="editor"></pre>
 		</div>
 		<div title="design">
+			<div>
+				<table class="easyui-datagrid" title="Task communication in the application" style="wdith:500px" data-options="rownumbers:true">
+					<thead>
+						<tr>
+							<th data-options="field:'appId', width:100">Application Id</th>
+							<th data-options="field:'appName',width:100">Application Name</th>
+							<th data-options="field:'srcTask',width:80">Src Task</th>
+							<th data-options="field:'dstTask',width:80">Dst Task</th>
+							<th data-options="field:'variable',width:100">Communication Variable</th>
+							<th data-options="field:'type',width:80">Communication Type</th>
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach items="${applications}" var="app">
+						<c:forEach items="${app.taskCommunications }" var="tc">
+							<tr>
+								<td>${app.id }</td>
+								<td>${app.name }</td>
+								<td>${tc.srcTask.name}</td>
+								<td>${tc.dstTask.name}</td>
+								<td>${tc.variable.name}</td>
+								<td>
+									<select id="cc" class="easyui-combobox" name="dd">
+										<option>Blackboard</option>
+										<option>Buffer</option>
+									</select>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:forEach>
+					</tbody>
+				</table>
+			</div>
 			
+			<select id="cc" class="easyui-combobox" name="dd">
+										<option>Blackboard</option>
+										<option>Buffer</option>
+									</select>
 		</div>
 	</div>
 	<div id="tab-tools">

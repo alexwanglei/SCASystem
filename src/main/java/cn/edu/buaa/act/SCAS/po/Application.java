@@ -14,6 +14,8 @@ public class Application {
 	private ArrayList<Variable> inputs = new ArrayList<Variable>();
 	
 	private ArrayList<Variable> outputs = new ArrayList<Variable>();
+	
+	private ArrayList<TaskCommunication> taskCommunications = new ArrayList<TaskCommunication>();
 
 	public void findIOput(HashSet<Variable> otherInputs){
 		Set<Variable> taskInputs = new HashSet<Variable>();
@@ -52,8 +54,30 @@ public class Application {
 		for(Variable o : result){
 			this.outputs.add(o);
 		}
-		
 	}
+	
+	public void findTaskComm(){
+		for(int i=0; i<tasks.size(); i++){
+			for(int j=0; j<tasks.size(); j++){
+				if(j == i){
+					continue;
+				}else{
+					for(Variable input : tasks.get(i).getInputs()){
+						for(Variable output : tasks.get(j).getOutputs()){
+							if(output.equals(input)){
+								TaskCommunication tc = new TaskCommunication();
+								tc.setSrcTask(tasks.get(j));
+								tc.setDstTask(tasks.get(i));
+								tc.setVariable(output);
+								taskCommunications.add(tc);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	
 	public int getId() {
 		return id;
@@ -93,6 +117,15 @@ public class Application {
 
 	public void setOutputs(ArrayList<Variable> outputs) {
 		this.outputs = outputs;
+	}
+
+	public ArrayList<TaskCommunication> getTaskCommunications() {
+		return taskCommunications;
+	}
+
+	public void setTaskCommunications(
+			ArrayList<TaskCommunication> taskCommunications) {
+		this.taskCommunications = taskCommunications;
 	}
 	
 	

@@ -274,9 +274,9 @@
 					alert("任务图文件");
 					parseTask(filename, title);
 					break;
-				case "partition":
+				case "application":
 					alert("分区表文件");
-					parsePartition(filename, title);
+					parseApplication(filename, title);
 					break;
 				case "amt":
 					parseAmt(filename, title);
@@ -326,8 +326,8 @@
 	}
 	
 	//解析分区文件
-	function parsePartition(filename, title){
-		var href = "showPartitions?filename="+filename;
+	function parseApplication(filename, title){
+		var href = "showApplications?filename="+filename;
 		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';
 		var tabId = title.replace(".","");
 		$("#tt").tabs('add',{

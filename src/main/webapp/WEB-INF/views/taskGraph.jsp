@@ -45,15 +45,15 @@
 				</table>
 			</div>
 			
-			<input id="creatPartition" type="button" value="Creat a Partition" style="float:left;margin:30px 10px"/>
+			<input id="creatApplication" type="button" value="Creat a Application" style="float:left;margin:30px 10px"/>
 			
 			<div style="float:left">
-				<table id="partition" class="easyui-datagrid" title="Partitions" data-options="rownumbers:true,fitColumns:true,nowrap:false,onClickCell: onClickCell,singleSelect: true" style="width:400px">
+				<table id="application" class="easyui-datagrid" title="Applications" data-options="rownumbers:true,fitColumns:true,nowrap:false,onClickCell: onClickCell,singleSelect: true" style="width:400px">
 					<thead>
 						<tr>
 							<th data-options="field:'name',width:100,editor:'text'" >Name</th>
 							<th data-options="field:'ids',width:100">Tasks ids</th> 
-							<th data-options="field:'tasks',width:200">Tasks in the partition</th>
+							<th data-options="field:'tasks',width:200">Tasks in the application</th>
 						</tr>
 					</thead>
 				</table>
@@ -73,7 +73,7 @@
 	editor.setValue(${tasksXml});
 	
 	//创建任务按钮点击处理函数
-	$("#creatPartition").click(function(){
+	$("#creatApplication").click(function(){
 		var checkrows = $("#task").datagrid("getChecked");
 
 		var names="";
@@ -83,8 +83,8 @@
 			names=names+checkrows[i].name+";";
 		}
 		
-		$("#partition").datagrid('appendRow',{
-			name:"new partition",
+		$("#application").datagrid('appendRow',{
+			name:"new application",
 			ids:ids,
 			tasks:names,
 		});
@@ -118,8 +118,8 @@
      var editIndex = undefined;
      function endEditing(){
          if (editIndex == undefined){return true}
-         if ($('#partition').datagrid('validateRow', editIndex)){
-             $('#partition').datagrid('endEdit', editIndex);
+         if ($('#application').datagrid('validateRow', editIndex)){
+             $('#application').datagrid('endEdit', editIndex);
              editIndex = undefined;
              return true;
          } else {
@@ -128,7 +128,7 @@
      }
      function onClickCell(index, field){
          if (endEditing()){
-             $('#partition').datagrid('selectRow', index)
+             $('#application').datagrid('selectRow', index)
                      .datagrid('editCell', {index:index,field:field});
              editIndex = index;
          }
@@ -156,27 +156,27 @@
 		}
 		//生成任务
 		else{
-			var rows = $('#partition').datagrid('getRows');
-			var partitionNames = [];
+			var rows = $('#application').datagrid('getRows');
+			var applicationNames = [];
 			var taskIds = [];
 			for(var i=0; i<rows.length;i++){
-				partitionNames[i]=rows[i].name;
+				applicationNames[i]=rows[i].name;
 				taskIds[i] = rows[i].ids;
 			}
 			$.ajax({
 				type:"POST",
-				url:"generatePartition",
+				url:"generateApplication",
 				traditional: true,
-				data:{partitionNames:partitionNames,
+				data:{applicationNames:applicationNames,
 					taskIds:taskIds,
 					filename:${filename},
 				},
 				success:function(data){
 					if(data=="success"){
-						alert("Generate partition file success!");
+						alert("Generate application file success!");
 					}
 					else{
-						alert("Generate partition file fail!");
+						alert("Generate application file fail!");
 					}
 					
 				}

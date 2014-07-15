@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Applications>
+  <Application Id="1" Name="application1">
+    <Tasks>
+      <Task Id="1"/>
+      <Task Id="2"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="Uh2" Type="double"/>
+      <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
+      <Variable Name="theta" Type="double" Unit="deg"/>
+      <Variable Name="GSCapt" Type="int"/>
+      <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
+      <Variable Name="delta e3 delta f" Type="double"/>
+      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+      <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
+      <Variable Name="sat Uh2" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="delta e" Type="double"/>
+    </Outputs>
+  </Application>
+  <Application Id="2" Name="application2">
+    <Tasks>
+      <Task Id="3"/>
+      <Task Id="4"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
+      <Variable Name="Pitch Rate" Type="double" Unit="deg/s"/>
+      <Variable Name="Flap state" Type="int" Unit="deg"/>
+      <Variable Name="hsat derivative" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Uh2" Type="double"/>
+      <Variable Name="sat Uh2" Type="double"/>
+      <Variable Name="delta e3 delta f" Type="double"/>
+    </Outputs>
+  </Application>
+</Applications>

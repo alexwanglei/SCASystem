@@ -119,15 +119,15 @@ public class ModelGenerationService {
 		
 	}
 	
-	public boolean generatePartitionFile(List<Application> applications, String filepath){
+	public boolean generateApplicationFile(List<Application> applications, String filepath){
 		
-		File partitionFile = new File(rootPath+"/"+filepath.substring(0,filepath.indexOf('.')) + ".partition");
+		File partitionFile = new File(rootPath+"/"+filepath.substring(0,filepath.indexOf('.')) + ".application");
 		logger.info(partitionFile.getPath());
 		
 		Document doc = DocumentHelper.createDocument();
-		Element root = doc.addElement("Partitions");
+		Element root = doc.addElement("Applications");
 		for(Application app : applications){
-			Element PartitionEle = root.addElement("Partition");
+			Element PartitionEle = root.addElement("Application");
 			PartitionEle.addAttribute("Id", Integer.toString(app.getId()));
 			PartitionEle.addAttribute("Name", app.getName());
 			Element TasksEle = PartitionEle.addElement("Tasks");
