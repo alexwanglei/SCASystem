@@ -4,12 +4,11 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="resources/style/main.css" />
 	<link rel="stylesheet" href="resources/script/jquery-easyui/themes/default/easyui.css" />
 	<link rel="stylesheet" href="resources/script/jquery-easyui/themes/icon.css" />
-	<link rel="stylesheet" type="text/css" href="resources/script/jquery-multiselect2side/css/jquery.multiselect2side.css" /> 
 	<script src="resources/script/jquery-easyui/jquery-2.0.0.js"></script>
 	<script src="resources/script/jquery-easyui/jquery.easyui.min.js"></script>
-	<script  src="resources/script/jquery-multiselect2side/js/jquery.multiselect2side.js"></script> 
 </head>
 <style type="text/css" media="screen">
     #editor { 

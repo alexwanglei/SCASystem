@@ -4,6 +4,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="resources/style/main.css" />
 	<link rel="stylesheet" href="resources/script/jquery-easyui/themes/default/easyui.css" />
 	<link rel="stylesheet" href="resources/script/jquery-easyui/themes/icon.css" />
 	<script src="resources/script/jquery-easyui/jquery-2.0.0.js"></script>
