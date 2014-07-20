@@ -6,6 +6,8 @@ public class TaskCommunication {
 	private Task srcTask;
 	
 	private Task dstTask;
+	
+	private String type;
 
 	public Variable getVariable() {
 		return variable;
@@ -37,9 +39,18 @@ public class TaskCommunication {
 		String retValue = "";
 
 		retValue = "ResourceListener ( " +  "variable = " + this.variable.getName() + tab + "srcTask = "
-				+ this.srcTask.getName() + tab + "dstTask = " + this.dstTask.getName() 
+				+ this.srcTask.getName() + tab + "dstTask = " + this.dstTask.getName() + tab + "type = "
+				+ this.type
 				+ " )";
 
 		return retValue;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

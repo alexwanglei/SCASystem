@@ -241,10 +241,41 @@
 					filename:${filename},
 				},
 				success:function(data){
-					alert("save success!");
+					if(data.equals("success"))
+						alert("save success!");
+					else
+						alert("save fail!");
 				}
 			});
-		}		
+		}
+		else{
+			if(endEditing_tc()&&endEditing_ac()&&endEditing_ec()){
+				var tcRows = $('#tc').datagrid('getRows');
+				var acRows = $('#ac').datagrid('getRows');
+				var ecRows = $('#ec').datagrid('getRows');
+				var tcData = JSON.stringify(tcRows);
+				var acData = JSON.stringify(acRows);
+				var ecData = JSON.stringify(ecRows);
+				
+				$.ajax({
+					type:"POST",
+					url:"generateSAModel",
+					data:{tc:tcData,
+						ac:acData,
+						ec:ecData,
+						filename:${filename},
+					},
+					success:function(data){
+						if(data.equals("success"))
+							alert("save success!");
+						else
+							alert("save fail!");
+					}
+				});
+			}
+			
+		}
+		
 	}
 </script>
 </body>

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.dom4j.DocumentException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,8 +155,6 @@ public class IndexController {
 //				logger.info(tc.toString());
 //			}
 //		}
-		
-		
 		//得到应用之间的通信
 		List<AppCommunication> appCommList = new ArrayList<AppCommunication>();
 		HashSet<Variable> appCommSet = new HashSet<Variable>();
@@ -336,6 +335,27 @@ public class IndexController {
 		}else{
 			reponse.getWriter().print("fail");
 		}
+		
+		
+	}
+	
+	@RequestMapping(value = "/generateSAModel", method=RequestMethod.POST)
+	public void generateSAModel(HttpServletRequest request, HttpServletResponse response, String tc, String ac, String ec, String filename) throws DocumentException, JSONException{
+		logger.info(tc);
+		logger.info(ac);
+		logger.info(ec);
+		logger.info(filename);
+		List<Application> applications  = fileManageService.getApplication(filename);
+		JSONArray tcJsonArray = new JSONArray(tc);
+		int i=0;
+		for(Application app : applications){
+			for(TaskCommunication taskCom : app.getTaskCommunications()){
+				taskCom.setType(tcJsonArray.getJSONObject(i++).getString("type"));
+				System.out.println(taskCom.toString());
+			}
+		}
+		modelGenerationService.gnerateSAModel(applications, ac, ec, filename);
+		
 		
 		
 	}

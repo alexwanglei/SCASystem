@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
+import cn.edu.buaa.act.SCAS.po.TaskCommunication;
 import cn.edu.buaa.act.SCAS.po.Variable;
 
 /** 
@@ -32,6 +33,68 @@ public class ModelGenerationService {
 	private static Logger logger = LoggerFactory.getLogger(ModelGenerationService.class);
 	
 	private String rootPath = this.getClass().getResource("/File").getPath();
+	
+	public boolean gnerateSAModel(List<Application> applications, String ac, String ec, String filepath){
+		File modelFolder = new File(rootPath+"/"+filepath.substring(0,filepath.indexOf('/')) + "/SAModel");
+		logger.info(modelFolder.getPath());
+		if(!modelFolder.exists())
+			modelFolder.mkdir();
+		
+		//生成分区模型
+		for(Application app : applications){
+			File partitionModelFile = new File(modelFolder.getPath()+"/"+app.getName()+".amp");
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SAPartition");
+			root.addAttribute("Id", Integer.toString(app.getId()));
+			root.addAttribute("Name", app.getName());
+			Element saTaskEle = root.addElement("SATasks");
+			saTaskEle.addAttribute("xmlns:xi", "http://www.w3.org/2003/XInclude");
+			for(Task task : app.getTasks()){
+				Element includeEle = saTaskEle.addElement("xi:include");
+				includeEle.addAttribute("href", task.getName());
+			}
+			
+			Element intraComEle = root.addElement("IntraCommunications");
+			int mc = 1;
+			for(TaskCommunication tc : app.getTaskCommunications()){
+				Element commEle = intraComEle.addElement("Communication");
+				commEle.addAttribute("SrcTask", tc.getSrcTask().getName());
+				commEle.addAttribute("DstTask", tc.getDstTask().getName());
+				commEle.addAttribute("MessageContainerNameRef", "mc"+mc++);
+				commEle.addText(tc.getVariable().getName());
+			}
+			
+			Element mcsEle = root.addElement("MessageContainers");
+			HashMap<String, TaskCommunciaton> = new H
+			mc = 1;
+			for(TaskCommunication tc : app.getTaskCommunications()){
+				Element mcEle = mcsEle.addElement("MessageContainer");
+				mcEle.addAttribute("Name", "mc"+mc);
+				if(tc.getType().equals("buffer")){
+					Element bufferEle = mcEle.addElement("Buffer");
+					bufferEle.addAttribute("Id", Integer.toString(mc));
+					String bufferName = "b"+mc++;
+					bufferEle.addAttribute("Name", bufferName);
+					bufferEle.addAttribute("MessageSize", "");
+					bufferEle.addAttribute("BufferLength", "");
+					bufferEle.addAttribute("Discipline", "");
+					
+				}
+			}
+		}
+		
+		//生成任务模型
+		for(Application app : applications){
+			for(Task task : app.getTasks()){
+				File taskModelFile = new File(modelFolder.getPath()+"/"+task.getName()+".amt");
+				
+			}
+		}
+		
+		
+		return true;
+	}
+	
 	
 	public boolean generateTaskFile(List<Task> tasks, String filepath){
 //		logger.info(filepath);
