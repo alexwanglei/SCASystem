@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAPartition Id="1" Name="application1">
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">
+    <include href="task1"/>
+    <include href="task2"/>
+  </SATasks>
+  <IntraCommunications>
+    <Communication SrcTask="task2" DstTask="task1" MessageContainerId="1">Uh1</Communication>
+    <Communication SrcTask="task2" DstTask="task1" MessageContainerId="2">U0</Communication>
+  </IntraCommunications>
+  <MessageContainers>
+    <MessageContainer Id="1">
+      <Blackboard Name="blackboard_1" MessageSize=""/>
+    </MessageContainer>
+    <MessageContainer Id="2">
+      <Blackboard Name="blackboard_2" MessageSize=""/>
+    </MessageContainer>
+  </MessageContainers>
+  <Ports>
+    <SamplePort Id="1" Name="samplePort_1" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="2" Name="samplePort_2" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="3" Name="samplePort_3" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="4" Name="samplePort_4" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="5" Name="samplePort_5" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="6" Name="samplePort_6" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <QueuePort Id="7" Name="queuePort_7" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
+    <QueuePort Id="8" Name="queuePort_8" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
+    <QueuePort Id="9" Name="queuePort_9" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
+    <SamplePort Id="10" Name="samplePort_10" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+  </Ports>
+</SAPartition>

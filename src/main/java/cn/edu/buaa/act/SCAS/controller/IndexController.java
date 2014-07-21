@@ -340,7 +340,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping(value = "/generateSAModel", method=RequestMethod.POST)
-	public void generateSAModel(HttpServletRequest request, HttpServletResponse response, String tc, String ac, String ec, String filename) throws DocumentException, JSONException{
+	public void generateSAModel(HttpServletRequest request, HttpServletResponse response, String tc, String ac, String ec, String filename) throws DocumentException, JSONException, IOException{
 		logger.info(tc);
 		logger.info(ac);
 		logger.info(ec);

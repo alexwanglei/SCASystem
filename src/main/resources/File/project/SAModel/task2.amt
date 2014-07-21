@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="2" Name="task2">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="GlIdeslope Beam Error" Datatype="double" Type="InterPartition" Connect="samplePort_2"/>
+    <IO Id="2" ConceptName="theta" Datatype="double" Type="InterPartition" Connect="samplePort_3"/>
+    <IO Id="3" ConceptName="GSCapt" Datatype="int" Type="InterPartition" Connect="samplePort_4"/>
+    <IO Id="4" ConceptName="Vertical Acceleration" Datatype="double" Type="InterPartition" Connect="samplePort_5"/>
+    <IO Id="5" ConceptName="Rader Altitude" Datatype="double" Type="InterPartition" Connect="queuePort_1"/>
+    <IO Id="6" ConceptName="Altitude Rate" Datatype="double" Type="InterPartition" Connect="queuePort_8"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="7" ConceptName="Uh1" DataType="double" Type="IntraPartition" Connect="blackboard_1"/>
+    <IO Id="8" ConceptName="U0" DataType="double" Type="IntraPartition" Connect="blackboard_2"/>
+  </TaskOutputs>
+</SATask>

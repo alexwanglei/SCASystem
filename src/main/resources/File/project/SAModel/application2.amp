@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAPartition Id="2" Name="application2">
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">
+    <include href="task3"/>
+    <include href="task4"/>
+  </SATasks>
+  <IntraCommunications>
+    <Communication SrcTask="task3" DstTask="task4" MessageContainerId="1">Uh2</Communication>
+  </IntraCommunications>
+  <MessageContainers>
+    <MessageContainer Id="1">
+      <Buffer Name="buffer_1" MessageSize="" BufferLength="" Discipline=""/>
+    </MessageContainer>
+  </MessageContainers>
+  <Ports>
+    <QueuePort Id="1" Name="queuePort_1" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
+    <SamplePort Id="2" Name="samplePort_2" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="3" Name="samplePort_3" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="4" Name="samplePort_4" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="5" Name="samplePort_5" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+    <QueuePort Id="6" Name="queuePort_6" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
+    <SamplePort Id="7" Name="samplePort_7" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+  </Ports>
+</SAPartition>

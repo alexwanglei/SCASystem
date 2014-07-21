@@ -308,22 +308,31 @@ public class FileManageService {
 		List<Element> msgContainerList = root.element("MessageContainers").elements("MessageContainer");
 		HashMap<String,MsgContainer> msgContainerMap = new HashMap<String,MsgContainer>();
 		for(Element messageContainer : msgContainerList){
-			String key = messageContainer.attributeValue("Name");
+			String key = messageContainer.attributeValue("Id");
 			for(Element e: (List<Element>)messageContainer.elements()){
 				if(e.getName().equals("Buffer")){
 					Buffer buffer = new Buffer();
-					buffer.setId(Integer.parseInt(e.attributeValue("Id")));
+					buffer.setId(Integer.parseInt(key));
 					buffer.setName(e.attributeValue("Name"));
-					buffer.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-					buffer.setBufferLength(Integer.parseInt(e.attributeValue("BufferLength")));
-					buffer.setDiscipline(e.attributeValue("Discipline"));
+					if(e.attributeValue("MessageSize")!=""){
+						buffer.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					}
+					if(e.attributeValue("BufferLength")!=""){
+						buffer.setBufferLength(Integer.parseInt(e.attributeValue("BufferLength")));
+					}
+					if(e.attributeValue("Discipline")!=""){
+						buffer.setDiscipline(e.attributeValue("Discipline"));
+					}
 					msgContainerMap.put(key, buffer);
 				}
 				else if(e.getName().equals("Blackboard")){
 					Blackboard blackboard = new Blackboard();
-					blackboard.setId(Integer.parseInt(e.attributeValue("Id")));
+					blackboard.setId(Integer.parseInt(key));
 					blackboard.setName(e.attributeValue("Name"));
-					blackboard.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					if(e.attributeValue("MessageSize")!=""){
+						blackboard.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					}
+					
 					msgContainerMap.put(key, blackboard);
 				}
 			}
@@ -335,7 +344,7 @@ public class FileManageService {
 			IntraPartitionCom intraPartitionCom = new IntraPartitionCom();
 			intraPartitionCom.setSrcTask(e.attributeValue("SrcTask"));
 			intraPartitionCom.setDstTask(e.attributeValue("DstTask"));
-			intraPartitionCom.setMsgContainer(msgContainerMap.get(e.attributeValue("MessageContainerNameRef")));
+			intraPartitionCom.setMsgContainer(msgContainerMap.get(e.attributeValue("MessageContainerId")));
 			intraPartitionCom.setConceptName(e.getText());
 			partition.getIntraComs().add(intraPartitionCom);
 		}
@@ -348,8 +357,12 @@ public class FileManageService {
 				samplePort.setId(Integer.parseInt(e.attributeValue("Id")));
 				samplePort.setName(e.attributeValue("Name"));
 				samplePort.setDirection(e.attributeValue("Direction"));
-				samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-				samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				if(e.attributeValue("MessageSize")!=""){
+					samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("RefreshPeriod")!=""){
+					samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				}
 				partition.getPorts().add(samplePort);
 				portMap.put(samplePort.getName(), samplePort);
 			}
@@ -358,8 +371,12 @@ public class FileManageService {
 				queuePort.setId(Integer.parseInt(e.attributeValue("Id")));
 				queuePort.setName(e.attributeValue("Name"));
 				queuePort.setDirection(e.attributeValue("Direction"));
-				queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-				queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				}
 				queuePort.setProtocol(e.attributeValue("Protocol"));
 				queuePort.setDiscipline(e.attributeValue("Discipline"));
 				partition.getPorts().add(queuePort);
