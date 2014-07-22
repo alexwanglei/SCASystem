@@ -53,12 +53,15 @@ public class ModelGenerationService {
 			variableTypeMap.put(ecJsonArray.getJSONObject(i).getString("variable"), ecJsonArray.getJSONObject(i).getString("type"));
 		}
 		
-		//保存分区间通信中变量和端口名的映射
-		HashMap<Variable,String> portNameMap = new HashMap<Variable,String>();
-		//保存分区内通信中变量和消息容器名的映射
-		HashMap<Variable, String> IOMcNameMap= new HashMap<Variable,String>();
+
+		
+		
+		
+		
+		
 		//生成分区模型
 		for(Application app : applications){
+			
 			File partitionModelFile = new File(modelFolder.getPath()+"/"+app.getName()+".amp");
 //			logger.info(partitionModelFile.getPath());
 			Document doc = DocumentHelper.createDocument();
@@ -96,14 +99,14 @@ public class ModelGenerationService {
 					bufferEle.addAttribute("MessageSize", "");
 					bufferEle.addAttribute("BufferLength", "");
 					bufferEle.addAttribute("Discipline", "");
-					IOMcNameMap.put(tc.getVariable(), bufferName);
+					app.getIOMcNameMap().put(tc.getVariable(), bufferName);
 				}
 				else if(tc.getType().equals("blackboard")){
 					Element blackboardEle = mcEle.addElement("Blackboard");
 					String blackboardName = "blackboard_"+mcId++;
 					blackboardEle.addAttribute("Name", blackboardName);
 					blackboardEle.addAttribute("MessageSize", "");
-					IOMcNameMap.put(tc.getVariable(), blackboardName);
+					app.getIOMcNameMap().put(tc.getVariable(), blackboardName);
 				}
 			}
 			
@@ -121,7 +124,7 @@ public class ModelGenerationService {
 						samplePortEle.addAttribute("Direction", "DESTINATION");
 						samplePortEle.addAttribute("MessageSize", "");
 						samplePortEle.addAttribute("RefreshPeriod", "");
-						portNameMap.put(var, samplePortName);
+						app.getPortNameMap().put(var, samplePortName);
 					}
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
@@ -133,7 +136,7 @@ public class ModelGenerationService {
 						queuePortEle.addAttribute("QueueLength", "");
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
-						portNameMap.put(var, queuePortName);
+						app.getPortNameMap().put(var, queuePortName);
 					}
 				}
 				else{
@@ -151,7 +154,7 @@ public class ModelGenerationService {
 						samplePortEle.addAttribute("Direction", "SOURCE");
 						samplePortEle.addAttribute("MessageSize", "");
 						samplePortEle.addAttribute("RefreshPeriod", "");
-						portNameMap.put(var, samplePortName);
+						app.getPortNameMap().put(var, samplePortName);
 					}
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
@@ -163,7 +166,7 @@ public class ModelGenerationService {
 						queuePortEle.addAttribute("QueueLength", "");
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
-						portNameMap.put(var, queuePortName);
+						app.getPortNameMap().put(var, queuePortName);
 					}
 				}
 				else{
@@ -203,32 +206,32 @@ public class ModelGenerationService {
 					ioEle.addAttribute("ConceptName", var.getName());
 					ioEle.addAttribute("Datatype", var.getType());
 					
-					if(IOMcNameMap.get(var)!=null){
+					if(app.getIOMcNameMap().get(var)!=null){
 						ioEle.addAttribute("Type", "IntraPartition");
-						ioEle.addAttribute("Connect", IOMcNameMap.get(var));
+						ioEle.addAttribute("Connect", app.getIOMcNameMap().get(var));
 					}
-					else if(portNameMap.get(var)!=null){
+					else if(app.getPortNameMap().get(var)!=null){
 						ioEle.addAttribute("Type", "InterPartition");
-						ioEle.addAttribute("Connect", portNameMap.get(var));
+						ioEle.addAttribute("Connect", app.getPortNameMap().get(var));
 					}
 				}
 				Element taskOutputsEle = saTaskEle.addElement("TaskOutputs");
 				for(Variable var : task.getOutputs()){
-					if(IOMcNameMap.get(var)!=null){
+					if(app.getIOMcNameMap().get(var)!=null){
 						Element ioEle = taskOutputsEle.addElement("IO");
 						ioEle.addAttribute("Id", Integer.toString(ioId++));
 						ioEle.addAttribute("ConceptName", var.getName());
 						ioEle.addAttribute("DataType", var.getType());
 						ioEle.addAttribute("Type", "IntraPartition");
-						ioEle.addAttribute("Connect", IOMcNameMap.get(var));
+						ioEle.addAttribute("Connect", app.getIOMcNameMap().get(var));
 					}
-					else if(portNameMap.get(var)!=null){
+					if(app.getPortNameMap().get(var)!=null){
 						Element ioEle = taskOutputsEle.addElement("IO");
 						ioEle.addAttribute("Id", Integer.toString(ioId++));
 						ioEle.addAttribute("ConceptName", var.getName());
 						ioEle.addAttribute("DataType", var.getType());
 						ioEle.addAttribute("Type", "InterPartition");
-						ioEle.addAttribute("Connect", portNameMap.get(var));
+						ioEle.addAttribute("Connect", app.getPortNameMap().get(var));
 					}
 				}
 				BufferedWriter bw = new BufferedWriter(new FileWriter(taskModelFile));
@@ -241,7 +244,49 @@ public class ModelGenerationService {
 			}
 		}
 		
+		//生成模块模型
+		File moduleModelFile = new File(modelFolder.getPath()+"/module.amm");
+		Document mdoc = DocumentHelper.createDocument();
+		Element mroot = mdoc.addElement("SAModule");
+		mroot.addAttribute("Id", "1");
+		mroot.addAttribute("Name", "module");
+		Element saPartitionsEle = mroot.addElement("SAPartitions");
+		for(Application app : applications){
+			Element includeEle = saPartitionsEle.addElement("include");
+			includeEle.addAttribute("href", app.getName()+".amp");
+		}
+		Element interComsEle = mroot.addElement("InterCommunications");
+		for(int i=0; i<acJsonArray.length(); i++){
+			Element comEle = interComsEle.addElement("Communicaton");
+			String srcApp = acJsonArray.getJSONObject(i).getString("srcApp");
+			String dstApp = acJsonArray.getJSONObject(i).getString("dstApp");
+			String variableName = acJsonArray.getJSONObject(i).getString("variable");
+			Variable variable = new Variable();
+			variable.setName(variableName);
+			comEle.addAttribute("SrcPart", srcApp);
+			comEle.addAttribute("DstPart", dstApp);
 		
+			for(Application app : applications){
+				if(app.getName().equals(srcApp)){
+					comEle.addAttribute("SrcPort", app.getPortNameMap().get(variable));
+				}
+				if(app.getName().equals(dstApp)){
+					comEle.addAttribute("DstPort", app.getPortNameMap().get(variable));
+				}
+			}
+			comEle.addAttribute("Mode", acJsonArray.getJSONObject(i).getString("type"));
+		}
+		
+		Element scheduleEle = mroot.addElement("Schedule");
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(moduleModelFile));
+		XMLWriter out = null;
+		OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("UTF-8");
+        out = new XMLWriter(bw, format);
+        out.write(mdoc);
+        bw.close();
+        
 		return true;
 	}
 	

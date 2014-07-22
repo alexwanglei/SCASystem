@@ -1,6 +1,7 @@
 package cn.edu.buaa.act.SCAS.po;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,11 @@ public class Application {
 	private ArrayList<Variable> outputs = new ArrayList<Variable>();
 	
 	private ArrayList<TaskCommunication> taskCommunications = new ArrayList<TaskCommunication>();
+	
+	//保存分区间通信中变量和端口名的映射
+	private HashMap<Variable,String> portNameMap = new HashMap<Variable,String>();
+	//保存分区内通信中变量和消息容器名的映射
+	private HashMap<Variable, String> IOMcNameMap= new HashMap<Variable,String>();
 
 	public void findIOput(HashSet<Variable> otherInputs){
 		Set<Variable> taskInputs = new HashSet<Variable>();
@@ -126,6 +132,22 @@ public class Application {
 	public void setTaskCommunications(
 			ArrayList<TaskCommunication> taskCommunications) {
 		this.taskCommunications = taskCommunications;
+	}
+
+	public HashMap<Variable,String> getPortNameMap() {
+		return portNameMap;
+	}
+
+	public void setPortNameMap(HashMap<Variable,String> portNameMap) {
+		this.portNameMap = portNameMap;
+	}
+
+	public HashMap<Variable, String> getIOMcNameMap() {
+		return IOMcNameMap;
+	}
+
+	public void setIOMcNameMap(HashMap<Variable, String> iOMcNameMap) {
+		IOMcNameMap = iOMcNameMap;
 	}
 	
 	
