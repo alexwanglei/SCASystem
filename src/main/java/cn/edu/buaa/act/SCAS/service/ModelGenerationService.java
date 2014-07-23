@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cn.edu.buaa.act.SCAS.po.Application;
+import cn.edu.buaa.act.SCAS.po.DirectAccessPort;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
 import cn.edu.buaa.act.SCAS.po.TaskCommunication;
@@ -44,6 +47,7 @@ public class ModelGenerationService {
 			modelFolder.mkdir();
 		
 		HashMap<String,String> variableTypeMap = new HashMap<String,String>();
+		HashSet<String> ecVariableSet = new HashSet<String>();
 		JSONArray acJsonArray = new JSONArray(ac);
 		for(int i=0; i<acJsonArray.length(); i++){
 			variableTypeMap.put(acJsonArray.getJSONObject(i).getString("variable"), acJsonArray.getJSONObject(i).getString("type"));
@@ -51,10 +55,12 @@ public class ModelGenerationService {
 		JSONArray ecJsonArray = new JSONArray(ec);
 		for(int i=0; i<ecJsonArray.length(); i++){
 			variableTypeMap.put(ecJsonArray.getJSONObject(i).getString("variable"), ecJsonArray.getJSONObject(i).getString("type"));
+			ecVariableSet.add(ecJsonArray.getJSONObject(i).getString("variable"));
 		}
 		
 
-		
+		//直连端口数组
+		ArrayList<DirectAccessPort> daPortList = new ArrayList<DirectAccessPort>();
 		
 		
 		
@@ -110,9 +116,11 @@ public class ModelGenerationService {
 				}
 			}
 			
-			//生成分区端口
-			Element portsEle = root.addElement("Ports");
+			//生成应用端口
+			ArrayList<DirectAccessPort> appDaPortList = new ArrayList<DirectAccessPort>();
+			Element portsEle = root.addElement("ApplicationPorts");
 			int portId = 1;
+			int daPortId =1;
 			for(Variable var : app.getInputs()){
 				String type = variableTypeMap.get(var.getName());
 				if(type !=null){
@@ -125,6 +133,10 @@ public class ModelGenerationService {
 						samplePortEle.addAttribute("MessageSize", "");
 						samplePortEle.addAttribute("RefreshPeriod", "");
 						app.getPortNameMap().put(var, samplePortName);
+						//创建对应的直连端口
+						if(ecVariableSet.contains(var.getName())){
+							appDaPortList.add(new DirectAccessPort(daPortId, "directAccessPort_"+daPortId++,"SOURCE","sample",app.getName(),samplePortName,var.getName()));
+						}
 					}
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
@@ -137,6 +149,10 @@ public class ModelGenerationService {
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
 						app.getPortNameMap().put(var, queuePortName);
+						//创建对应的直连端口
+						if(ecVariableSet.contains(var.getName())){
+							appDaPortList.add(new DirectAccessPort(daPortId, "directAccessPort_"+daPortId++,"SOURCE","queue",app.getName(),queuePortName,var.getName()));
+						}
 					}
 				}
 				else{
@@ -155,6 +171,10 @@ public class ModelGenerationService {
 						samplePortEle.addAttribute("MessageSize", "");
 						samplePortEle.addAttribute("RefreshPeriod", "");
 						app.getPortNameMap().put(var, samplePortName);
+						//创建对应的直连端口
+						if(ecVariableSet.contains(var.getName())){
+							appDaPortList.add(new DirectAccessPort(daPortId, "directAccessPort_"+daPortId++,"DESTINATION","sample",app.getName(),samplePortName,var.getName()));
+						}
 					}
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
@@ -167,12 +187,41 @@ public class ModelGenerationService {
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
 						app.getPortNameMap().put(var, queuePortName);
+						//创建对应的直连端口
+						if(ecVariableSet.contains(var.getName())){
+							appDaPortList.add(new DirectAccessPort(daPortId, "directAccessPort_"+daPortId++,"DESTINATION","queue",app.getName(),queuePortName,var.getName()));
+						}
 					}
 				}
 				else{
 					logger.info(var.toString() + "类型找不到");
 				}
 			}
+			
+			//生成分区直连端口
+			Element partPortsEle = root.addElement("PartitionPorts");
+			for(DirectAccessPort daPort : appDaPortList){
+				if(daPort.getType().equals("sample")){
+					Element samplePortEle = partPortsEle.addElement("SamplePort");
+					samplePortEle.addAttribute("Id", Integer.toString(daPort.getId()));
+					samplePortEle.addAttribute("Name", daPort.getName());
+					samplePortEle.addAttribute("Direction", daPort.getDirection());
+					samplePortEle.addAttribute("MessageSize", "");
+					samplePortEle.addAttribute("RefreshPeriod", "");
+				}
+				else if(daPort.getType().equals("queue")){
+					Element queuePortEle = partPortsEle.addElement("QueuePort");
+					queuePortEle.addAttribute("Id", Integer.toString(daPort.getId()));
+					queuePortEle.addAttribute("Name", daPort.getName());
+					queuePortEle.addAttribute("Direction", daPort.getDirection());
+					queuePortEle.addAttribute("MessageSize", "");
+					queuePortEle.addAttribute("QueueLength", "");
+					queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
+					queuePortEle.addAttribute("Discipline", "FIFO");
+				}
+			}
+			daPortList.addAll(appDaPortList);
+			
 			BufferedWriter bw = new BufferedWriter(new FileWriter(partitionModelFile));
 			XMLWriter out = null;
 			OutputFormat format = OutputFormat.createPrettyPrint();
@@ -255,6 +304,7 @@ public class ModelGenerationService {
 			Element includeEle = saPartitionsEle.addElement("include");
 			includeEle.addAttribute("href", app.getName()+".amp");
 		}
+		//生成分区间通信
 		Element interComsEle = mroot.addElement("InterCommunications");
 		for(int i=0; i<acJsonArray.length(); i++){
 			Element comEle = interComsEle.addElement("Communicaton");
@@ -275,6 +325,24 @@ public class ModelGenerationService {
 				}
 			}
 			comEle.addAttribute("Mode", acJsonArray.getJSONObject(i).getString("type"));
+			comEle.addText(variableName);
+		}
+		//生成分区直连端口和应用端口的连接
+		Element daComsEle = mroot.addElement("DaCommunications");
+		for(DirectAccessPort daPort :daPortList){
+			Element comEle = daComsEle.addElement("Communication");
+			comEle.addAttribute("SrcPart", daPort.getPartitionName());
+			comEle.addAttribute("DstPart", daPort.getPartitionName());
+			if(daPort.getDirection().equals("SOURCE")){
+				comEle.addAttribute("SrcPort", daPort.getName());
+				comEle.addAttribute("DstPort", daPort.getAppPortName());
+			}
+			else{
+				comEle.addAttribute("SrcPort", daPort.getAppPortName());
+				comEle.addAttribute("DstPort", daPort.getName());
+			}
+			comEle.addAttribute("Mode", daPort.getType());
+			comEle.addText(daPort.getVariableName());
 		}
 		
 		Element scheduleEle = mroot.addElement("Schedule");

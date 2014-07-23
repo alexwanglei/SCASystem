@@ -350,7 +350,7 @@ public class FileManageService {
 		}
 		
 		HashMap<String,Port> portMap = new HashMap<String,Port>();
-		List<Element> portList = root.element("Ports").elements();
+		List<Element> portList = root.element("ApplicationPorts").elements();
 		for(Element e: portList){
 			if(e.getName().equals("SamplePort")){
 				SamplePort samplePort = new SamplePort();

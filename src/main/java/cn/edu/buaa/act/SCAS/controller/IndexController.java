@@ -291,7 +291,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping(value = "/generateApplication",method=RequestMethod.POST)
-	public void generateApplication(HttpServletRequest request, HttpServletResponse reponse, String[] applicationNames, String[] taskIds, String filename) throws DocumentException, IOException{
+	public void generateApplication(HttpServletRequest request, HttpServletResponse response, String[] applicationNames, String[] taskIds, String filename) throws DocumentException, IOException{
 		logger.info(Arrays.toString(applicationNames));
 		logger.info(Arrays.toString(taskIds));
 		logger.info(filename);
@@ -331,9 +331,9 @@ public class IndexController {
 		
 		//生成分区应用文件
 		if(modelGenerationService.generateApplicationFile(applications, filename)){
-			reponse.getWriter().print("success");
+			response.getWriter().print("success");
 		}else{
-			reponse.getWriter().print("fail");
+			response.getWriter().print("fail");
 		}
 		
 		
@@ -354,9 +354,11 @@ public class IndexController {
 				System.out.println(taskCom.toString());
 			}
 		}
-		modelGenerationService.gnerateSAModel(applications, ac, ec, filename);
-		
-		
+		if(modelGenerationService.gnerateSAModel(applications, ac, ec, filename)){
+			response.getWriter().print("success");
+		}else{
+			response.getWriter().print("fail");
+		}
 		
 	}
 	
@@ -536,6 +538,34 @@ public class IndexController {
 		else{
 			response.getWriter().print("fail");
 		}
+	}
+	
+	@RequestMapping(value = "/completeTask", method=RequestMethod.POST)
+	public ModelAndView completeTask(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
+
+		logger.info(request.getParameter("name"));
+		logger.info(request.getParameter("stack"));
+		logger.info(request.getParameter("priorty"));
+		logger.info(request.getParameter("period"));
+		logger.info(request.getParameter("capacity"));
+		String filename = request.getParameter("filename");
+		ModelAndView mav = new ModelAndView("task");
+		Process process = fileManageService.getProcess(filename);
+		process.setName(request.getParameter("name"));
+		process.setStack(Integer.parseInt(request.getParameter("stack")));
+		process.setPriorty(Integer.parseInt(request.getParameter("priorty")));
+		process.setPeriod(Double.parseDouble(request.getParameter("period")));
+		process.setCapacity(Double.parseDouble(request.getParameter("capacity")));
+		process.setDeadline(request.getParameter("deadline"));
+		
+//		process.setXmlProcess(proce);
+		fileManageService.saveByXml(process.toXml(), filename);
+		
+		mav.addObject("process", process);
+		
+		mav.addObject("filename", "\""+filename+"\"");
+//		response.getWriter().println("hello");
+		return mav;
 	}
 	
 	

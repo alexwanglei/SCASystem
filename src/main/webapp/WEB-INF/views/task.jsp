@@ -26,11 +26,11 @@
 			<pre id="editor"></pre>
 		</div>
 		<div title="design">
-			<form id="task-form" method="post">
+			<form id="task-form" method="post" action="completeTask">
 				<table cellpadding="5">
 					<tr>
 						<td>ID:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.id}></input></td>
+						<td><input class="easyui-validatebox" type="text" name="id" data-options="required:true" value=${process.id} disabled="disabled"></input></td>
 					</tr>
 					<tr>
 						<td>Name:</td>
@@ -38,25 +38,31 @@
 					</tr>
 					<tr>
 						<td>Stack:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.stack}></input></td>
+						<td><input class="easyui-validatebox" type="text" name="stack" data-options="required:true" value=${process.stack}></input></td>
 					</tr>
 					<tr>
 						<td>Priorty:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.priorty}></input></td>
+						<td><input class="easyui-validatebox" type="text" name="priorty" data-options="required:true" value=${process.priorty}></input></td>
 					</tr>
 					<tr>
 						<td>Period:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.period}></input></td>
+						<td><input class="easyui-validatebox" type="text" name="period" data-options="required:true" value=${process.period}></input></td>
 					</tr>
 					<tr>
 						<td>Capacity:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.capacity}></input></td>
+						<td><input class="easyui-validatebox" type="text" name="capacity" data-options="required:true" value=${process.capacity}></input></td>
 					</tr>
 					<tr>
 						<td>Deadline:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.deadline}></input></td>
+						<td>
+							<select class="easyui-combobox" name="deadline">
+								<option value="soft">SOFT</option>
+								<option value="hard" selected="selected">HARD</option>
+							</select>
+						</td>
 					</tr>
-				</table>		
+				</table>
+				<input type="hidden" name="filename" value=${filename} ></input>		
 			</form>
 		</div>
 	</div>
@@ -71,6 +77,16 @@
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${process.xmlProcess});
 	
+/*	$("#task-form").form({
+		url:"completeTask",
+		onSubmit:function(){
+			
+		},
+		success:function(data){
+			alert(data);
+		}
+	});
+*/	
 	function save(){
 		var tab = $('#subtt').tabs('getSelected');
 		var index = $('#subtt').tabs('getTabIndex',tab);
@@ -83,12 +99,15 @@
 					filename:${filename},
 				},
 				success:function(data){
-					alert("save success!");
+					if(data.equals("success"))
+						alert("save success!");
+					else
+						alert("save fail!");
 				}
 			});
 		}
-		else{
-			
+		else{			
+			$("#task-form").submit();
 		}
 		
 	}
