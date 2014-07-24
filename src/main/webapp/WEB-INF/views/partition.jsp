@@ -26,8 +26,39 @@
 			<pre id="editor"></pre>
 		</div>
 		<div title="design">
-			<form id="task-form" method="post">
-						
+			<form id="partition-form" method="post">
+				<table id="msContainer" title="Intra-partition communication" data-options="rownumbers:true,fitColumns:true,singleSelect: true" >
+					<thead>
+						<tr>
+							<th data-options="field:id">Id</th>
+							<th data-options="field:type">Type</th>
+							<th data-options="field:name">Name</th>
+							<th data-options="field:messageSize">MessageSize</th>
+						<!-- 	<th data-options="field:bufferLength">BufferLength</th>
+							<th data-options="field:discipline">Discipline</th> -->
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${partitions.intraComs.msgContainer}" var="mc">
+							<tr>
+								<td>${mc.id}</td>
+								<td>
+									<c:if test="${fn:contains(${mc.name},'buffer')}">
+										<c:out value="${'Buffer'}"/>
+									</c:if>
+									<c:if test="${fn:contains(${mc.name},'blackboard')}">
+										<c:out value="${'Blackboard'}"/>
+									</c:if>
+								</td>
+								<td>${mc.name}</td>
+								<td>
+									<input type="text" value=${mc.messageSize}></input>
+								</td>
+								
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>	
 			</form>
 		</div>
 	</div>

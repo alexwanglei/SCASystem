@@ -3,6 +3,7 @@ package cn.edu.buaa.act.SCAS.service;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,14 +19,19 @@ import java.util.Map.Entry;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
 
 
 
@@ -480,6 +486,63 @@ public class FileManageService {
 		}
 		
 		return process;
+		
+	}
+	
+	public boolean saveProcessToXml(Process process, String filename){
+		File processXmlFile = new File(rootPath+"/"+filename);
+		Document doc = DocumentHelper.createDocument();
+		Element saTaskEle = doc.addElement("SATask");
+		saTaskEle.addAttribute("Id", Integer.toString(process.getId()));
+		saTaskEle.addAttribute("Name", process.getName());
+		Element stackEle = saTaskEle.addElement("Stack");
+		stackEle.addText(Integer.toString(process.getStack()));
+		Element priortyEle = saTaskEle.addElement("Priorty");
+		priortyEle.addText(Integer.toString(process.getPriorty()));
+		Element periodEle = saTaskEle.addElement("Period");
+		periodEle.addText(Double.toString(process.getPeriod()));
+		Element timeCapacityEle = saTaskEle.addElement("TimeCapacity");
+		timeCapacityEle.addText(Double.toString(process.getCapacity()));
+		Element deadlineEle = saTaskEle.addElement("Deadline");
+		deadlineEle.addText(process.getDeadline());
+		
+		Element taskInputsEle = saTaskEle.addElement("TaskInputs");
+
+		for(IOput in : process.getInputs()){
+			Element ioEle = taskInputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(in.getId()));
+			ioEle.addAttribute("ConceptName", in.getConceptName());
+			ioEle.addAttribute("Datatype", in.getDataType());
+			ioEle.addAttribute("Type", in.getType());
+			ioEle.addAttribute("Connect", in.getConnect());
+		
+		}
+		Element taskOutputsEle = saTaskEle.addElement("TaskOutputs");
+		for(IOput out : process.getOutputs()){
+			Element ioEle = taskOutputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(out.getId()));
+			ioEle.addAttribute("ConceptName", out.getConceptName());
+			ioEle.addAttribute("DataType", out.getDataType());
+			ioEle.addAttribute("Type", out.getType());
+			ioEle.addAttribute("Connect", out.getConnect());
+		}
+		
+		BufferedWriter bw;
+		try {
+			bw = new BufferedWriter(new FileWriter(processXmlFile));
+			XMLWriter out = null;
+			OutputFormat format = OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        out = new XMLWriter(bw, format);
+	        out.write(doc);
+	        bw.close();
+	        return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
 		
 	}
 	

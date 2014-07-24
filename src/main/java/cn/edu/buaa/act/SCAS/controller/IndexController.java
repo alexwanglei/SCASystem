@@ -540,14 +540,22 @@ public class IndexController {
 		}
 	}
 	
+	/**
+	 * @Description 在design模式下补充进程的属性信息，并更新到xml文件
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws DocumentException
+	 * @author wanglei
+	 * @date 2014年7月24日
+	 */
 	@RequestMapping(value = "/completeTask", method=RequestMethod.POST)
 	public ModelAndView completeTask(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
-
-		logger.info(request.getParameter("name"));
-		logger.info(request.getParameter("stack"));
-		logger.info(request.getParameter("priorty"));
-		logger.info(request.getParameter("period"));
-		logger.info(request.getParameter("capacity"));
+//		logger.info(request.getParameter("name"));
+//		logger.info(request.getParameter("stack"));
+//		logger.info(request.getParameter("priorty"));
+//		logger.info(request.getParameter("period"));
+//		logger.info(request.getParameter("capacity"));
 		String filename = request.getParameter("filename");
 		ModelAndView mav = new ModelAndView("task");
 		Process process = fileManageService.getProcess(filename);
@@ -557,14 +565,15 @@ public class IndexController {
 		process.setPeriod(Double.parseDouble(request.getParameter("period")));
 		process.setCapacity(Double.parseDouble(request.getParameter("capacity")));
 		process.setDeadline(request.getParameter("deadline"));
+		//把process重新写入xml文件
+		fileManageService.saveProcessToXml(process,filename);
 		
-//		process.setXmlProcess(proce);
-		fileManageService.saveByXml(process.toXml(), filename);
+		Process newProcess = fileManageService.getProcess(filename);
 		
-		mav.addObject("process", process);
+		mav.addObject("process", newProcess);
 		
 		mav.addObject("filename", "\""+filename+"\"");
-//		response.getWriter().println("hello");
+
 		return mav;
 	}
 	

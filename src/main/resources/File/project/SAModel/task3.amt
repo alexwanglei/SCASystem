@@ -8,9 +8,10 @@
   <Deadline/>
   <TaskInputs>
     <IO Id="1" ConceptName="Rader Altitude" Datatype="double" Type="InterPartition" Connect="queuePort_1"/>
-    <IO Id="2" ConceptName="hsat derivative" Datatype="double" Type="InterPartition" Connect="samplePort_4"/>
+    <IO Id="2" ConceptName="hsat derivative" Datatype="double" Type="InterPartition" Connect="queuePort_4"/>
   </TaskInputs>
   <TaskOutputs>
     <IO Id="3" ConceptName="Uh2" DataType="double" Type="IntraPartition" Connect="buffer_1"/>
+    <IO Id="4" ConceptName="Uh2" DataType="double" Type="InterPartition" Connect="queuePort_5"/>
   </TaskOutputs>
 </SATask>

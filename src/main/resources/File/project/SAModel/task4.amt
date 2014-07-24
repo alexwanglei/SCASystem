@@ -9,10 +9,10 @@
   <TaskInputs>
     <IO Id="1" ConceptName="Uh2" Datatype="double" Type="IntraPartition" Connect="buffer_1"/>
     <IO Id="2" ConceptName="Pitch Rate" Datatype="double" Type="InterPartition" Connect="samplePort_2"/>
-    <IO Id="3" ConceptName="Flap state" Datatype="int" Type="InterPartition" Connect="samplePort_3"/>
+    <IO Id="3" ConceptName="Flap state" Datatype="int" Type="InterPartition" Connect="queuePort_3"/>
   </TaskInputs>
   <TaskOutputs>
     <IO Id="4" ConceptName="sat Uh2" DataType="double" Type="InterPartition" Connect="queuePort_6"/>
-    <IO Id="5" ConceptName="delta e3 delta f" DataType="double" Type="InterPartition" Connect="samplePort_7"/>
+    <IO Id="5" ConceptName="delta e3 delta f" DataType="double" Type="InterPartition" Connect="queuePort_7"/>
   </TaskOutputs>
 </SATask>
