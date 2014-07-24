@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>  
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,18 +40,19 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${partitions.intraComs.msgContainer}" var="mc">
+						<c:forEach items="${partitions.intraComs}" var="com">
 							<tr>
-								<td>${mc.id}</td>
+								<td>${com.msgContainer.id}</td>
 								<td>
-									<c:if test="${fn:contains(${mc.name},'buffer')}">
+									<c:set var="name" value="${mc.msgContainer.name}"/>
+									<c:if test="${fn:contains(name,'buffer')}">
 										<c:out value="${'Buffer'}"/>
 									</c:if>
-									<c:if test="${fn:contains(${mc.name},'blackboard')}">
+									<c:if test="${fn:contains(name,'blackboard')}">
 										<c:out value="${'Blackboard'}"/>
 									</c:if>
 								</td>
-								<td>${mc.name}</td>
+								<td>${mc.msgContainer.name}</td>
 								<td>
 									<input type="text" value=${mc.messageSize}></input>
 								</td>
