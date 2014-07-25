@@ -13,6 +13,8 @@ public class Partition {
 	
 	private ArrayList<Port> ports = new ArrayList<Port>();
 	
+	private ArrayList<Port> daPorts = new ArrayList<Port>();
+	
 	private ArrayList<IntraPartitionCom> intraComs = new ArrayList<IntraPartitionCom>();
 	
 	private int MemorySizeBss = 0x1000;
@@ -178,5 +180,11 @@ public class Partition {
 	}
 	public void setMemorySizeText(int memorySizeText) {
 		MemorySizeText = memorySizeText;
+	}
+	public ArrayList<Port> getDaPorts() {
+		return daPorts;
+	}
+	public void setDaPorts(ArrayList<Port> daPorts) {
+		this.daPorts = daPorts;
 	}
 }

@@ -18,6 +18,20 @@
         width:100%;
         height:100%;
     }
+    
+    table{
+		border-collapse:collapse;
+		border:none;
+		align:center;	
+		font-size:12px;
+		margin:10px auto;
+	}
+	th,td{
+		border:1px solid #ccc;
+	}
+	div table th{
+		background-color:#E0ECFF;	
+	}
 </style>
 <body>
 
@@ -28,39 +42,52 @@
 		</div>
 		<div title="design">
 			<form id="partition-form" method="post">
-				<table id="msContainer" title="Intra-partition communication" data-options="rownumbers:true,fitColumns:true,singleSelect: true" >
-					<thead>
+					<p>Intra-partition communication</p>
+					<table id="buffer-table" title="Buffer">
 						<tr>
-							<th data-options="field:id">Id</th>
-							<th data-options="field:type">Type</th>
-							<th data-options="field:name">Name</th>
-							<th data-options="field:messageSize">MessageSize</th>
-						<!-- 	<th data-options="field:bufferLength">BufferLength</th>
-							<th data-options="field:discipline">Discipline</th> -->
+							<th>Id</th>
+							<th>Name</th>
+							<th>MessageSize</th>
+							<th>BufferLength</th>
+							<th>Discipline</th>
 						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${partitions.intraComs}" var="com">
+						<c:forEach items="${buffers}" var="buffer">
 							<tr>
-								<td>${com.msgContainer.id}</td>
+								<td>${buffer.id}</td>
+								<td>${buffer.name}</td>
 								<td>
-									<c:set var="name" value="${mc.msgContainer.name}"/>
-									<c:if test="${fn:contains(name,'buffer')}">
-										<c:out value="${'Buffer'}"/>
-									</c:if>
-									<c:if test="${fn:contains(name,'blackboard')}">
-										<c:out value="${'Blackboard'}"/>
-									</c:if>
+									<input type="text" value=${buffer.messageSize} name="bufferMessageSize"></input>
 								</td>
-								<td>${mc.msgContainer.name}</td>
 								<td>
-									<input type="text" value=${mc.messageSize}></input>
+									<input type="text" value=${buffer.bufferLength} name="bufferLength"></input>
 								</td>
-								
+								<td>
+									<select name="bufferDiscipline">
+										<option value="fifo">FIFO</option>
+										<option value="priority">PRIORITY</option>
+									</select>
+								</td>
 							</tr>
 						</c:forEach>
-					</tbody>
-				</table>	
+					</table>
+				
+					<table id="blackboard-table" title="Blackboard">
+						<tr>
+							<th>Id</td>
+							<th>Name</td>
+							<th>MessageSize</td>
+						</tr>
+						<c:forEach items="${blackboards}" var="blackboard">
+							<tr>
+								<td>${blackboard.id}</td>
+								<td>${blackboard.name}</td>
+								<td>
+									<input type="text" value=${blackboard.messageSize} name="blackboardMessageSize"></input>
+								</td>
+							</tr>
+						</c:forEach>
+					</table>
+			
 			</form>
 		</div>
 	</div>
@@ -73,7 +100,7 @@
 	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
-	editor.setValue(${partition.xmlPartition});
+	editor.setValue(${partitionXml});
 	
 	function save(){
 		var tab = $('#subtt').tabs('getSelected');
@@ -83,7 +110,7 @@
 			$.ajax({
 				type: "POST",
 				url: "savePartitionByXml",
-				data:{taskXml: editor.getValue(),
+				data:{partitionXml: editor.getValue(),
 					filename:${filename},
 				},
 				success:function(data){

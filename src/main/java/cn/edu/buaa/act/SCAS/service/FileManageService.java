@@ -313,6 +313,8 @@ public class FileManageService {
 		
 		List<Element> msgContainerList = root.element("MessageContainers").elements("MessageContainer");
 		HashMap<String,MsgContainer> msgContainerMap = new HashMap<String,MsgContainer>();
+		//保存消息容器和名字的map
+		HashMap<String,MsgContainer> msgContainerNameMap = new HashMap<String,MsgContainer>();
 		for(Element messageContainer : msgContainerList){
 			String key = messageContainer.attributeValue("Id");
 			for(Element e: (List<Element>)messageContainer.elements()){
@@ -330,6 +332,7 @@ public class FileManageService {
 						buffer.setDiscipline(e.attributeValue("Discipline"));
 					}
 					msgContainerMap.put(key, buffer);
+					msgContainerNameMap.put(buffer.getName(), buffer);
 				}
 				else if(e.getName().equals("Blackboard")){
 					Blackboard blackboard = new Blackboard();
@@ -340,6 +343,7 @@ public class FileManageService {
 					}
 					
 					msgContainerMap.put(key, blackboard);
+					msgContainerNameMap.put(blackboard.getName(), blackboard);
 				}
 			}
 		}
@@ -355,6 +359,7 @@ public class FileManageService {
 			partition.getIntraComs().add(intraPartitionCom);
 		}
 		
+		//处理应用端口元素
 		HashMap<String,Port> portMap = new HashMap<String,Port>();
 		List<Element> portList = root.element("ApplicationPorts").elements();
 		for(Element e: portList){
@@ -389,7 +394,40 @@ public class FileManageService {
 				portMap.put(queuePort.getName(), queuePort);
 			}
 		}
+		//处理分区直连端口元素
+		List<Element> daPortList = root.element("PartitionPorts").elements();
+		for(Element e: daPortList){
+			if(e.getName().equals("SamplePort")){
+				SamplePort samplePort = new SamplePort();
+				samplePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				samplePort.setName(e.attributeValue("Name"));
+				samplePort.setDirection(e.attributeValue("Direction"));
+				if(e.attributeValue("MessageSize")!=""){
+					samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("RefreshPeriod")!=""){
+					samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				}
+				partition.getDaPorts().add(samplePort);
+			}
+			else if(e.getName().equals("QueuePort")){
+				QueuePort queuePort = new QueuePort();
+				queuePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				queuePort.setName(e.attributeValue("Name"));
+				queuePort.setDirection(e.attributeValue("Direction"));
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				}
+				queuePort.setProtocol(e.attributeValue("Protocol"));
+				queuePort.setDiscipline(e.attributeValue("Discipline"));
+				partition.getDaPorts().add(queuePort);
+			}
+		}
 		
+		//处理任务模型
 		List<Element> includeList = root.element("SATasks").elements("include");
 		for(Element include : includeList){
 			String tfilename = filename.substring(0,filename.lastIndexOf('/')+1)+include.attributeValue("href");
@@ -397,7 +435,7 @@ public class FileManageService {
 			Process process = getProcess(tfilename);
 			for(IOput in : process.getInputs()){
 				if(in.getType().equals("IntraPartition")){
-					in.setMsgContainer(msgContainerMap.get(in.getConnect()));
+					in.setMsgContainer(msgContainerNameMap.get(in.getConnect()));
 				}
 				else if(in.getType().equals("InterPartition")){
 					in.setPort(portMap.get(in.getConnect()));
@@ -406,7 +444,7 @@ public class FileManageService {
 			
 			for(IOput out : process.getOutputs()){
 				if(out.getType().equals("IntraPartition")){
-					out.setMsgContainer(msgContainerMap.get(out.getConnect()));
+					out.setMsgContainer(msgContainerNameMap.get(out.getConnect()));
 				}
 				else if(out.getType().equals("InterPartition")){
 					out.setPort(portMap.get(out.getConnect()));
