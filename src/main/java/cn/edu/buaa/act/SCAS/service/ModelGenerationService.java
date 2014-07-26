@@ -65,7 +65,7 @@ public class ModelGenerationService {
 			}
 			
 			Element mcsEle = root.addElement("MessageContainers");
-			HashMap<String, TaskCommunciaton> = new H
+			//HashMap<String, TaskCommunciaton> = new H
 			mc = 1;
 			for(TaskCommunication tc : app.getTaskCommunications()){
 				Element mcEle = mcsEle.addElement("MessageContainer");
@@ -78,9 +78,23 @@ public class ModelGenerationService {
 					bufferEle.addAttribute("MessageSize", "");
 					bufferEle.addAttribute("BufferLength", "");
 					bufferEle.addAttribute("Discipline", "");
-					
+				}
+				else if(tc.getType().equals("blackboard")){
+					Element blackboardEle = mcEle.addElement("Blackboard");
+					blackboardEle.addAttribute("Id", Integer.toString(mc));
+					String blackboardName = "b"+mc++;
+					blackboardEle.addAttribute("Name", blackboardName);
+					blackboardEle.addAttribute("MessageSize", "");
 				}
 			}
+			
+			Element portsEle = root.addElement("Ports");
+			int port = 1;
+			for(Variable var : app.getInputs()){
+				if(var.getType().equals("sample"))
+				Element portEle = portsEle.addElement("");
+			}
+			
 		}
 		
 		//生成任务模型
