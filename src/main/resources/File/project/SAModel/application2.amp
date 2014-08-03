@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<SAPartition Id="2" Name="application2">
-  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">
-    <include href="task3.amt"/>
-    <include href="task4.amt"/>
-  </SATasks>
-  <IntraCommunications>
-    <Communication SrcTask="task3" DstTask="task4" MessageContainerId="1">Uh2</Communication>
-  </IntraCommunications>
-  <MessageContainers>
-    <MessageContainer Id="1">
-      <Buffer Name="buffer_1" MessageSize="" BufferLength="" Discipline=""/>
-    </MessageContainer>
-  </MessageContainers>
-  <ApplicationPorts>
-    <QueuePort Id="1" Name="queuePort_1" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <SamplePort Id="2" Name="samplePort_2" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
-    <QueuePort Id="3" Name="queuePort_3" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <QueuePort Id="4" Name="queuePort_4" Direction="DESTINATION" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <QueuePort Id="5" Name="queuePort_5" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <QueuePort Id="6" Name="queuePort_6" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <QueuePort Id="7" Name="queuePort_7" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-  </ApplicationPorts>
-  <PartitionPorts>
-    <QueuePort Id="0" Name="directAccessPort_1" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <SamplePort Id="0" Name="directAccessPort_2" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
-    <QueuePort Id="0" Name="directAccessPort_3" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-    <QueuePort Id="0" Name="directAccessPort_4" Direction="SOURCE" MessageSize="" QueueLength="" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>
-  </PartitionPorts>
+<SAPartition Id="2" Name="application2"> 
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">  
+    <include href="task3.amt"/>  
+    <include href="task4.amt"/> 
+  </SATasks>  
+  <IntraCommunications> 
+    <Communication SrcTask="task3" DstTask="task4" MessageContainerId="1">Uh2</Communication> 
+  </IntraCommunications>  
+  <MessageContainers> 
+    <MessageContainer Id="1"> 
+      <Buffer Name="buffer_1" MessageSize="100" BufferLength="10" Discipline="FIFO"/> 
+    </MessageContainer> 
+  </MessageContainers>  
+  <ApplicationPorts> 
+    <QueuePort Id="1" Name="queuePort_1" Direction="DESTINATION" MessageSize="10" QueueLength="10" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>  
+    <QueuePort Id="2" Name="queuePort_2" Direction="DESTINATION" MessageSize="10" QueueLength="10" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>  
+    <SamplePort Id="3" Name="samplePort_3" Direction="DESTINATION" MessageSize="100" RefreshPeriod="6"/>  
+    <SamplePort Id="4" Name="samplePort_4" Direction="DESTINATION" MessageSize="120" RefreshPeriod="5"/>  
+    <QueuePort Id="5" Name="queuePort_5" Direction="SOURCE" MessageSize="10" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/>  
+    <QueuePort Id="6" Name="queuePort_6" Direction="SOURCE" MessageSize="100" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/>  
+    <QueuePort Id="7" Name="queuePort_7" Direction="SOURCE" MessageSize="100" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/> 
+  </ApplicationPorts>  
+  <PartitionPorts> 
+    <QueuePort Id="1" Name="directAccessPort_1" Direction="SOURCE" MessageSize="10" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/>  
+    <QueuePort Id="2" Name="directAccessPort_2" Direction="SOURCE" MessageSize="10" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/>  
+    <SamplePort Id="3" Name="directAccessPort_3" Direction="SOURCE" MessageSize="10" RefreshPeriod="5"/>  
+    <SamplePort Id="4" Name="directAccessPort_4" Direction="SOURCE" MessageSize="10" RefreshPeriod="5"/> 
+  </PartitionPorts> 
 </SAPartition>

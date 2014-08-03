@@ -8,8 +8,8 @@
   <Deadline/>
   <TaskInputs>
     <IO Id="1" ConceptName="Uh2" Datatype="double" Type="IntraPartition" Connect="buffer_1"/>
-    <IO Id="2" ConceptName="Pitch Rate" Datatype="double" Type="InterPartition" Connect="samplePort_2"/>
-    <IO Id="3" ConceptName="Flap state" Datatype="int" Type="InterPartition" Connect="queuePort_3"/>
+    <IO Id="2" ConceptName="Pitch Rate" Datatype="double" Type="InterPartition" Connect="queuePort_2"/>
+    <IO Id="3" ConceptName="Flap state" Datatype="int" Type="InterPartition" Connect="samplePort_3"/>
   </TaskInputs>
   <TaskOutputs>
     <IO Id="4" ConceptName="sat Uh2" DataType="double" Type="InterPartition" Connect="queuePort_6"/>
