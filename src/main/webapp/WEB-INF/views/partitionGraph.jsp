@@ -266,7 +266,8 @@
 						filename:${filename},
 					},
 					success:function(data){
-						if(data.equals("success"))
+						alert(data);
+						if(data=="success")
 							alert("save success!");
 						else
 							alert("save fail!");

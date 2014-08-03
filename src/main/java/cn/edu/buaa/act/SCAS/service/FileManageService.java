@@ -3,6 +3,7 @@ package cn.edu.buaa.act.SCAS.service;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,16 +17,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
+
+
+
 
 
 
@@ -307,24 +319,37 @@ public class FileManageService {
 		
 		List<Element> msgContainerList = root.element("MessageContainers").elements("MessageContainer");
 		HashMap<String,MsgContainer> msgContainerMap = new HashMap<String,MsgContainer>();
+		//保存消息容器和名字的map
+		HashMap<String,MsgContainer> msgContainerNameMap = new HashMap<String,MsgContainer>();
 		for(Element messageContainer : msgContainerList){
-			String key = messageContainer.attributeValue("Name");
+			String key = messageContainer.attributeValue("Id");
 			for(Element e: (List<Element>)messageContainer.elements()){
 				if(e.getName().equals("Buffer")){
 					Buffer buffer = new Buffer();
-					buffer.setId(Integer.parseInt(e.attributeValue("Id")));
+					buffer.setId(Integer.parseInt(key));
 					buffer.setName(e.attributeValue("Name"));
-					buffer.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-					buffer.setBufferLength(Integer.parseInt(e.attributeValue("BufferLength")));
-					buffer.setDiscipline(e.attributeValue("Discipline"));
+					if(e.attributeValue("MessageSize")!=""){
+						buffer.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					}
+					if(e.attributeValue("BufferLength")!=""){
+						buffer.setBufferLength(Integer.parseInt(e.attributeValue("BufferLength")));
+					}
+					if(e.attributeValue("Discipline")!=""){
+						buffer.setDiscipline(e.attributeValue("Discipline"));
+					}
 					msgContainerMap.put(key, buffer);
+					msgContainerNameMap.put(buffer.getName(), buffer);
 				}
 				else if(e.getName().equals("Blackboard")){
 					Blackboard blackboard = new Blackboard();
-					blackboard.setId(Integer.parseInt(e.attributeValue("Id")));
+					blackboard.setId(Integer.parseInt(key));
 					blackboard.setName(e.attributeValue("Name"));
-					blackboard.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					if(e.attributeValue("MessageSize")!=""){
+						blackboard.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+					}
+					
 					msgContainerMap.put(key, blackboard);
+					msgContainerNameMap.put(blackboard.getName(), blackboard);
 				}
 			}
 		}
@@ -335,21 +360,26 @@ public class FileManageService {
 			IntraPartitionCom intraPartitionCom = new IntraPartitionCom();
 			intraPartitionCom.setSrcTask(e.attributeValue("SrcTask"));
 			intraPartitionCom.setDstTask(e.attributeValue("DstTask"));
-			intraPartitionCom.setMsgContainer(msgContainerMap.get(e.attributeValue("MessageContainerNameRef")));
+			intraPartitionCom.setMsgContainer(msgContainerMap.get(e.attributeValue("MessageContainerId")));
 			intraPartitionCom.setConceptName(e.getText());
 			partition.getIntraComs().add(intraPartitionCom);
 		}
 		
+		//处理应用端口元素
 		HashMap<String,Port> portMap = new HashMap<String,Port>();
-		List<Element> portList = root.element("Ports").elements();
+		List<Element> portList = root.element("ApplicationPorts").elements();
 		for(Element e: portList){
 			if(e.getName().equals("SamplePort")){
 				SamplePort samplePort = new SamplePort();
 				samplePort.setId(Integer.parseInt(e.attributeValue("Id")));
 				samplePort.setName(e.attributeValue("Name"));
 				samplePort.setDirection(e.attributeValue("Direction"));
-				samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-				samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				if(e.attributeValue("MessageSize")!=""){
+					samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("RefreshPeriod")!=""){
+					samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				}
 				partition.getPorts().add(samplePort);
 				portMap.put(samplePort.getName(), samplePort);
 			}
@@ -358,15 +388,52 @@ public class FileManageService {
 				queuePort.setId(Integer.parseInt(e.attributeValue("Id")));
 				queuePort.setName(e.attributeValue("Name"));
 				queuePort.setDirection(e.attributeValue("Direction"));
-				queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
-				queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				}
 				queuePort.setProtocol(e.attributeValue("Protocol"));
 				queuePort.setDiscipline(e.attributeValue("Discipline"));
 				partition.getPorts().add(queuePort);
 				portMap.put(queuePort.getName(), queuePort);
 			}
 		}
+		//处理分区直连端口元素
+		List<Element> daPortList = root.element("PartitionPorts").elements();
+		for(Element e: daPortList){
+			if(e.getName().equals("SamplePort")){
+				SamplePort samplePort = new SamplePort();
+				samplePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				samplePort.setName(e.attributeValue("Name"));
+				samplePort.setDirection(e.attributeValue("Direction"));
+				if(e.attributeValue("MessageSize")!=""){
+					samplePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("RefreshPeriod")!=""){
+					samplePort.setRefreshPeriod(Double.parseDouble(e.attributeValue("RefreshPeriod")));
+				}
+				partition.getDaPorts().add(samplePort);
+			}
+			else if(e.getName().equals("QueuePort")){
+				QueuePort queuePort = new QueuePort();
+				queuePort.setId(Integer.parseInt(e.attributeValue("Id")));
+				queuePort.setName(e.attributeValue("Name"));
+				queuePort.setDirection(e.attributeValue("Direction"));
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setMessageSize(Integer.parseInt(e.attributeValue("MessageSize")));
+				}
+				if(e.attributeValue("MessageSize")!=""){
+					queuePort.setQueueLength(Integer.parseInt(e.attributeValue("QueueLength")));
+				}
+				queuePort.setProtocol(e.attributeValue("Protocol"));
+				queuePort.setDiscipline(e.attributeValue("Discipline"));
+				partition.getDaPorts().add(queuePort);
+			}
+		}
 		
+		//处理任务模型
 		List<Element> includeList = root.element("SATasks").elements("include");
 		for(Element include : includeList){
 			String tfilename = filename.substring(0,filename.lastIndexOf('/')+1)+include.attributeValue("href");
@@ -374,7 +441,7 @@ public class FileManageService {
 			Process process = getProcess(tfilename);
 			for(IOput in : process.getInputs()){
 				if(in.getType().equals("IntraPartition")){
-					in.setMsgContainer(msgContainerMap.get(in.getConnect()));
+					in.setMsgContainer(msgContainerNameMap.get(in.getConnect()));
 				}
 				else if(in.getType().equals("InterPartition")){
 					in.setPort(portMap.get(in.getConnect()));
@@ -383,7 +450,7 @@ public class FileManageService {
 			
 			for(IOput out : process.getOutputs()){
 				if(out.getType().equals("IntraPartition")){
-					out.setMsgContainer(msgContainerMap.get(out.getConnect()));
+					out.setMsgContainer(msgContainerNameMap.get(out.getConnect()));
 				}
 				else if(out.getType().equals("InterPartition")){
 					out.setPort(portMap.get(out.getConnect()));
@@ -464,6 +531,187 @@ public class FileManageService {
 		
 		return process;
 		
+	}
+	
+	public boolean saveProcessToXml(Process process, String filename){
+		File processXmlFile = new File(rootPath+"/"+filename);
+		Document doc = DocumentHelper.createDocument();
+		Element saTaskEle = doc.addElement("SATask");
+		saTaskEle.addAttribute("Id", Integer.toString(process.getId()));
+		saTaskEle.addAttribute("Name", process.getName());
+		Element stackEle = saTaskEle.addElement("Stack");
+		stackEle.addText(Integer.toString(process.getStack()));
+		Element priortyEle = saTaskEle.addElement("Priorty");
+		priortyEle.addText(Integer.toString(process.getPriorty()));
+		Element periodEle = saTaskEle.addElement("Period");
+		periodEle.addText(Double.toString(process.getPeriod()));
+		Element timeCapacityEle = saTaskEle.addElement("TimeCapacity");
+		timeCapacityEle.addText(Double.toString(process.getCapacity()));
+		Element deadlineEle = saTaskEle.addElement("Deadline");
+		deadlineEle.addText(process.getDeadline());
+		
+		Element taskInputsEle = saTaskEle.addElement("TaskInputs");
+
+		for(IOput in : process.getInputs()){
+			Element ioEle = taskInputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(in.getId()));
+			ioEle.addAttribute("ConceptName", in.getConceptName());
+			ioEle.addAttribute("Datatype", in.getDataType());
+			ioEle.addAttribute("Type", in.getType());
+			ioEle.addAttribute("Connect", in.getConnect());
+		
+		}
+		Element taskOutputsEle = saTaskEle.addElement("TaskOutputs");
+		for(IOput out : process.getOutputs()){
+			Element ioEle = taskOutputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(out.getId()));
+			ioEle.addAttribute("ConceptName", out.getConceptName());
+			ioEle.addAttribute("DataType", out.getDataType());
+			ioEle.addAttribute("Type", out.getType());
+			ioEle.addAttribute("Connect", out.getConnect());
+		}
+		
+		BufferedWriter bw;
+		try {
+			bw = new BufferedWriter(new FileWriter(processXmlFile));
+			XMLWriter out = null;
+			OutputFormat format = OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        out = new XMLWriter(bw, format);
+	        out.write(doc);
+	        bw.close();
+	        return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean modifyPartitionToXml(HttpServletRequest request,String filename){
+		
+
+		String[] bbMessageSize = request.getParameterValues("bbMessageSize");
+		
+		String[] bfMessageSize = request.getParameterValues("bfMessageSize");
+		String[] bfLength = request.getParameterValues("bfLength");
+		String[] bfDiscipline = request.getParameterValues("bfDiscipline");
+		
+		String[] appSpMessageSize = request.getParameterValues("appSpMessageSize");
+		String[] appSpRefreshPeriod = request.getParameterValues("appSpRefreshPeriod");
+		
+		String[] appQpMessageSize = request.getParameterValues("appQpMessageSize");
+		String[] appQpQueueLength = request.getParameterValues("appQpQueueLength"); 
+		String[] appQpProtocol = request.getParameterValues("appQpProtocol"); 
+		String[] appQpDiscipline = request.getParameterValues("appQpDiscipline");
+		
+		String[] daSpMessageSize = request.getParameterValues("daSpMessageSize");
+		String[] daSpRefreshPeriod = request.getParameterValues("daSpRefreshPeriod");
+		
+		String[] daQpMessageSize = request.getParameterValues("daQpMessageSize");
+		String[] daQpQueueLength = request.getParameterValues("daQpQueueLength"); 
+		String[] daQpProtocol = request.getParameterValues("daQpProtocol"); 
+		String[] daQpDiscipline = request.getParameterValues("daQpDiscipline");
+		
+		File partitionModelFile = new File(rootPath+"/"+filename);
+		
+		SAXReader saxReader = new SAXReader();
+		try {
+			Document document = saxReader.read(partitionModelFile);
+			
+			//补充黑板的属性
+			List<Attribute> bbMsAttribute = document.selectNodes("/SAPartition/MessageContainers/MessageContainer/Blackboard/@MessageSize");
+			for(int i=0; i<bbMsAttribute.size(); i++){
+				bbMsAttribute.get(i).setValue(bbMessageSize[i]);
+			}
+			
+			//补充缓冲区的属性
+			List<Element> bufferEles = document.selectNodes("//Buffer");
+			Element buffer;
+			for(int i=0; i<bufferEles.size(); i++){
+				buffer = bufferEles.get(i);
+				Attribute messageSize = buffer.attribute("MessageSize");
+				messageSize.setValue(bfMessageSize[i]);
+				Attribute bufferLength = buffer.attribute("BufferLength");
+				bufferLength.setValue(bfLength[i]);
+				Attribute discipline = buffer.attribute("Discipline");
+				discipline.setValue(bfDiscipline[i]);
+			}
+			
+			//补充采样端口的属性
+			List<Element> sampleEles = document.selectNodes("//ApplicationPorts/SamplePort");
+			logger.info("采样端口数："+sampleEles.size());
+			Element sample;
+			for(int i=0; i<sampleEles.size(); i++){
+				sample = sampleEles.get(i);
+//				logger.info(sample.attributeValue("Id"));
+				Attribute messageSize = sample.attribute("MessageSize");
+				messageSize.setValue(appSpMessageSize[i]);
+				Attribute refreshPeriod = sample.attribute("RefreshPeriod");
+				refreshPeriod.setValue(appSpRefreshPeriod[i]);
+				//logger.info(sample.asXML());
+			}
+			
+			//补充队列端口属性
+			List<Element> queueEles = document.selectNodes("//ApplicationPorts/QueuePort");
+			Element queue;
+			for(int i=0; i<queueEles.size(); i++){
+				queue = queueEles.get(i);
+				Attribute messageSize = queue.attribute("MessageSize");
+				messageSize.setValue(appQpMessageSize[i]);
+				Attribute refreshPeriod = queue.attribute("QueueLength");
+				refreshPeriod.setValue(appQpQueueLength[i]);
+				Attribute protocol = queue.attribute("Protocol");
+				protocol.setValue(appQpProtocol[i]);
+				Attribute discipline = queue.attribute("Discipline");
+				discipline.setValue(appQpDiscipline[i]);
+			}
+			
+			//补充直连采样端口信息
+			Element daSample;
+			List<Element> daSampleEles = document.selectNodes("//PartitionPorts/SamplePort");
+			for(int i=0; i<daSampleEles.size(); i++){
+				daSample = daSampleEles.get(i);
+//				logger.info(daSample.attributeValue("Id"));
+				Attribute messageSize = daSample.attribute("MessageSize");
+				messageSize.setValue(daSpMessageSize[i]);
+				Attribute refreshPeriod = daSample.attribute("RefreshPeriod");
+				refreshPeriod.setValue(daSpRefreshPeriod[i]);
+			}
+			
+			//补充直连队列端口属性
+			Element daQueue;
+			List<Element> daQueueEles = document.selectNodes("//PartitionPorts/QueuePort");
+			for(int i=0; i<daQueueEles.size(); i++){
+				daQueue = daQueueEles.get(i);
+				Attribute messageSize = daQueue.attribute("MessageSize");
+				messageSize.setValue(daQpMessageSize[i]);
+				Attribute refreshPeriod = daQueue.attribute("QueueLength");
+				refreshPeriod.setValue(daQpQueueLength[i]);
+				Attribute protocol = daQueue.attribute("Protocol");
+				protocol.setValue(daQpProtocol[i]);
+				Attribute discipline = daQueue.attribute("Discipline");
+				discipline.setValue(daQpDiscipline[i]);
+			}
+			
+//			logger.info(document.asXML());
+			BufferedWriter bw = new BufferedWriter(new FileWriter(partitionModelFile));
+			XMLWriter out = null;
+			OutputFormat format = OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        out = new XMLWriter(bw, format);
+	        out.write(document);
+	        bw.close();
+	        return true;
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public boolean saveByXml(String xml, String filename){

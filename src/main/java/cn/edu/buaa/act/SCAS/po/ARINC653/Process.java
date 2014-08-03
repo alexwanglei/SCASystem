@@ -2,6 +2,12 @@ package cn.edu.buaa.act.SCAS.po.ARINC653;
 
 import java.util.ArrayList;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
+import cn.edu.buaa.act.SCAS.po.Variable;
+
 public class Process {
 	
 	private int id;
@@ -189,6 +195,47 @@ public class Process {
 		code.append("}\n");
 		return code.toString();
 	}
+	
+	public String toXml(){
+		Document doc = DocumentHelper.createDocument();
+		Element saTaskEle = doc.addElement("SATask");
+		saTaskEle.addAttribute("Id", Integer.toString(this.id));
+		saTaskEle.addAttribute("Name", this.name);
+		Element stackEle = saTaskEle.addElement("Stack");
+		stackEle.addText(Integer.toString(this.stack));
+		Element priortyEle = saTaskEle.addElement("Priorty");
+		priortyEle.addText(Double.toString(this.priorty));
+		Element periodEle = saTaskEle.addElement("Period");
+		periodEle.addText(Double.toString(this.period));
+		Element timeCapacityEle = saTaskEle.addElement("TimeCapacity");
+		timeCapacityEle.addText(Double.toString(this.capacity));
+		Element deadlineEle = saTaskEle.addElement("Deadline");
+		deadlineEle.addText(this.deadline);
+		
+		Element taskInputsEle = saTaskEle.addElement("TaskInputs");
 
+		for(IOput in : this.inputs){
+			Element ioEle = taskInputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(in.getId()));
+			ioEle.addAttribute("ConceptName", in.getConceptName());
+			ioEle.addAttribute("Datatype", in.getDataType());
+			ioEle.addAttribute("Type", in.getType());
+			ioEle.addAttribute("Connect", in.getConnect());
+		
+		}
+		Element taskOutputsEle = saTaskEle.addElement("TaskOutputs");
+		for(IOput out : this.outputs){
+			Element ioEle = taskOutputsEle.addElement("IO");
+			ioEle.addAttribute("Id", Integer.toString(out.getId()));
+			ioEle.addAttribute("ConceptName", out.getConceptName());
+			ioEle.addAttribute("DataType", out.getDataType());
+			ioEle.addAttribute("Type", out.getType());
+			ioEle.addAttribute("Connect", out.getConnect());
+			
+		}
+		
+		return doc.asXML();
+	}
+	
 	
 }

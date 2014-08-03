@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAModule Id="1" Name="module">
+  <SAPartitions>
+    <include href="application1.amp"/>
+    <include href="application2.amp"/>
+  </SAPartitions>
+  <InterCommunications>
+    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_1" SrcPort="queuePort_5" Mode="queue">Uh2</Communicaton>
+    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_6" SrcPort="queuePort_7" Mode="queue">delta e3 delta f</Communicaton>
+    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_9" SrcPort="queuePort_6" Mode="queue">sat Uh2</Communicaton>
+  </InterCommunications>
+  <DaCommunications>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_1" DstPort="samplePort_2" Mode="sample">GlIdeslope Beam Error</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_2" DstPort="samplePort_3" Mode="sample">theta</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_3" DstPort="samplePort_4" Mode="sample">GSCapt</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_4" DstPort="samplePort_5" Mode="sample">Vertical Acceleration</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_5" DstPort="queuePort_7" Mode="queue">Rader Altitude</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_6" DstPort="queuePort_8" Mode="queue">Altitude Rate</Communication>
+    <Communication SrcPart="application1" DstPart="application1" SrcPort="queuePort_10" DstPort="directAccessPort_7" Mode="queue">delta e</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_1" DstPort="queuePort_1" Mode="queue">Rader Altitude</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_2" DstPort="samplePort_2" Mode="sample">Pitch Rate</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_3" DstPort="queuePort_3" Mode="queue">Flap state</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_4" DstPort="queuePort_4" Mode="queue">hsat derivative</Communication>
+  </DaCommunications>
+  <Schedule/>
+</SAModule>

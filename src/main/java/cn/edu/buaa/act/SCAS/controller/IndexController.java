@@ -33,9 +33,15 @@ import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
 import cn.edu.buaa.act.SCAS.po.TaskCommunication;
 import cn.edu.buaa.act.SCAS.po.Variable;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
+import cn.edu.buaa.act.SCAS.po.ARINC653.IntraPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Port;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
+import cn.edu.buaa.act.SCAS.po.ARINC653.QueuePort;
+import cn.edu.buaa.act.SCAS.po.ARINC653.SamplePort;
 /**
  * @Description 首页控制器
  * @author wanglei
@@ -291,7 +297,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping(value = "/generateApplication",method=RequestMethod.POST)
-	public void generateApplication(HttpServletRequest request, HttpServletResponse reponse, String[] applicationNames, String[] taskIds, String filename) throws DocumentException, IOException{
+	public void generateApplication(HttpServletRequest request, HttpServletResponse response, String[] applicationNames, String[] taskIds, String filename) throws DocumentException, IOException{
 		logger.info(Arrays.toString(applicationNames));
 		logger.info(Arrays.toString(taskIds));
 		logger.info(filename);
@@ -331,16 +337,16 @@ public class IndexController {
 		
 		//生成分区应用文件
 		if(modelGenerationService.generateApplicationFile(applications, filename)){
-			reponse.getWriter().print("success");
+			response.getWriter().print("success");
 		}else{
-			reponse.getWriter().print("fail");
+			response.getWriter().print("fail");
 		}
 		
 		
 	}
 	
 	@RequestMapping(value = "/generateSAModel", method=RequestMethod.POST)
-	public void generateSAModel(HttpServletRequest request, HttpServletResponse response, String tc, String ac, String ec, String filename) throws DocumentException, JSONException{
+	public void generateSAModel(HttpServletRequest request, HttpServletResponse response, String tc, String ac, String ec, String filename) throws DocumentException, JSONException, IOException{
 		logger.info(tc);
 		logger.info(ac);
 		logger.info(ec);
@@ -354,9 +360,11 @@ public class IndexController {
 				System.out.println(taskCom.toString());
 			}
 		}
-		modelGenerationService.gnerateSAModel(applications, ac, ec, filename);
-		
-		
+		if(modelGenerationService.gnerateSAModel(applications, ac, ec, filename)){
+			response.getWriter().print("success");
+		}else{
+			response.getWriter().print("fail");
+		}
 		
 	}
 	
@@ -401,8 +409,54 @@ public class IndexController {
 		
 		ModelAndView mav = new ModelAndView("partition");
 		Partition partition = fileManageService.getPartition(filename);
-		mav.addObject("partition", partition);
 		
+		ArrayList<Blackboard> blackboards = new ArrayList<Blackboard>();
+		ArrayList<Buffer> buffers = new ArrayList<Buffer>();
+		for(IntraPartitionCom intraCom : partition.getIntraComs()){
+			if(intraCom.getMsgContainer() instanceof Blackboard){
+				blackboards.add((Blackboard)intraCom.getMsgContainer());
+			}
+			else if(intraCom.getMsgContainer() instanceof Buffer){
+				buffers.add((Buffer)intraCom.getMsgContainer());
+			}
+		}
+		logger.info("黑板："+blackboards.size());
+		logger.info("缓冲区:"+buffers.size());
+		
+		ArrayList<SamplePort> appSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> appQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getPorts()){
+			if(port instanceof SamplePort){
+				appSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				appQueuePorts.add((QueuePort)port);
+			}
+		}
+		logger.info("采样："+appSamplePorts.size());
+		logger.info("队列:"+appQueuePorts.size());
+		
+		ArrayList<SamplePort> daSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> daQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getDaPorts()){
+			if(port instanceof SamplePort){
+				daSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				daQueuePorts.add((QueuePort)port);
+			}
+		}
+		logger.info("采样："+daSamplePorts.size());
+		logger.info("队列:"+daQueuePorts.size());
+		
+		
+		mav.addObject("partitionXml", partition.getXmlPartition());
+		mav.addObject("blackboards",blackboards);
+		mav.addObject("buffers", buffers);
+		mav.addObject("appSamplePorts",appSamplePorts);
+		mav.addObject("appQueuePorts",appQueuePorts);
+		mav.addObject("daSamplePorts",daSamplePorts);
+		mav.addObject("daQueuePorts",daQueuePorts);
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");
 		return mav;
@@ -537,6 +591,109 @@ public class IndexController {
 			response.getWriter().print("fail");
 		}
 	}
+	
+	/**
+	 * @Description 在design模式下补充进程的属性信息，并更新到xml文件
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws DocumentException
+	 * @author wanglei
+	 * @date 2014年7月24日
+	 */
+	@RequestMapping(value = "/completeTask", method=RequestMethod.POST)
+	public ModelAndView completeTask(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
+//		logger.info(request.getParameter("name"));
+//		logger.info(request.getParameter("stack"));
+//		logger.info(request.getParameter("priorty"));
+//		logger.info(request.getParameter("period"));
+//		logger.info(request.getParameter("capacity"));
+		String filename = request.getParameter("filename");
+		ModelAndView mav = new ModelAndView("task");
+		Process process = fileManageService.getProcess(filename);
+		process.setName(request.getParameter("name"));
+		process.setStack(Integer.parseInt(request.getParameter("stack")));
+		process.setPriorty(Integer.parseInt(request.getParameter("priorty")));
+		process.setPeriod(Double.parseDouble(request.getParameter("period")));
+		process.setCapacity(Double.parseDouble(request.getParameter("capacity")));
+		process.setDeadline(request.getParameter("deadline"));
+		//把process重新写入xml文件
+		fileManageService.saveProcessToXml(process,filename);
+		
+		Process newProcess = fileManageService.getProcess(filename);
+		
+		mav.addObject("process", newProcess);
+		
+		mav.addObject("filename", "\""+filename+"\"");
+
+		return mav;
+	}
+	
+	@RequestMapping(value = "/completePartition", method=RequestMethod.POST)
+	public ModelAndView completePartition(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
+		String filename = request.getParameter("filename");
+		
+		ModelAndView mav = new ModelAndView("partition");
+
+		//修改分区模型文件
+		fileManageService.modifyPartitionToXml(request,filename);
+		
+		//重新获取分区模型
+		Partition partition = fileManageService.getPartition(filename);
+		
+		ArrayList<Blackboard> blackboards = new ArrayList<Blackboard>();
+		ArrayList<Buffer> buffers = new ArrayList<Buffer>();
+		for(IntraPartitionCom intraCom : partition.getIntraComs()){
+			if(intraCom.getMsgContainer() instanceof Blackboard){
+				blackboards.add((Blackboard)intraCom.getMsgContainer());
+			}
+			else if(intraCom.getMsgContainer() instanceof Buffer){
+				buffers.add((Buffer)intraCom.getMsgContainer());
+			}
+		}
+//		logger.info("黑板："+blackboards.size());
+//		logger.info("缓冲区:"+buffers.size());
+		
+		ArrayList<SamplePort> appSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> appQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getPorts()){
+			if(port instanceof SamplePort){
+				appSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				appQueuePorts.add((QueuePort)port);
+			}
+		}
+//		logger.info("采样："+appSamplePorts.size());
+//		logger.info("队列:"+appQueuePorts.size());
+		
+		ArrayList<SamplePort> daSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> daQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getDaPorts()){
+			if(port instanceof SamplePort){
+				daSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				daQueuePorts.add((QueuePort)port);
+			}
+		}
+//		logger.info("采样："+daSamplePorts.size());
+//		logger.info("队列:"+daQueuePorts.size());
+		
+		
+		mav.addObject("partitionXml", partition.getXmlPartition());
+		mav.addObject("blackboards",blackboards);
+		mav.addObject("buffers", buffers);
+		mav.addObject("appSamplePorts",appSamplePorts);
+		mav.addObject("appQueuePorts",appQueuePorts);
+		mav.addObject("daSamplePorts",daSamplePorts);
+		mav.addObject("daQueuePorts",daQueuePorts);
+		mav.addObject("filename", "\""+filename+"\"");
+//		response.getWriter().println("hello");
+		return mav;
+		
+	}
+	
 	
 	
 	/**
