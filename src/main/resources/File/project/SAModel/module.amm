@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <SAModule Id="1" Name="module">
   <SAPartitions>
     <include href="application1.amp"/>
     <include href="application2.amp"/>
   </SAPartitions>
   <InterCommunications>
-    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_1" SrcPort="queuePort_5" Mode="queue">Uh2</Communicaton>
-    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_6" SrcPort="queuePort_7" Mode="queue">delta e3 delta f</Communicaton>
-    <Communicaton SrcPart="application2" DstPart="application1" DstPort="queuePort_9" SrcPort="queuePort_6" Mode="queue">sat Uh2</Communicaton>
+    <Communication SrcPart="application2" DstPart="application1" DstPort="queuePort_1" SrcPort="queuePort_5" Mode="queue">Uh2</Communication>
+    <Communication SrcPart="application2" DstPart="application1" DstPort="queuePort_6" SrcPort="queuePort_7" Mode="queue">delta e3 delta f</Communication>
+    <Communication SrcPart="application2" DstPart="application1" DstPort="queuePort_9" SrcPort="queuePort_6" Mode="queue">sat Uh2</Communication>
   </InterCommunications>
   <DaCommunications>
     <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_1" DstPort="samplePort_2" Mode="sample">GlIdeslope Beam Error</Communication>

@@ -19,6 +19,8 @@ public class Module {
 	
 	private ArrayList<InterPartitionCom> interCom = new ArrayList<InterPartitionCom>();
 	
+	private ArrayList<InterPartitionCom> daCom = new ArrayList<InterPartitionCom>();
+	
 	private ArrayList<Channel> channels = new ArrayList<Channel>();
 	
 	private ArrayList<PartitionWindow> schedule = new ArrayList<PartitionWindow>();
@@ -114,8 +116,34 @@ public class Module {
 
 			partitionEle.addAttribute("Id", Integer.toString(part.getId()));
 			Element partDescEle = partitionEle.addElement("PartitionDescription");
+			
 			Element appEle = partDescEle.addElement("Application");
 			appEle.addAttribute("NameRef", part.getName());
+			//分区直连端口
+			Element portsEle = partDescEle.addElement("Ports");
+			for(Port p : part.getDaPorts()){
+				if(p instanceof QueuePort){
+					QueuePort qp = (QueuePort)p;
+					Element queuePortEle = portsEle.addElement("QueuingPort");
+					queuePortEle.addAttribute("Attribute", "DIRECT_ACCESS_PORT");
+					queuePortEle.addAttribute("Name", qp.getName());
+					queuePortEle.addAttribute("Direction", qp.getDirection());
+					queuePortEle.addAttribute("MessageSize", Integer.toString(qp.getMessageSize()));
+					queuePortEle.addAttribute("QueueLength", Integer.toString(qp.getQueueLength()));
+					queuePortEle.addAttribute("Protocol", qp.getProtocol());
+					
+				}
+				else if(p instanceof SamplePort){
+					SamplePort sp = (SamplePort)p;
+					Element samplePortEle = portsEle.addElement("SamplingPort");
+					samplePortEle.addAttribute("Attribute", "DIRECT_ACCESS_PORT");
+					samplePortEle.addAttribute("Name", sp.getName());
+					samplePortEle.addAttribute("Direction", sp.getDirection());
+					samplePortEle.addAttribute("MessageSize", Integer.toString(sp.getMessageSize()));
+					samplePortEle.addAttribute("RefreshRate", Double.toString(sp.getRefreshPeriod()));
+				}
+			}
+			
 			Element shareLibRegionEle = partDescEle.addElement("SharedLibraryRegion");
 			shareLibRegionEle.addAttribute("NameRef", "vxSysLib");
 			Element settingsEle = partDescEle.addElement("Settings");
@@ -207,6 +235,14 @@ public class Module {
 			partPLEle.addAttribute("NameRef", part.getName());
 		}
 		return payloadsEle;
+	}
+
+	public ArrayList<InterPartitionCom> getDaCom() {
+		return daCom;
+	}
+
+	public void setDaCom(ArrayList<InterPartitionCom> daCom) {
+		this.daCom = daCom;
 	}
 
 }

@@ -26,38 +26,7 @@
 			<pre id="editor"></pre>
 		</div>
 		<div title="design">
-			<form id="task-form" method="post">
-				<table cellpadding="5">
-					<tr>
-						<td>ID:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.id}></input></td>
-					</tr>
-					<tr>
-						<td>Name:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.name}></input></td>
-					</tr>
-					<tr>
-						<td>Stack:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.stack}></input></td>
-					</tr>
-					<tr>
-						<td>Priorty:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.priorty}></input></td>
-					</tr>
-					<tr>
-						<td>Period:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.period}></input></td>
-					</tr>
-					<tr>
-						<td>Capacity:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.capacity}></input></td>
-					</tr>
-					<tr>
-						<td>Deadline:</td>
-						<td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" value=${process.deadline}></input></td>
-					</tr>
-				</table>		
-			</form>
+			
 		</div>
 	</div>
 	<div id="tab-tools">

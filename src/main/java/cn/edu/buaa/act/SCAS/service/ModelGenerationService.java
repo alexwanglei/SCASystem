@@ -307,7 +307,7 @@ public class ModelGenerationService {
 		//生成分区间通信
 		Element interComsEle = mroot.addElement("InterCommunications");
 		for(int i=0; i<acJsonArray.length(); i++){
-			Element comEle = interComsEle.addElement("Communicaton");
+			Element comEle = interComsEle.addElement("Communication");
 			String srcApp = acJsonArray.getJSONObject(i).getString("srcApp");
 			String dstApp = acJsonArray.getJSONObject(i).getString("dstApp");
 			String variableName = acJsonArray.getJSONObject(i).getString("variable");

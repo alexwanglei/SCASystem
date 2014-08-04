@@ -260,6 +260,21 @@ public class FileManageService {
 			}
 		}
 		
+		List<Element> daCommList = root.element("DaCommunications").elements("Communication");
+		if(daCommList != null){
+			for(Element daCom : daCommList){
+				InterPartitionCom daPartitionCom = new InterPartitionCom();
+				daPartitionCom.setSrcPartition(daCom.attributeValue("SrcPart"));
+				daPartitionCom.setDstPartition(daCom.attributeValue("DstPart"));
+				daPartitionCom.setSrcPort(daCom.attributeValue("SrcPort"));
+				daPartitionCom.setDstPort(daCom.attributeValue("DstPort"));
+				daPartitionCom.setMode(daCom.attributeValue("Mode"));
+				daPartitionCom.setConcept(daCom.getText());
+				module.getDaCom().add(daPartitionCom);
+			}
+		}
+		
+		//生成schedule成员变量
 		List<Element> scheduleList = root.element("Schedule").elements("window");
 		if(scheduleList != null){
 			for(Element e : scheduleList){
@@ -272,24 +287,36 @@ public class FileManageService {
 			}
 		}
 		
-		//生成schedule成员变量
+		//生成connection
+		//1:分区之间的端口连接
+		//2:分区直连端口和应用端口的连接
+		
 		HashMap<String,String> srcMap = new HashMap<String,String>();
 		for(InterPartitionCom ipc : module.getInterCom()){
-			srcMap.put(ipc.getSrcPort(), ipc.getSrcPartition());
+			srcMap.put(ipc.getSrcPartition()+ipc.getSrcPort(), ipc.getSrcPort());
+		}
+		for(InterPartitionCom dac : module.getDaCom()){
+			srcMap.put(dac.getSrcPartition()+dac.getSrcPort(), dac.getSrcPort());
 		}
 		int cid=1;
 		Iterator iter= srcMap.entrySet().iterator();
 		while(iter.hasNext()){
 			Entry<String,String> entry = (Entry)iter.next();
-			Channel c = new Channel(cid++, entry.getValue(), entry.getKey());
+			Channel c = new Channel(cid++,  entry.getKey().substring(0, entry.getKey().indexOf(entry.getValue())),entry.getValue());
 			module.getChannels().add(c);
 		}
 		
 		for(Channel c: module.getChannels()){
 			for(InterPartitionCom ipc : module.getInterCom()){
-				if(ipc.getSrcPort().equals(c.getSrcPort())){
+				if(ipc.getSrcPort().equals(c.getSrcPort())&&ipc.getSrcPartition().equals(c.getSrcPartition())){
 					c.getDstPartitions().add(ipc.getDstPartition());
 					c.getDstPorts().add(ipc.getDstPort());
+				}
+			}
+			for(InterPartitionCom dac : module.getDaCom()){
+				if(dac.getSrcPort().equals(c.getSrcPort())&&dac.getSrcPartition().equals(c.getSrcPartition())){
+					c.getDstPartitions().add(dac.getDstPartition());
+					c.getDstPorts().add(dac.getDstPort());
 				}
 			}
 		}	
