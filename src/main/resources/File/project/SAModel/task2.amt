@@ -15,7 +15,7 @@
     <IO Id="6" ConceptName="Altitude Rate" Datatype="double" Type="InterPartition" Connect="queuePort_8"/>
   </TaskInputs>
   <TaskOutputs>
-    <IO Id="7" ConceptName="Uh1" DataType="double" Type="IntraPartition" Connect="blackboard_1"/>
-    <IO Id="8" ConceptName="U0" DataType="double" Type="IntraPartition" Connect="blackboard_2"/>
+    <IO Id="7" ConceptName="Uh1" DataType="double" Type="IntraPartition" Connect="buffer_1"/>
+    <IO Id="8" ConceptName="U0" DataType="double" Type="IntraPartition" Connect="buffer_2"/>
   </TaskOutputs>
 </SATask>

@@ -19,9 +19,9 @@
     <Communication SrcPart="application1" DstPart="application1" SrcPort="directAccessPort_6" DstPort="queuePort_8" Mode="queue">Altitude Rate</Communication>
     <Communication SrcPart="application1" DstPart="application1" SrcPort="queuePort_10" DstPort="directAccessPort_7" Mode="queue">delta e</Communication>
     <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_1" DstPort="queuePort_1" Mode="queue">Rader Altitude</Communication>
-    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_2" DstPort="samplePort_2" Mode="sample">Pitch Rate</Communication>
-    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_3" DstPort="queuePort_3" Mode="queue">Flap state</Communication>
-    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_4" DstPort="queuePort_4" Mode="queue">hsat derivative</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_2" DstPort="queuePort_2" Mode="queue">Pitch Rate</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_3" DstPort="samplePort_3" Mode="sample">Flap state</Communication>
+    <Communication SrcPart="application2" DstPart="application2" SrcPort="directAccessPort_4" DstPort="samplePort_4" Mode="sample">hsat derivative</Communication>
   </DaCommunications>
   <Schedule/>
 </SAModule>

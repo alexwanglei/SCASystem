@@ -93,7 +93,7 @@ public class ModelGenerationService {
 			}
 			//生成消息容器
 			Element mcsEle = root.addElement("MessageContainers");
-			
+
 			mcId = 1;
 			for(TaskCommunication tc : app.getTaskCommunications()){
 				Element mcEle = mcsEle.addElement("MessageContainer");
@@ -120,7 +120,7 @@ public class ModelGenerationService {
 			ArrayList<DirectAccessPort> appDaPortList = new ArrayList<DirectAccessPort>();
 			Element portsEle = root.addElement("ApplicationPorts");
 			int portId = 1;
-			int daPortId =1;
+			int daPortId = 1;
 			for(Variable var : app.getInputs()){
 				String type = variableTypeMap.get(var.getName());
 				if(type !=null){

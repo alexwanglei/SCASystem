@@ -629,6 +629,72 @@ public class IndexController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "/completePartition", method=RequestMethod.POST)
+	public ModelAndView completePartition(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
+		String filename = request.getParameter("filename");
+		
+		ModelAndView mav = new ModelAndView("partition");
+
+		//修改分区模型文件
+		fileManageService.modifyPartitionToXml(request,filename);
+		
+		//重新获取分区模型
+		Partition partition = fileManageService.getPartition(filename);
+		
+		ArrayList<Blackboard> blackboards = new ArrayList<Blackboard>();
+		ArrayList<Buffer> buffers = new ArrayList<Buffer>();
+		for(IntraPartitionCom intraCom : partition.getIntraComs()){
+			if(intraCom.getMsgContainer() instanceof Blackboard){
+				blackboards.add((Blackboard)intraCom.getMsgContainer());
+			}
+			else if(intraCom.getMsgContainer() instanceof Buffer){
+				buffers.add((Buffer)intraCom.getMsgContainer());
+			}
+		}
+//		logger.info("黑板："+blackboards.size());
+//		logger.info("缓冲区:"+buffers.size());
+		
+		ArrayList<SamplePort> appSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> appQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getPorts()){
+			if(port instanceof SamplePort){
+				appSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				appQueuePorts.add((QueuePort)port);
+			}
+		}
+//		logger.info("采样："+appSamplePorts.size());
+//		logger.info("队列:"+appQueuePorts.size());
+		
+		ArrayList<SamplePort> daSamplePorts = new ArrayList<SamplePort>();
+		ArrayList<QueuePort> daQueuePorts = new ArrayList<QueuePort>();
+		for(Port port : partition.getDaPorts()){
+			if(port instanceof SamplePort){
+				daSamplePorts.add((SamplePort)port);
+			}
+			else if(port instanceof QueuePort){
+				daQueuePorts.add((QueuePort)port);
+			}
+		}
+//		logger.info("采样："+daSamplePorts.size());
+//		logger.info("队列:"+daQueuePorts.size());
+		
+		
+		mav.addObject("partitionXml", partition.getXmlPartition());
+		mav.addObject("blackboards",blackboards);
+		mav.addObject("buffers", buffers);
+		mav.addObject("appSamplePorts",appSamplePorts);
+		mav.addObject("appQueuePorts",appQueuePorts);
+		mav.addObject("daSamplePorts",daSamplePorts);
+		mav.addObject("daQueuePorts",daQueuePorts);
+		mav.addObject("filename", "\""+filename+"\"");
+//		response.getWriter().println("hello");
+		return mav;
+		
+	}
+	
+	
 	
 	/**
 	 * @Description 打开C文件

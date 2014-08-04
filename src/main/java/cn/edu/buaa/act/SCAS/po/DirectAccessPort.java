@@ -16,6 +16,7 @@ public class DirectAccessPort {
 	private String variableName;
 	
 	public DirectAccessPort(int id, String name, String direction, String type, String partitionName, String appPortName, String variableName){
+		this.id = id;
 		this.name = name;
 		this.direction = direction;
 		this.type = type;

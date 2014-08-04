@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -30,6 +33,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+
+
 
 
 
@@ -580,8 +586,132 @@ public class FileManageService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean modifyPartitionToXml(HttpServletRequest request,String filename){
 		
+
+		String[] bbMessageSize = request.getParameterValues("bbMessageSize");
 		
+		String[] bfMessageSize = request.getParameterValues("bfMessageSize");
+		String[] bfLength = request.getParameterValues("bfLength");
+		String[] bfDiscipline = request.getParameterValues("bfDiscipline");
+		
+		String[] appSpMessageSize = request.getParameterValues("appSpMessageSize");
+		String[] appSpRefreshPeriod = request.getParameterValues("appSpRefreshPeriod");
+		
+		String[] appQpMessageSize = request.getParameterValues("appQpMessageSize");
+		String[] appQpQueueLength = request.getParameterValues("appQpQueueLength"); 
+		String[] appQpProtocol = request.getParameterValues("appQpProtocol"); 
+		String[] appQpDiscipline = request.getParameterValues("appQpDiscipline");
+		
+		String[] daSpMessageSize = request.getParameterValues("daSpMessageSize");
+		String[] daSpRefreshPeriod = request.getParameterValues("daSpRefreshPeriod");
+		
+		String[] daQpMessageSize = request.getParameterValues("daQpMessageSize");
+		String[] daQpQueueLength = request.getParameterValues("daQpQueueLength"); 
+		String[] daQpProtocol = request.getParameterValues("daQpProtocol"); 
+		String[] daQpDiscipline = request.getParameterValues("daQpDiscipline");
+		
+		File partitionModelFile = new File(rootPath+"/"+filename);
+		
+		SAXReader saxReader = new SAXReader();
+		try {
+			Document document = saxReader.read(partitionModelFile);
+			
+			//补充黑板的属性
+			List<Attribute> bbMsAttribute = document.selectNodes("/SAPartition/MessageContainers/MessageContainer/Blackboard/@MessageSize");
+			for(int i=0; i<bbMsAttribute.size(); i++){
+				bbMsAttribute.get(i).setValue(bbMessageSize[i]);
+			}
+			
+			//补充缓冲区的属性
+			List<Element> bufferEles = document.selectNodes("//Buffer");
+			Element buffer;
+			for(int i=0; i<bufferEles.size(); i++){
+				buffer = bufferEles.get(i);
+				Attribute messageSize = buffer.attribute("MessageSize");
+				messageSize.setValue(bfMessageSize[i]);
+				Attribute bufferLength = buffer.attribute("BufferLength");
+				bufferLength.setValue(bfLength[i]);
+				Attribute discipline = buffer.attribute("Discipline");
+				discipline.setValue(bfDiscipline[i]);
+			}
+			
+			//补充采样端口的属性
+			List<Element> sampleEles = document.selectNodes("//ApplicationPorts/SamplePort");
+			logger.info("采样端口数："+sampleEles.size());
+			Element sample;
+			for(int i=0; i<sampleEles.size(); i++){
+				sample = sampleEles.get(i);
+//				logger.info(sample.attributeValue("Id"));
+				Attribute messageSize = sample.attribute("MessageSize");
+				messageSize.setValue(appSpMessageSize[i]);
+				Attribute refreshPeriod = sample.attribute("RefreshPeriod");
+				refreshPeriod.setValue(appSpRefreshPeriod[i]);
+				//logger.info(sample.asXML());
+			}
+			
+			//补充队列端口属性
+			List<Element> queueEles = document.selectNodes("//ApplicationPorts/QueuePort");
+			Element queue;
+			for(int i=0; i<queueEles.size(); i++){
+				queue = queueEles.get(i);
+				Attribute messageSize = queue.attribute("MessageSize");
+				messageSize.setValue(appQpMessageSize[i]);
+				Attribute refreshPeriod = queue.attribute("QueueLength");
+				refreshPeriod.setValue(appQpQueueLength[i]);
+				Attribute protocol = queue.attribute("Protocol");
+				protocol.setValue(appQpProtocol[i]);
+				Attribute discipline = queue.attribute("Discipline");
+				discipline.setValue(appQpDiscipline[i]);
+			}
+			
+			//补充直连采样端口信息
+			Element daSample;
+			List<Element> daSampleEles = document.selectNodes("//PartitionPorts/SamplePort");
+			for(int i=0; i<daSampleEles.size(); i++){
+				daSample = daSampleEles.get(i);
+//				logger.info(daSample.attributeValue("Id"));
+				Attribute messageSize = daSample.attribute("MessageSize");
+				messageSize.setValue(daSpMessageSize[i]);
+				Attribute refreshPeriod = daSample.attribute("RefreshPeriod");
+				refreshPeriod.setValue(daSpRefreshPeriod[i]);
+			}
+			
+			//补充直连队列端口属性
+			Element daQueue;
+			List<Element> daQueueEles = document.selectNodes("//PartitionPorts/QueuePort");
+			for(int i=0; i<daQueueEles.size(); i++){
+				daQueue = daQueueEles.get(i);
+				Attribute messageSize = daQueue.attribute("MessageSize");
+				messageSize.setValue(daQpMessageSize[i]);
+				Attribute refreshPeriod = daQueue.attribute("QueueLength");
+				refreshPeriod.setValue(daQpQueueLength[i]);
+				Attribute protocol = daQueue.attribute("Protocol");
+				protocol.setValue(daQpProtocol[i]);
+				Attribute discipline = daQueue.attribute("Discipline");
+				discipline.setValue(daQpDiscipline[i]);
+			}
+			
+//			logger.info(document.asXML());
+			BufferedWriter bw = new BufferedWriter(new FileWriter(partitionModelFile));
+			XMLWriter out = null;
+			OutputFormat format = OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        out = new XMLWriter(bw, format);
+	        out.write(document);
+	        bw.close();
+	        return true;
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public boolean saveByXml(String xml, String filename){
