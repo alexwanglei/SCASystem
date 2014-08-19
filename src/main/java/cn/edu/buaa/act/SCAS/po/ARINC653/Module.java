@@ -193,7 +193,7 @@ public class Module {
 			Element partitionWinEle = scheduleEle.addElement("PartitionWindow");
 			partitionWinEle.addAttribute("PartitionNameRef", pw.getPartName());
 			partitionWinEle.addAttribute("Duration", Double.toString(pw.getDuration()));
-			partitionWinEle.addAttribute("ReleasePoint",Double.toString(pw.getReleasePoint()));
+			partitionWinEle.addAttribute("ReleasePoint",Integer.toString(pw.getReleasePoint()));
 		}
 		return schedulesEle;
 	}

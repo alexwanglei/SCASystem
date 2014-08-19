@@ -24,6 +24,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 
 
 
@@ -275,14 +277,14 @@ public class FileManageService {
 		}
 		
 		//生成schedule成员变量
-		List<Element> scheduleList = root.element("Schedule").elements("window");
+		List<Element> scheduleList = root.element("Schedule").elements("Window");
 		if(scheduleList != null){
 			for(Element e : scheduleList){
 				PartitionWindow partitionWindow = new PartitionWindow();
-				partitionWindow.setId(Integer.parseInt(e.attributeValue("Id")));
-				partitionWindow.setPartName(e.attributeValue("PartitonNameRef"));
+				
+				partitionWindow.setPartName(e.attributeValue("PartitionNameRef"));
 				partitionWindow.setDuration(Double.parseDouble(e.attributeValue("Duration")));
-				partitionWindow.setReleasePoint(Double.parseDouble(e.attributeValue("ReleasePoint")));
+				partitionWindow.setReleasePoint(Integer.parseInt(e.attributeValue("ReleasePoint")));
 				module.getSchedule().add(partitionWindow);
 			}
 		}
@@ -739,6 +741,54 @@ public class FileManageService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	
+	public boolean modifyModuleToXml(String schedules, String filename) throws JSONException{
+		File moduleModelFile = new File(rootPath+"/"+filename);
+		SAXReader saxReader = new SAXReader();
+		try {
+			Document document = saxReader.read(moduleModelFile);
+			List<Element> windowsEles = document.selectNodes("//Schedule/Window");
+			if(windowsEles.size() > 0)
+			{
+				Element scheduleEle = windowsEles.get(0).getParent();
+				for(Element e : windowsEles){
+					scheduleEle.remove(e);
+				}
+			}
+			
+			List<Element> scheduleEles = document.selectNodes("//Schedule");
+			if(scheduleEles.size()>0){	
+				Element scheduleEle = scheduleEles.get(0);
+				JSONArray winJsonArray = new JSONArray(schedules);
+				for(int i=0; i<winJsonArray.length(); i++){
+					Element winEle = scheduleEle.addElement("Window");
+					winEle.addAttribute("PartitionNameRef", winJsonArray.getJSONObject(i).getString("partition"));
+					winEle.addAttribute("Duration", winJsonArray.getJSONObject(i).getString("duration"));
+					winEle.addAttribute("ReleasePoint", winJsonArray.getJSONObject(i).getString("releasePoint"));
+				}
+			}
+			BufferedWriter bw = new BufferedWriter(new FileWriter(moduleModelFile));
+			XMLWriter out = null;
+			OutputFormat format = OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        out = new XMLWriter(bw, format);
+	        out.write(document);
+	        bw.close();
+	        return true;
+			
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		
 	}
 	
 	public boolean saveByXml(String xml, String filename){

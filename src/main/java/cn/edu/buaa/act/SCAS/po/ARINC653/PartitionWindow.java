@@ -4,7 +4,7 @@ public class PartitionWindow {
 	private int id;
 	private String partName;
 	private double duration;
-	private double releasePoint;
+	private int releasePoint;
 	
 	public int getId() {
 		return id;
@@ -30,11 +30,11 @@ public class PartitionWindow {
 		this.duration = duration;
 	}
 
-	public double getReleasePoint() {
+	public int getReleasePoint() {
 		return releasePoint;
 	}
 
-	public void setReleasePoint(double releasePoint) {
+	public void setReleasePoint(int releasePoint) {
 		this.releasePoint = releasePoint;
 	}
 }

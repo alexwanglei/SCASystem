@@ -385,10 +385,20 @@ public class IndexController {
 		
 		ModelAndView mav = new ModelAndView("module");
 		Module module = fileManageService.getModule(filename);
+		
+		StringBuffer partitionNames = new StringBuffer();
+		for(Partition p : module.getPartitions()){
+			partitionNames.append("{partition:'"+p.getName()+"',partitionName:'"+p.getName()+"'},");
+		}
+		partitionNames.append("{partition:'spare',partitionName:'spare'}");
+		
+		String val = "field:'partition',width:100,formatter:function(value,row){return row.partitionName;},editor:{type:'combobox',options:{valueField:'partition',textField:'partitionName',data:["+partitionNames+"]}}";
+		logger.info(val);
+		
 		mav.addObject("module", module);
+		mav.addObject("value",val);
 		
 		mav.addObject("filename", "\""+filename+"\"");
-//		response.getWriter().println("hello");
 		return mav;
 	}
 	
@@ -694,7 +704,33 @@ public class IndexController {
 		
 	}
 	
-	
+	@RequestMapping(value="/completeModule",method=RequestMethod.POST)
+	public ModelAndView completeModule(HttpServletRequest request, HttpServletResponse response) throws JSONException, DocumentException{
+		String filename = request.getParameter("filename");
+		String schedules = request.getParameter("schedule");
+		logger.info(filename);
+		logger.info(schedules);
+		
+		//修改模块模型文件
+		fileManageService.modifyModuleToXml(schedules,filename);
+		ModelAndView mav = new ModelAndView("module");
+		Module module = fileManageService.getModule(filename);
+		
+		StringBuffer partitionNames = new StringBuffer();
+		for(Partition p : module.getPartitions()){
+			partitionNames.append("{partition:'"+p.getName()+"',partitionName:'"+p.getName()+"'},");
+		}
+		partitionNames.append("{partition:'spare',partitionName:'spare'}");
+		
+		String val = "field:'partition',width:100,formatter:function(value,row){return row.partitionName;},editor:{type:'combobox',options:{valueField:'partition',textField:'partitionName',data:["+partitionNames+"]}}";
+		logger.info(val);
+		
+		mav.addObject("module", module);
+		mav.addObject("value",val);
+		
+		mav.addObject("filename", "\""+filename+"\"");
+		return mav;
+	}
 	
 	/**
 	 * @Description 打开C文件
