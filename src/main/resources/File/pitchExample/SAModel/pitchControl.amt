@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="4" Name="pitchControl">
+  <Stack>400</Stack>
+  <Priorty>200</Priorty>
+  <Period>2.0</Period>
+  <TimeCapacity>2.0</TimeCapacity>
+  <Deadline>SOFT</Deadline>
+  <TaskInputs>
+    <IO Id="1" ConceptName="pitch command" DataType="double" Type="InterPartition" Connect="queuePort_1d"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="2" ConceptName="pitch control" DataType="double" Type="InterPartition" Connect="queuePort_2s"/>
+  </TaskOutputs>
+</SATask>

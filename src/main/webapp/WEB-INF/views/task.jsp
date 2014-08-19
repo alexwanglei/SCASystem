@@ -56,8 +56,8 @@
 						<td>Deadline:</td>
 						<td>
 							<select class="easyui-combobox" name="deadline">
-								<option value="soft" selected="selected">SOFT</option>
-								<option value="hard">HARD</option>
+								<option value="SOFT" selected="selected">SOFT</option>
+								<option value="HARD">HARD</option>
 							</select>
 						</td>
 					</tr>

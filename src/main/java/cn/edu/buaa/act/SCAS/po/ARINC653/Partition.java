@@ -76,6 +76,11 @@ public class Partition {
 			code.append(p.CreateProcess(i));
 			i++;
 		}
+		//启动进程
+		for(Process p : this.processes)
+		{
+			code.append(p.StartProcess());
+		}
 		//设置分区模式为normal
 		code.append("	SET_PARTITION_MODE (NORMAL, &retCode);\n" +
 				"	CHECK_CODE (\"SET_PARTITION_MODE\", retCode);\n" +

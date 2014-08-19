@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAModule Id="1" Name="module">
+  <SAPartitions>
+    <include href="flightManagement.amp"/>
+    <include href="flightControl.amp"/>
+  </SAPartitions>
+  <InterCommunications>
+    <Communication SrcPart="flightManagement" DstPart="flightControl" SrcPort="queuePort_1s" DstPort="queuePort_1d" Mode="queue">pitch command</Communication>
+  </InterCommunications>
+  <DaCommunications>
+    <Communication SrcPart="flightControl" DstPart="flightControl" SrcPort="queuePort_2s" DstPort="directAccessPort_1" Mode="queue">pitch control</Communication>
+  </DaCommunications>
+  <Schedule/>
+</SAModule>

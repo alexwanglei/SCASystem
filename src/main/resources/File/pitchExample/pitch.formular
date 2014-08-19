@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Formulas>
+	<Formula Id="1" Name="pitch demand calculation">
+		<Result Name="pitch demand" Type="double"/>
+	</Formula>
+	<Formula Id="2" Name="state calculation">
+		<Result Name="state" Type="double"/>
+	</Formula>
+	<Formula Id="3" Name="pitch command calculation">
+		<Variable Name="pitch demand" Type="double"/>
+		<Variable Name="state" Type="double"/>
+		<Result Name="pitch command" Type="double"/>
+	</Formula>
+	<Formula Id="4" Name="pitch control calculation">
+		<Variable Name="pitch command" Type="double"/>
+		<Result Name="pitch control" Type="double"/>
+	</Formula>
+</Formulas>

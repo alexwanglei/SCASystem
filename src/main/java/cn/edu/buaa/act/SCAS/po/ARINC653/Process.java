@@ -120,7 +120,7 @@ public class Process {
 	
 	public String StartProcess(){
 		StringBuffer code = new StringBuffer();
-		code.append("	START ("+this.id+", &retCode);\n");
+		code.append("	START (process_"+this.id+", &retCode);\n");
 		code.append("	if(retCode != NO_ERROR)\n" +
 				"		printf(\"START: can't start process "+this.name + " %s)\\n\",codeToStr(retCode));\n");
 		return code.toString();
@@ -144,12 +144,12 @@ public class Process {
 		for(IOput o : this.outputs){
 			code.append("	"+o.getDataType()+ " "+o.getConceptName().replaceAll(" ", "")+"=0;\n");
 			int sn = o.getId();
-			code.append("	int lenMsgData"+ sn + "= sizeof("+o.getConceptName()+");\n");
+			code.append("	int lenMsgData"+ sn + "= sizeof("+o.getConceptName().replaceAll(" ", "")+");\n");
 		}
 		
 		//判断任务是否为周期任务
 		if(this.period!=0){
-			code.append(" FOREVER\n" +
+			code.append("    FOREVER\n" +
 					"	{\n" +
 					"		PERIODIC_WAIT (&retCode);\n" +
 					"		CHECK_CODE (\"PERIODIC_WAIT\", retCode);\n");	
@@ -167,7 +167,24 @@ public class Process {
 			}
 	
 			//打印接受的数据
-			code.append("		printf(\""+this.name+" "+i.getType()+" receive %d\\n\","+i.getConceptName().replaceAll(" ", "")+");\n");
+			//根据数据类型调整打印格式%d, %f
+			String conceptName = i.getConceptName().replaceAll(" ", "");
+			if(i.getType()!=null&&(i.getType().equals("InterPartition")))
+			{
+				code.append("		printf(\""+this.name+" receive "+conceptName+"=%f from the "+i.getPort().getName()+"\\n\","+conceptName+");\n");
+				
+			}
+			else if(i.getType()!=null&&(i.getType().equals("IntraPartition")))
+			{
+				if(i.getMsgContainer() instanceof Buffer)
+				{
+					code.append("		printf(\""+this.name+" receive "+conceptName+"=%f from the "+i.getMsgContainer().getName()+"\\n\","+conceptName+");\n");
+				}
+				else if(i.getMsgContainer() instanceof Blackboard)
+				{
+					code.append("		printf(\""+this.name+" read "+conceptName+"=%f from the "+i.getMsgContainer().getName()+"\\n\","+conceptName+");\n");
+				}
+			}
 		}
 		
 		//生成任务发送队列和采样消息
@@ -185,12 +202,29 @@ public class Process {
 
 			
 			//打印发送的数据
-			code.append("		printf(\""+this.name+" "+o.getType()+" send %d\\n\","+o.getConceptName().replaceAll(" ", "")+"++);\n");
+			//根据数据类型调整打印格式%d, %f
+			String conceptName = o.getConceptName().replaceAll(" ", "");
+			if(o.getType()!=null&&(o.getType().equals("InterPartition")))
+			{
+				code.append("		printf(\""+this.name+" send "+conceptName+"=%f to the "+o.getPort().getName()+"\\n\","+conceptName+");\n");
+				
+			}
+			else if(o.getType()!=null&&(o.getType().equals("IntraPartition")))
+			{
+				if(o.getMsgContainer() instanceof Buffer)
+				{
+					code.append("		printf(\""+this.name+" send "+conceptName+"=%f to the "+o.getMsgContainer().getName()+"\\n\","+conceptName+");\n");
+				}
+				else if(o.getMsgContainer() instanceof Blackboard)
+				{
+					code.append("		printf(\""+this.name+" display "+conceptName+"=%f on the "+o.getMsgContainer().getName()+"\\n\","+conceptName+");\n");
+				}
+			}
 		}
 		
 		//判断任务是否为周期任务
 		if(this.period!=0){
-			code.append("	}\n}");
+			code.append("	}\n");
 		}
 		code.append("}\n");
 		return code.toString();

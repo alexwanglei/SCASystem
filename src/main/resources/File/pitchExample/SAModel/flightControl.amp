@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAPartition Id="2" Name="flightControl"> 
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">  
+    <include href="pitchControl.amt"/> 
+  </SATasks>  
+  <IntraCommunications/>  
+  <MessageContainers/>  
+  <ApplicationPorts> 
+    <QueuePort Id="1" Name="queuePort_1d" Direction="DESTINATION" MessageSize="1024" QueueLength="10" Protocol="NOT_APPLICABLE" Discipline="FIFO"/>  
+    <QueuePort Id="2" Name="queuePort_2s" Direction="SOURCE" MessageSize="1024" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/> 
+  </ApplicationPorts>  
+  <PartitionPorts> 
+    <QueuePort Id="1" Name="directAccessPort_1" Direction="DESTINATION" MessageSize="1024" QueueLength="10" Protocol="NOT_APPLICABLE" Discipline="FIFO"/> 
+  </PartitionPorts> 
+</SAPartition>

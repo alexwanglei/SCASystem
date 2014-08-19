@@ -26,7 +26,15 @@
 			<pre id="editor"></pre>
 		</div>
 		<div title="design">
-			
+			<table id="schedule" class="easyui-datagrid" title="Partition Schedule configuration" data-options="rownumbers:true,fitColumns:true,singleSelect:true,toolbar:toolbar">
+				<thead>
+					<tr>
+						<th data-options="field:'partition',width:100">Partition</th>
+						<th data-options="field:'duration',width:50">Duration</th>
+						<th data-options="field:'releasePoint',width:50">Release Point</th>
+					</tr>
+				</thead>
+			</table>
 		</div>
 	</div>
 	<div id="tab-tools">
@@ -39,6 +47,25 @@
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${module.xmlModule});
+	
+	var toolbar=[{
+		text:'Add',
+		iconCls:'icon-add',
+		handler:function(){
+			alert("add");
+			$('#schedule').datagrid('appendRow',{
+				partition:'',
+				duration: '',
+				releasePoint:''
+			});
+		}
+	},{
+		text:'Delete',
+		iconCls:'icon-remove',
+		handler:function(){
+			alert("del");
+		}
+	}]
 	
 	function save(){
 		var tab = $('#subtt').tabs('getSelected');

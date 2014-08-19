@@ -9,7 +9,9 @@ public class SamplePort extends Port{
 		StringBuffer code = new StringBuffer();
 		code.append("	CREATE_SAMPLING_PORT (\""+super.getName() + "\", "+ super.getMessageSize()+ ", "+super.getDirection()+", (SYSTEM_TIME_TYPE)"+(long)(this.refreshPeriod*(long)1000000000)+"ll, &samplePort_"+super.getId() +", &retCode);\n");
 		code.append("	if(retCode != NO_ERROR)\n" +
-				"		printf(\"CREATE_SAMPLING_PORT: can't create "+super.getName()+" (%s)\\n\", codeToStr(retCode));\n");
+				"		printf(\"CREATE_SAMPLING_PORT: can't create "+super.getName()+" (%s)\\n\", codeToStr(retCode));\n"+
+				"	else\n" +
+				"		printf (\"CREATE_SAMPLING_PORT: "+super.getName()+" created\\n\");\n");
 		return code.toString();
 	}
 	public String genLocalID(){

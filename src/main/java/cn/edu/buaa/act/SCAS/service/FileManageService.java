@@ -583,7 +583,7 @@ public class FileManageService {
 			Element ioEle = taskInputsEle.addElement("IO");
 			ioEle.addAttribute("Id", Integer.toString(in.getId()));
 			ioEle.addAttribute("ConceptName", in.getConceptName());
-			ioEle.addAttribute("Datatype", in.getDataType());
+			ioEle.addAttribute("DataType", in.getDataType());
 			ioEle.addAttribute("Type", in.getType());
 			ioEle.addAttribute("Connect", in.getConnect());
 		

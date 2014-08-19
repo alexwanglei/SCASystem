@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAPartition Id="1" Name="flightManagement"> 
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">  
+    <include href="pitchDemand.amt"/>  
+    <include href="stateIndicate.amt"/>  
+    <include href="pitchCommand.amt"/> 
+  </SATasks>  
+  <IntraCommunications> 
+    <Communication SrcTask="pitchDemand" DstTask="pitchCommand" MessageContainerId="1">pitch demand</Communication>  
+    <Communication SrcTask="stateIndicate" DstTask="pitchCommand" MessageContainerId="2">state</Communication> 
+  </IntraCommunications>  
+  <MessageContainers> 
+    <MessageContainer Id="1"> 
+      <Buffer Name="buffer_1" MessageSize="512" BufferLength="5" Discipline="FIFO"/> 
+    </MessageContainer>  
+    <MessageContainer Id="2"> 
+      <Blackboard Name="blackboard_2" MessageSize="1024"/> 
+    </MessageContainer> 
+  </MessageContainers>  
+  <ApplicationPorts> 
+    <QueuePort Id="1" Name="queuePort_1s" Direction="SOURCE" MessageSize="1024" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/> 
+  </ApplicationPorts>  
+  <PartitionPorts/> 
+</SAPartition>

@@ -11,7 +11,9 @@ public class QueuePort extends Port{
 		StringBuffer code = new StringBuffer();
 		code.append("	CREATE_QUEUING_PORT (\""+super.getName() + "\", "+super.getMessageSize()+", "+this.queueLength+", "+super.getDirection()+", "+this.discipline+", &queuePort_"+super.getId()+", &retCode );\n");
 		code.append("	if(retCode != NO_ERROR)\n" +
-				"		printf(\"CREATE_QUEUING_PORT: can't create "+super.getName()+" (%s)\\n\", codeToStr(retCode));\n");
+				"		printf(\"CREATE_QUEUING_PORT: can't create "+super.getName()+" (%s)\\n\", codeToStr(retCode));\n" +
+				"	else\n" +
+				"		printf (\"CREATE_QUEUING_PORT: "+super.getName()+" created\\n\");\n");
 		return code.toString();
 	}
 	public String genLocalID(){

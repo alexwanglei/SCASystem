@@ -9,11 +9,11 @@ public class Buffer extends MsgContainer{
 	
 	public String createMsgContainer(){
 		StringBuffer code = new StringBuffer();
-		code.append("	CREATE_BUFFER ("+super.getName()+"\", "+super.getMessageSize()+", "+this.bufferLength+", "+this.discipline+", &buffer_"+super.getId()+", &retCode);\n");
+		code.append("	CREATE_BUFFER (\""+super.getName()+"\", "+super.getMessageSize()+", "+this.bufferLength+", "+this.discipline+", &buffer_"+super.getId()+", &retCode);\n");
 		code.append("	if (retCode != NO_ERROR)\n" +
 				"		printf (\"CREATE_BUFFER: can't create a buffer (%s)\\n\", codeToStr(retCode));\n" +
 				"	else\n" +
-				"		printf (\"CREATE_BUFFER: buffer created\\n\");\n");
+				"		printf (\"CREATE_BUFFER: "+super.getName()+" created\\n\");\n");
 		return code.toString();
 	}
 	
@@ -30,7 +30,7 @@ public class Buffer extends MsgContainer{
 	
 	public String sendContainerMsg(IOput o, int n){
 		StringBuffer code = new StringBuffer();
-		code.append("		SEND_BUFFER(buffer_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getConceptName().replaceAll(" ", "")+", &lenMsgData"+n+",  INFINITE_TIME_VALUE, &retCode);\n" +
+		code.append("		SEND_BUFFER(buffer_"+super.getId()+", (MESSAGE_ADDR_TYPE)&"+o.getConceptName().replaceAll(" ", "")+", lenMsgData"+n+",  INFINITE_TIME_VALUE, &retCode);\n" +
 		"		CHECK_CODE (\"SEND_BUFFER\", retCode);\n");
 		return code.toString();
 	}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="1" Name="pitchDemand">
+  <Stack>400</Stack>
+  <Priorty>200</Priorty>
+  <Period>1.0</Period>
+  <TimeCapacity>1.0</TimeCapacity>
+  <Deadline>SOFT</Deadline>
+  <TaskInputs/>
+  <TaskOutputs>
+    <IO Id="1" ConceptName="pitch demand" DataType="double" Type="IntraPartition" Connect="buffer_1"/>
+  </TaskOutputs>
+</SATask>

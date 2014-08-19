@@ -29,8 +29,14 @@ public class Formula {
 			this.vars.add(variable);
 		}
 		Element resultEle = e.element("Result");
-		Variable result = new Variable(resultEle);
-		this.result = result;
+		if(resultEle != null){
+			Variable result = new Variable(resultEle);
+			this.result = result;
+		}
+		else{
+			this.result = null;
+		}
+		
 	}
 	public int getId() {
 		return id;

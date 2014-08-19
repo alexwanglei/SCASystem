@@ -127,7 +127,7 @@ public class ModelGenerationService {
 					if(type.equals("sample")){
 						Element samplePortEle = portsEle.addElement("SamplePort");
 						samplePortEle.addAttribute("Id", Integer.toString(portId));
-						String samplePortName = "samplePort_"+portId++;
+						String samplePortName = "samplePort_"+portId++ +"d";
 						samplePortEle.addAttribute("Name", samplePortName);
 						samplePortEle.addAttribute("Direction", "DESTINATION");
 						samplePortEle.addAttribute("MessageSize", "");
@@ -141,7 +141,7 @@ public class ModelGenerationService {
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
 						queuePortEle.addAttribute("Id", Integer.toString(portId));
-						String queuePortName = "queuePort_"+portId++;
+						String queuePortName = "queuePort_"+portId++ +"d";
 						queuePortEle.addAttribute("Name", queuePortName);
 						queuePortEle.addAttribute("Direction", "DESTINATION");
 						queuePortEle.addAttribute("MessageSize", "");
@@ -165,7 +165,7 @@ public class ModelGenerationService {
 					if(type.equals("sample")){
 						Element samplePortEle = portsEle.addElement("SamplePort");
 						samplePortEle.addAttribute("Id", Integer.toString(portId));
-						String samplePortName = "samplePort_"+portId++;
+						String samplePortName = "samplePort_"+portId++ +"s";
 						samplePortEle.addAttribute("Name", samplePortName);
 						samplePortEle.addAttribute("Direction", "SOURCE");
 						samplePortEle.addAttribute("MessageSize", "");
@@ -179,7 +179,7 @@ public class ModelGenerationService {
 					else if(type.equals("queue")){
 						Element queuePortEle = portsEle.addElement("QueuePort");
 						queuePortEle.addAttribute("Id", Integer.toString(portId));
-						String queuePortName = "queuePort_"+portId++;
+						String queuePortName = "queuePort_"+portId++ + "s";
 						queuePortEle.addAttribute("Name", queuePortName);
 						queuePortEle.addAttribute("Direction", "SOURCE");
 						queuePortEle.addAttribute("MessageSize", "");
@@ -253,7 +253,7 @@ public class ModelGenerationService {
 					Element ioEle = taskInputsEle.addElement("IO");
 					ioEle.addAttribute("Id", Integer.toString(ioId++));
 					ioEle.addAttribute("ConceptName", var.getName());
-					ioEle.addAttribute("Datatype", var.getType());
+					ioEle.addAttribute("DataType", var.getType());
 					
 					if(app.getIOMcNameMap().get(var)!=null){
 						ioEle.addAttribute("Type", "IntraPartition");

@@ -10,7 +10,7 @@ public class Blackboard extends MsgContainer{
 		code.append("	if (retCode != NO_ERROR)\n" +
 				"		printf (\"CREATE_BLACKBOARD: can't create a blackboard (%s)\\n\", codeToStr(retCode));\n" +
 				"	else\n" +
-				"		printf (\"CREATE_BLACKBOARD: blackboard created\\n\");\n");
+				"		printf (\"CREATE_BLACKBOARD: "+super.getName()+" created\\n\");\n");
 		return code.toString();
 	}
 	
