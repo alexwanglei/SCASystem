@@ -17,7 +17,9 @@
     <MessageContainer Id="2"> 
       <Blackboard Name="blackboard_2" MessageSize="1024"/> 
     </MessageContainer> 
-  </MessageContainers>  
+  </MessageContainers>
+  <Semaphores/>
+  <Events/>
   <ApplicationPorts> 
     <QueuePort Id="1" Name="queuePort_1s" Direction="SOURCE" MessageSize="1024" QueueLength="10" Protocol="SENDER_BLOCK" Discipline="FIFO"/> 
   </ApplicationPorts>  

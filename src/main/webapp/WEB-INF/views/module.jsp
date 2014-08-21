@@ -53,6 +53,7 @@
         		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">Remove</a>
         		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">Accept</a>
 			</div>
+			
 		</div>
 	</div>
 	<div id="tab-tools">
@@ -65,6 +66,9 @@
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${module.xmlModule});
+	
+
+	
 	
 	var editIndex = undefined;
     function endEditing(){

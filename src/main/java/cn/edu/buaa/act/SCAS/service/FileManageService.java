@@ -73,6 +73,8 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
@@ -91,6 +93,7 @@ import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
 import cn.edu.buaa.act.SCAS.po.ARINC653.MsgContainer;
 import cn.edu.buaa.act.SCAS.po.ARINC653.QueuePort;
 import cn.edu.buaa.act.SCAS.po.ARINC653.SamplePort;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Semaphore;
 
 @Service
 public class FileManageService {
@@ -394,6 +397,10 @@ public class FileManageService {
 			partition.getIntraComs().add(intraPartitionCom);
 		}
 		
+		
+		
+		
+		
 		//处理应用端口元素
 		HashMap<String,Port> portMap = new HashMap<String,Port>();
 		List<Element> portList = root.element("ApplicationPorts").elements();
@@ -488,7 +495,32 @@ public class FileManageService {
 			partition.getProcesses().add(process);
 		}
 		
-		
+		//处理信号量
+		HashMap<String,Process> processMap = new HashMap<String,Process>();
+		for(Process p : partition.getProcesses()){
+			processMap.put(p.getName(), p);
+		}
+		List<Element> semaphoreList = root.element("Semaphores").elements("Semaphore");
+		for(Element e : semaphoreList){
+			Semaphore semaphore = new Semaphore();
+			semaphore.setId(Integer.parseInt(e.attributeValue("Id")));
+			semaphore.setName(e.attributeValue("Name"));
+			semaphore.setCurrentValue(Integer.parseInt(e.attributeValue("CurrentValue")));
+			semaphore.setMaxValue(Integer.parseInt(e.attributeValue("MaxValue")));
+			semaphore.setQueuingDiscipline(e.attributeValue("QueuingDiscipline"));
+			logger.info(e.attributeValue("QueuingDiscipline"));
+			partition.getSemaphores().add(semaphore);
+			List<Element> ctaskList = e.elements("CorrelativeTask");
+			for(Element ctaskEle : ctaskList){
+				Process p = processMap.get(ctaskEle.attributeValue("NameRef"));
+				if(p!=null){
+					p.getSemaphores().add(semaphore);
+				}
+				else{
+					logger.info("Process "+ctaskEle.attributeValue("NameRef") + "can not find!");
+				}
+			}
+		}
 		
 		return partition;
 	}
@@ -617,7 +649,7 @@ public class FileManageService {
 		}
 	}
 	
-	public boolean modifyPartitionToXml(HttpServletRequest request,String filename){
+	public boolean modifyPartitionToXml(HttpServletRequest request,String filename) throws JSONException{
 		
 
 		String[] bbMessageSize = request.getParameterValues("bbMessageSize");
@@ -641,6 +673,8 @@ public class FileManageService {
 		String[] daQpQueueLength = request.getParameterValues("daQpQueueLength"); 
 		String[] daQpProtocol = request.getParameterValues("daQpProtocol"); 
 		String[] daQpDiscipline = request.getParameterValues("daQpDiscipline");
+		
+		String semaphores = request.getParameter("semaphores");
 		
 		File partitionModelFile = new File(rootPath+"/"+filename);
 		
@@ -666,6 +700,28 @@ public class FileManageService {
 				Attribute discipline = buffer.attribute("Discipline");
 				discipline.setValue(bfDiscipline[i]);
 			}
+			
+			//补充信号量
+			List<Element> semaphoreEles = document.selectNodes("//Semaphores");
+			if(semaphoreEles.size() == 1){
+				Element semaphoresEle = semaphoreEles.get(0);
+				JSONArray semaphoreJsonArray = new JSONArray(semaphores);
+				for(int i=0; i<semaphoreJsonArray.length(); i++){
+					JSONObject semaphoreJO = semaphoreJsonArray.getJSONObject(i);
+					Element semaphoreEle = semaphoresEle.addElement("Semaphore");
+					semaphoreEle.addAttribute("Id", Integer.toString(i+1));
+					semaphoreEle.addAttribute("Name", semaphoreJO.getString("name"));
+					semaphoreEle.addAttribute("CurrentValue", semaphoreJO.getString("currentValue"));
+					semaphoreEle.addAttribute("MaxValue", semaphoreJO.getString("maxValue"));
+					semaphoreEle.addAttribute("QueuingDiscipline", semaphoreJO.getString("queuingDiscipline"));
+					String[] processNames = semaphoreJO.getString("processes").split(",");
+					for(int j=0; j<processNames.length; j++){
+						Element procEle = semaphoreEle.addElement("CorrelativeTask");
+						procEle.addAttribute("NameRef", processNames[j]);
+					}
+				}
+			}
+			
 			
 			//补充采样端口的属性
 			List<Element> sampleEles = document.selectNodes("//ApplicationPorts/SamplePort");

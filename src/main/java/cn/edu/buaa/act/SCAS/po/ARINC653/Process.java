@@ -29,6 +29,8 @@ public class Process {
 	
 	private ArrayList<IOput> inputs = new  ArrayList<IOput>();
 	private ArrayList<IOput> outputs = new  ArrayList<IOput>();
+	
+	private ArrayList<Semaphore> semaphores = new ArrayList<Semaphore>();
 
 	public int getId() {
 		return id;
@@ -187,6 +189,18 @@ public class Process {
 			}
 		}
 		
+		//生成等待信号量
+		for(Semaphore sem : this.semaphores){
+			code.append(sem.waitSemaphore());
+			code.append("		/*\n"
+					+ "			critical zone\n"
+					+ "			access the critical resource\n"
+					+ "		*/\n");
+			code.append(sem.signalSemaphore());
+		}
+		
+		
+		
 		//生成任务发送队列和采样消息
 		for(IOput o: this.outputs)
 		{		
@@ -269,6 +283,14 @@ public class Process {
 		}
 		
 		return doc.asXML();
+	}
+
+	public ArrayList<Semaphore> getSemaphores() {
+		return semaphores;
+	}
+
+	public void setSemaphores(ArrayList<Semaphore> semaphores) {
+		this.semaphores = semaphores;
 	}
 	
 	

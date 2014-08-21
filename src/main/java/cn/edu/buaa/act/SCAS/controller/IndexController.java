@@ -430,8 +430,8 @@ public class IndexController {
 				buffers.add((Buffer)intraCom.getMsgContainer());
 			}
 		}
-		logger.info("黑板："+blackboards.size());
-		logger.info("缓冲区:"+buffers.size());
+//		logger.info("黑板："+blackboards.size());
+//		logger.info("缓冲区:"+buffers.size());
 		
 		ArrayList<SamplePort> appSamplePorts = new ArrayList<SamplePort>();
 		ArrayList<QueuePort> appQueuePorts = new ArrayList<QueuePort>();
@@ -443,8 +443,8 @@ public class IndexController {
 				appQueuePorts.add((QueuePort)port);
 			}
 		}
-		logger.info("采样："+appSamplePorts.size());
-		logger.info("队列:"+appQueuePorts.size());
+//		logger.info("采样："+appSamplePorts.size());
+//		logger.info("队列:"+appQueuePorts.size());
 		
 		ArrayList<SamplePort> daSamplePorts = new ArrayList<SamplePort>();
 		ArrayList<QueuePort> daQueuePorts = new ArrayList<QueuePort>();
@@ -456,9 +456,17 @@ public class IndexController {
 				daQueuePorts.add((QueuePort)port);
 			}
 		}
-		logger.info("采样："+daSamplePorts.size());
-		logger.info("队列:"+daQueuePorts.size());
+//		logger.info("采样："+daSamplePorts.size());
+//		logger.info("队列:"+daQueuePorts.size());
 		
+		//生成为信号量选择进程的的combobox
+		StringBuffer processNames = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			processNames.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
+		}
+		
+		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+processNames.substring(0, processNames.length()-1)+"]}}";
+		logger.info(val);
 		
 		mav.addObject("partitionXml", partition.getXmlPartition());
 		mav.addObject("blackboards",blackboards);
@@ -467,6 +475,7 @@ public class IndexController {
 		mav.addObject("appQueuePorts",appQueuePorts);
 		mav.addObject("daSamplePorts",daSamplePorts);
 		mav.addObject("daQueuePorts",daQueuePorts);
+		mav.addObject("value",val);
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");
 		return mav;
@@ -640,8 +649,11 @@ public class IndexController {
 	}
 	
 	@RequestMapping(value = "/completePartition", method=RequestMethod.POST)
-	public ModelAndView completePartition(HttpServletRequest request, HttpServletResponse response) throws DocumentException{
+	public ModelAndView completePartition(HttpServletRequest request, HttpServletResponse response) throws DocumentException, JSONException{
 		String filename = request.getParameter("filename");
+		String semaphores = request.getParameter("semaphores");
+		logger.info(filename);
+		logger.info(semaphores);
 		
 		ModelAndView mav = new ModelAndView("partition");
 
@@ -690,7 +702,14 @@ public class IndexController {
 //		logger.info("采样："+daSamplePorts.size());
 //		logger.info("队列:"+daQueuePorts.size());
 		
+		//生成为信号量选择进程的的combobox
+		StringBuffer processNames = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			processNames.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
+		}
 		
+		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+processNames.substring(0, processNames.length()-1)+"]}}";
+	
 		mav.addObject("partitionXml", partition.getXmlPartition());
 		mav.addObject("blackboards",blackboards);
 		mav.addObject("buffers", buffers);
@@ -698,6 +717,7 @@ public class IndexController {
 		mav.addObject("appQueuePorts",appQueuePorts);
 		mav.addObject("daSamplePorts",daSamplePorts);
 		mav.addObject("daQueuePorts",daQueuePorts);
+		mav.addObject("value",val);
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");
 		return mav;

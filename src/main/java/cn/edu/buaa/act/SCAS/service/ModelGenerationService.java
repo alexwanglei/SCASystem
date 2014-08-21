@@ -115,6 +115,11 @@ public class ModelGenerationService {
 					app.getIOMcNameMap().put(tc.getVariable(), blackboardName);
 				}
 			}
+			//生成信号量
+			root.addElement("Semaphores");
+			
+			//生成事件
+			root.addElement("Events");
 			
 			//生成应用端口
 			ArrayList<DirectAccessPort> appDaPortList = new ArrayList<DirectAccessPort>();

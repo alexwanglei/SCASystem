@@ -17,6 +17,8 @@ public class Partition {
 	
 	private ArrayList<IntraPartitionCom> intraComs = new ArrayList<IntraPartitionCom>();
 	
+	private ArrayList<Semaphore> semaphores = new ArrayList<Semaphore>();
+	
 	private int MemorySizeBss = 0x1000;
 	private int MemorySizeData= 0x1000;
 	private int MemorySizePersistentBss = 0x1000;
@@ -69,6 +71,13 @@ public class Partition {
 		{
 			code.append(ipc.getMsgContainer().createMsgContainer());
 		}
+		
+		//创建信号量
+		for(Semaphore sem : this.semaphores)
+		{
+			code.append(sem.createSemaphore());
+		}
+		
 		//创建进程
 		int i =0;
 		for(Process p : this.processes)
@@ -125,6 +134,13 @@ public class Partition {
 		{
 			code.append(ipc.getMsgContainer().genLocalId());
 		}
+		
+		//信号量
+		for(Semaphore sem : this.semaphores){
+			code.append(sem.genLocalId());
+		}
+		
+		
 		//进程ID
 		for(Process p: this.processes)
 		{
@@ -191,5 +207,11 @@ public class Partition {
 	}
 	public void setDaPorts(ArrayList<Port> daPorts) {
 		this.daPorts = daPorts;
+	}
+	public ArrayList<Semaphore> getSemaphores() {
+		return semaphores;
+	}
+	public void setSemaphores(ArrayList<Semaphore> semaphores) {
+		this.semaphores = semaphores;
 	}
 }

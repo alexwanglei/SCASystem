@@ -281,6 +281,38 @@
 					</tbody>
 				</table>
 			</div>
+			
+			<div>
+				<table id="semaphore" class="easyui-datagrid" title="Semaphore in partition" data-options="rownumbers:true,fitColumns:true,iconCls:'icon-edit',singleSelect:true,toolbar:'#tb',onClickRow:onClickRow">
+					<thead>
+						<tr>
+							<th data-options="field:'name',width:50,editor:'text'">Name</th>
+							<th data-options="field:'currentValue',width:50,editor:'numberbox'">Current Value</th>
+							<th data-options="field:'maxValue',width:50,editor:'numberbox'">Max Value</th>
+							<th data-options="field:'queuingDiscipline',width:50,
+									formatter:function(value,row){
+										return row.qdvalue;
+									},
+									editor:{
+										type:'combobox',
+										options:{
+											valueField:'qdlabel',
+											textField:'qdvalue',
+											data:[{qdlabel:'FIFO',qdvalue:'FIFO'},{qdlabel:'PRIORITY',qdvalue:'PRIORITY'}]
+										}
+									}
+								">Queuing Discipline</th>
+							<th data-options="<c:out value="${value}"/>">Used Process</th>
+						</tr>
+					</thead>
+				</table>
+				<div id="tb" style="height:auto">
+					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append()">Append</a>
+	        		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit()">Remove</a>
+	        		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept()">Accept</a>
+				</div>
+			</div>
+			
 			</form>
 		</div>
 	</div>
@@ -294,6 +326,57 @@
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${partitionXml});
+	
+	var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#semaphore').datagrid('validateRow', editIndex)){
+            var ed = $('#semaphore').datagrid('getEditor', {index:editIndex,field:'processes'});
+            var processname = $(ed.target).combobox('getText');
+            $('#semaphore').datagrid('getRows')[editIndex]['value'] = processname;
+           
+            var ed2 = $('#semaphore').datagrid('getEditor', {index:editIndex,field:'queuingDiscipline'});
+            var queuingDiscipline = $(ed2.target).combobox('getText');
+            $('#semaphore').datagrid('getRows')[editIndex]['qdvalue'] = queuingDiscipline;
+            
+            $('#semaphore').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickRow(index){
+        if (editIndex != index){
+            if (endEditing()){
+                $('#semaphore').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                editIndex = index;
+            } else {
+                $('#semaphore').datagrid('selectRow', editIndex);
+            }
+        }
+    }
+    function append(){
+        if (endEditing()){
+            $('#semaphore').datagrid('appendRow',{});
+            editIndex = $('#semaphore').datagrid('getRows').length-1;
+            $('#semaphore').datagrid('selectRow', editIndex)
+                    .datagrid('beginEdit', editIndex);
+        }
+    }
+    function removeit(){
+        if (editIndex == undefined){return}
+        $('#semaphore').datagrid('cancelEdit', editIndex)
+                .datagrid('deleteRow', editIndex);
+        editIndex = undefined;
+    }
+    function accept(){
+        if (endEditing()){
+            $('#semaphore').datagrid('acceptChanges');
+        }
+    }
+	
 	
 	function save(){
 		var tab = $('#subtt').tabs('getSelected');
@@ -312,6 +395,10 @@
 			});
 		}
 		else{
+			var rows = $("#semaphore").datagrid('getRows');
+			alert(JSON.stringify(rows));
+			
+			$("#partition-form").append("<input type='hidden' name='semaphores' value='"+JSON.stringify(rows) +"'></input>");
 			$("#partition-form").submit();
 		}
 	}
