@@ -31,6 +31,12 @@ public class Process {
 	private ArrayList<IOput> outputs = new  ArrayList<IOput>();
 	
 	private ArrayList<Semaphore> semaphores = new ArrayList<Semaphore>();
+	
+	private ArrayList<Event> setEvents = new ArrayList<Event>();
+	
+	private ArrayList<Event> resetEvents = new ArrayList<Event>();
+	
+	private ArrayList<Event> waitEvents = new ArrayList<Event>();
 
 	public int getId() {
 		return id;
@@ -199,7 +205,31 @@ public class Process {
 			code.append(sem.signalSemaphore());
 		}
 		
+		//生成set event
+		for(Event evt : this.setEvents){
+			code.append("		/*\n"
+					+ "			process set event\n"
+					+ "		*/\n");
+			code.append(evt.setEvent());
+			
+		}
 		
+		//生成 reset event
+		for(Event evt : this.resetEvents){
+			code.append("		/*\n"
+					+ "			process reset event\n"
+					+ "		*/\n");
+			code.append(evt.resetEvent());
+			
+		}
+		
+		//生成wait event
+		for(Event evt : this.waitEvents){
+			code.append("		/*\n"
+					+ "			process wait event\n"
+					+ "		*/\n");
+			code.append(evt.waitEvent());
+		}
 		
 		//生成任务发送队列和采样消息
 		for(IOput o: this.outputs)
@@ -291,6 +321,30 @@ public class Process {
 
 	public void setSemaphores(ArrayList<Semaphore> semaphores) {
 		this.semaphores = semaphores;
+	}
+
+	public ArrayList<Event> getSetEvents() {
+		return setEvents;
+	}
+
+	public void setSetEvents(ArrayList<Event> setEvents) {
+		this.setEvents = setEvents;
+	}
+
+	public ArrayList<Event> getResetEvents() {
+		return resetEvents;
+	}
+
+	public void setResetEvents(ArrayList<Event> resetEvents) {
+		this.resetEvents = resetEvents;
+	}
+
+	public ArrayList<Event> getWaitEvents() {
+		return waitEvents;
+	}
+
+	public void setWaitEvents(ArrayList<Event> waitEvents) {
+		this.waitEvents = waitEvents;
 	}
 	
 	

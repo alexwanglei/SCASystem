@@ -1,5 +1,7 @@
 package cn.edu.buaa.act.SCAS.po.ARINC653;
 
+import java.util.ArrayList;
+
 public class Semaphore {
 	private int id;
 	
@@ -11,6 +13,7 @@ public class Semaphore {
 	
 	private String queuingDiscipline;
 
+	private ArrayList<String> processNames = new ArrayList<String>();
 	
 	public String genLocalId(){
 		return "LOCAL SEMAPHORE_ID_TYPE semaphore_"+this.id+";\n";
@@ -38,6 +41,16 @@ public class Semaphore {
 		code.append("		SIGNAL_SEMAPHORE (semaphore_"+this.getId()+", &retCode);\n"
 				+ "        CHECK_CODE (\"SIGNAL_SEMAPHORE\", retCode);\n");
 		return code.toString();
+	}
+	
+	public String getProcessNamesString(){
+		StringBuffer sb = new StringBuffer();
+		int i;
+		for(i=0; i<this.processNames.size()-1;i++){
+			sb.append(this.processNames.get(i)+",");
+		}
+		sb.append(this.processNames.get(i));
+		return sb.toString();		
 	}
 	
 	public int getId() {
@@ -78,6 +91,14 @@ public class Semaphore {
 
 	public void setQueuingDiscipline(String queuingDiscipline) {
 		this.queuingDiscipline = queuingDiscipline;
+	}
+
+	public ArrayList<String> getProcessNames() {
+		return processNames;
+	}
+
+	public void setProcessNames(ArrayList<String> processNames) {
+		this.processNames = processNames;
 	}
 
 

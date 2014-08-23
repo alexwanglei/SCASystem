@@ -75,6 +75,7 @@ import org.springframework.stereotype.Service;
 
 
 
+
 import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
 import cn.edu.buaa.act.SCAS.po.Task;
@@ -82,6 +83,7 @@ import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Channel;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Event;
 import cn.edu.buaa.act.SCAS.po.ARINC653.IOput;
 import cn.edu.buaa.act.SCAS.po.ARINC653.InterPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.IntraPartitionCom;
@@ -508,10 +510,11 @@ public class FileManageService {
 			semaphore.setCurrentValue(Integer.parseInt(e.attributeValue("CurrentValue")));
 			semaphore.setMaxValue(Integer.parseInt(e.attributeValue("MaxValue")));
 			semaphore.setQueuingDiscipline(e.attributeValue("QueuingDiscipline"));
-			logger.info(e.attributeValue("QueuingDiscipline"));
+			//logger.info(e.attributeValue("QueuingDiscipline"));
 			partition.getSemaphores().add(semaphore);
 			List<Element> ctaskList = e.elements("CorrelativeTask");
 			for(Element ctaskEle : ctaskList){
+				semaphore.getProcessNames().add(ctaskEle.attributeValue("NameRef"));
 				Process p = processMap.get(ctaskEle.attributeValue("NameRef"));
 				if(p!=null){
 					p.getSemaphores().add(semaphore);
@@ -520,6 +523,34 @@ public class FileManageService {
 					logger.info("Process "+ctaskEle.attributeValue("NameRef") + "can not find!");
 				}
 			}
+		}
+		
+		//处理事件
+		List<Element> eventList = root.element("Events").elements("Event");
+		for(Element e : eventList){
+			Event event = new Event();
+			event.setId(Integer.parseInt(e.attributeValue("Id")));
+			event.setName(e.attributeValue("Name"));
+			List<Element> setEventEles = e.elements("SetEvent");
+			if(setEventEles.size() == 1){
+				event.setSetEventProcess(setEventEles.get(0).getText());
+				processMap.get(event.getSetEventProcess()).getSetEvents().add(event);
+			}else{
+				logger.info("SetEvent Elememnt has error!");
+			}
+			List<Element> resetEventEles = e.elements("ResetEvent");
+			if(resetEventEles.size() == 1){
+				event.setResetEventProcess(resetEventEles.get(0).getText());
+				processMap.get(event.getResetEventProcess()).getResetEvents().add(event);
+			}else{
+				logger.info("ResetEvent Element has error!");
+			}
+			List<Element> waitEventEles = e.elements("WaitEvent");
+			for(Element we : waitEventEles){
+				event.getWaitEventProcesses().add(we.getText());
+				processMap.get(we.getText()).getWaitEvents().add(event);
+			}
+			partition.getEvents().add(event);
 		}
 		
 		return partition;
@@ -675,6 +706,9 @@ public class FileManageService {
 		String[] daQpDiscipline = request.getParameterValues("daQpDiscipline");
 		
 		String semaphores = request.getParameter("semaphores");
+		logger.info("complete partition model semaphores:"+semaphores);
+		String events = request.getParameter("events");
+		logger.info("complete partition model events:"+events);
 		
 		File partitionModelFile = new File(rootPath+"/"+filename);
 		
@@ -701,7 +735,16 @@ public class FileManageService {
 				discipline.setValue(bfDiscipline[i]);
 			}
 			
-			//补充信号量
+			//删除原来的信号量
+			List<Element> semaphoreEleList = document.selectNodes("//Semaphores/Semaphore");
+			if(semaphoreEleList.size() > 0)
+			{
+				Element semaphoresEle = semaphoreEleList.get(0).getParent();
+				for(Element e : semaphoreEleList){
+					semaphoresEle.remove(e);
+				}
+			}
+			//更新新的信号量
 			List<Element> semaphoreEles = document.selectNodes("//Semaphores");
 			if(semaphoreEles.size() == 1){
 				Element semaphoresEle = semaphoreEles.get(0);
@@ -722,10 +765,41 @@ public class FileManageService {
 				}
 			}
 			
+			//删除原来的事件
+			List<Element> eventEleList = document.selectNodes("//Events/Event");
+			if(eventEleList.size() > 0)
+			{
+				Element eventsEle = eventEleList.get(0).getParent();
+				for(Element e : eventEleList){
+					eventsEle.remove(e);
+				}
+			}
+			//补充事件
+			List<Element> eventsEles = document.selectNodes("//Events");
+			if(eventsEles.size() == 1){
+				Element eventsEle = eventsEles.get(0);
+				JSONArray eventJsonArray = new JSONArray(events);
+				for(int i=0; i<eventJsonArray.length(); i++){
+					JSONObject eventJO = eventJsonArray.getJSONObject(i);
+					Element eventEle = eventsEle.addElement("Event");
+					eventEle.addAttribute("Id", Integer.toString(i+1));
+					eventEle.addAttribute("Name", eventJO.getString("name"));
+					Element setEventEle = eventEle.addElement("SetEvent");
+					setEventEle.addText(eventJO.getString("setEvent"));
+					Element resetEventEle = eventEle.addElement("ResetEvent");
+					resetEventEle.addText(eventJO.getString("resetEvent"));
+					String[] waitEventProcess = eventJO.getString("waitEvent").split(",");
+					for(int j=0; j<waitEventProcess.length; j++){
+						Element waitEventElement = eventEle.addElement("WaitEvent");
+						waitEventElement.addText(waitEventProcess[j]);
+					}
+				}
+			}
+			
 			
 			//补充采样端口的属性
 			List<Element> sampleEles = document.selectNodes("//ApplicationPorts/SamplePort");
-			logger.info("采样端口数："+sampleEles.size());
+//			logger.info("采样端口数："+sampleEles.size());
 			Element sample;
 			for(int i=0; i<sampleEles.size(); i++){
 				sample = sampleEles.get(i);

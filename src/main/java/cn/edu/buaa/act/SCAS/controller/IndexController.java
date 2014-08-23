@@ -35,6 +35,7 @@ import cn.edu.buaa.act.SCAS.po.TaskCommunication;
 import cn.edu.buaa.act.SCAS.po.Variable;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Blackboard;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Buffer;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Event;
 import cn.edu.buaa.act.SCAS.po.ARINC653.IntraPartitionCom;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Module;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Partition;
@@ -42,6 +43,7 @@ import cn.edu.buaa.act.SCAS.po.ARINC653.Port;
 import cn.edu.buaa.act.SCAS.po.ARINC653.Process;
 import cn.edu.buaa.act.SCAS.po.ARINC653.QueuePort;
 import cn.edu.buaa.act.SCAS.po.ARINC653.SamplePort;
+import cn.edu.buaa.act.SCAS.po.ARINC653.Semaphore;
 /**
  * @Description 首页控制器
  * @author wanglei
@@ -460,13 +462,57 @@ public class IndexController {
 //		logger.info("队列:"+daQueuePorts.size());
 		
 		//生成为信号量选择进程的的combobox
-		StringBuffer processNames = new StringBuffer();
+		StringBuffer temp = new StringBuffer();
 		for(Process p : partition.getProcesses()){
-			processNames.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
+			temp.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
 		}
-		
-		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+processNames.substring(0, processNames.length()-1)+"]}}";
+		String processNames = temp.substring(0, temp.length()-1);
+		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+processNames+"]}}";
 		logger.info(val);
+		
+		
+		//生成set event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{selabel:'"+p.getName()+"',sevalue:'"+p.getName()+"'},");
+		}
+		processNames = temp.substring(0, temp.length()-1);
+		String setEventCombobox = "field:'setEvent',width:100,formatter:function(value,row){return row.sevalue;},editor:{type:'combobox',options:{valueField:'selabel',textField:'sevalue',data:["+processNames+"]}}";
+		logger.info(setEventCombobox);
+		
+		//生成reset event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{relabel:'"+p.getName()+"',revalue:'"+p.getName()+"'},");
+		}
+		processNames = temp.substring(0, temp.length()-1);
+		String resetEventCombobox = "field:'resetEvent',width:100,formatter:function(value,row){return row.revalue;},editor:{type:'combobox',options:{valueField:'relabel',textField:'revalue',data:["+processNames+"]}}";
+		logger.info(resetEventCombobox);
+		
+		//生成wait event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{welabel:'"+p.getName()+"',wevalue:'"+p.getName()+"'},");
+		}
+		processNames = temp.substring(0, temp.length()-1);
+		String waitEventCombobox = "field:'waitEvent',width:100,formatter:function(value,row){return row.wevalue;},editor:{type:'combobox',options:{valueField:'welabel',textField:'wevalue',multiple:true,data:["+processNames+"]}}";
+		logger.info(waitEventCombobox);
+		
+		//信号量的数据
+		StringBuffer semaphoreData = new StringBuffer("[");
+		for(Semaphore sem : partition.getSemaphores()){
+			semaphoreData.append("{name:'"+sem.getName()+"',currentValue:'"+sem.getCurrentValue()+"',maxValue:'"+sem.getMaxValue()+"',queuingDiscipline:'"+sem.getQueuingDiscipline()+"',qdvalue:'"+sem.getQueuingDiscipline()+"',processes:'"+sem.getProcessNamesString()+"',value:'"+sem.getProcessNamesString()+"'},");
+		}
+		semaphoreData.append("]");
+		logger.info("semaphoreData:"+semaphoreData);
+		
+		//事件的数据
+		StringBuffer eventData = new StringBuffer("[");
+		for(Event event : partition.getEvents()){
+			eventData.append("{name:'"+event.getName()+"',setEvent:'"+event.getSetEventProcess()+"',resetEvent:'"+event.getResetEventProcess()+"',waitEvent:'"+event.getWEProcessString()+"',sevalue:'"+event.getSetEventProcess()+"',revalue:'"+event.getResetEventProcess()+"',wevalue:'"+event.getWEProcessString()+"'},");
+		}
+		eventData.append("]");
+		logger.info("eventData:"+eventData);
 		
 		mav.addObject("partitionXml", partition.getXmlPartition());
 		mav.addObject("blackboards",blackboards);
@@ -476,6 +522,11 @@ public class IndexController {
 		mav.addObject("daSamplePorts",daSamplePorts);
 		mav.addObject("daQueuePorts",daQueuePorts);
 		mav.addObject("value",val);
+		mav.addObject("setEventCombobox",setEventCombobox);
+		mav.addObject("resetEventCombobox",resetEventCombobox);
+		mav.addObject("waitEventCombobox",waitEventCombobox);
+		mav.addObject("semaphoreData","[]");
+		mav.addObject("eventData",eventData);
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");
 		return mav;
@@ -651,9 +702,9 @@ public class IndexController {
 	@RequestMapping(value = "/completePartition", method=RequestMethod.POST)
 	public ModelAndView completePartition(HttpServletRequest request, HttpServletResponse response) throws DocumentException, JSONException{
 		String filename = request.getParameter("filename");
-		String semaphores = request.getParameter("semaphores");
-		logger.info(filename);
-		logger.info(semaphores);
+//		String semaphores = request.getParameter("semaphores");
+//		logger.info(filename);
+//		logger.info(semaphores);
 		
 		ModelAndView mav = new ModelAndView("partition");
 
@@ -703,13 +754,55 @@ public class IndexController {
 //		logger.info("队列:"+daQueuePorts.size());
 		
 		//生成为信号量选择进程的的combobox
-		StringBuffer processNames = new StringBuffer();
+		StringBuffer temp = new StringBuffer();
 		for(Process p : partition.getProcesses()){
-			processNames.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
+			temp.append("{label:'"+p.getName()+"',value:'"+p.getName()+"'},");
 		}
-		
-		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+processNames.substring(0, processNames.length()-1)+"]}}";
+		String val = "field:'processes',width:100,formatter:function(value,row){return row.value;},editor:{type:'combobox',options:{valueField:'label',textField:'value',multiple:true,data:["+temp.substring(0, temp.length()-1)+"]}}";
 	
+		//信号量的数据
+		StringBuffer semaphoreData = new StringBuffer("[");
+		for(Semaphore sem : partition.getSemaphores()){
+			semaphoreData.append("{name:'"+sem.getName()+"',currentValue:'"+sem.getCurrentValue()+"',maxValue:'"+sem.getMaxValue()+"',queuingDiscipline:'"+sem.getQueuingDiscipline()+"',qdvalue:'"+sem.getQueuingDiscipline()+"',processes:'"+sem.getProcessNamesString()+"',value:'"+sem.getProcessNamesString()+"'},");
+		}
+		semaphoreData.append("]");
+		logger.info("semaphoreData:"+semaphoreData);
+		
+		//生成set event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{selabel:'"+p.getName()+"',sevalue:'"+p.getName()+"'},");
+		}
+		String processNames = temp.substring(0, temp.length()-1);
+		String setEventCombobox = "field:'setEvent',width:100,formatter:function(value,row){return row.sevalue;},editor:{type:'combobox',options:{valueField:'selabel',textField:'sevalue',data:["+processNames+"]}}";
+//		logger.info(setEventCombobox);
+		
+		//生成reset event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{relabel:'"+p.getName()+"',revalue:'"+p.getName()+"'},");
+		}
+		processNames = temp.substring(0, temp.length()-1);
+		String resetEventCombobox = "field:'resetEvent',width:100,formatter:function(value,row){return row.revalue;},editor:{type:'combobox',options:{valueField:'relabel',textField:'revalue',data:["+processNames+"]}}";
+//		logger.info(resetEventCombobox);
+		
+		//生成wait event的选择进程combobox
+		temp = new StringBuffer();
+		for(Process p : partition.getProcesses()){
+			temp.append("{welabel:'"+p.getName()+"',wevalue:'"+p.getName()+"'},");
+		}
+		processNames = temp.substring(0, temp.length()-1);
+		String waitEventCombobox = "field:'waitEvent',width:100,formatter:function(value,row){return row.wevalue;},editor:{type:'combobox',options:{valueField:'welabel',textField:'wevalue',multiple:true,data:["+processNames+"]}}";
+//		logger.info(waitEventCombobox);
+		
+		//事件的数据
+		StringBuffer eventData = new StringBuffer("[");
+		for(Event event : partition.getEvents()){
+			eventData.append("{name:'"+event.getName()+"',setEvent:'"+event.getSetEventProcess()+"',resetEvent:'"+event.getResetEventProcess()+"',waitEvent:'"+event.getWEProcessString()+"',sevalue:'"+event.getSetEventProcess()+"',revalue:'"+event.getResetEventProcess()+"',wevalue:'"+event.getWEProcessString()+"'},");
+		}
+		eventData.append("]");
+		logger.info("eventData:"+eventData);
+		
 		mav.addObject("partitionXml", partition.getXmlPartition());
 		mav.addObject("blackboards",blackboards);
 		mav.addObject("buffers", buffers);
@@ -717,6 +810,11 @@ public class IndexController {
 		mav.addObject("appQueuePorts",appQueuePorts);
 		mav.addObject("daSamplePorts",daSamplePorts);
 		mav.addObject("daQueuePorts",daQueuePorts);
+		mav.addObject("semaphoreData",semaphoreData);
+		mav.addObject("eventData",eventData);
+		mav.addObject("setEventCombobox",setEventCombobox);
+		mav.addObject("resetEventCombobox",resetEventCombobox);
+		mav.addObject("waitEventCombobox",waitEventCombobox);
 		mav.addObject("value",val);
 		mav.addObject("filename", "\""+filename+"\"");
 //		response.getWriter().println("hello");

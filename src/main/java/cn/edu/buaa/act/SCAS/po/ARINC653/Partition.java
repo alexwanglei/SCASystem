@@ -19,6 +19,8 @@ public class Partition {
 	
 	private ArrayList<Semaphore> semaphores = new ArrayList<Semaphore>();
 	
+	private ArrayList<Event> events = new ArrayList<Event>();
+	
 	private int MemorySizeBss = 0x1000;
 	private int MemorySizeData= 0x1000;
 	private int MemorySizePersistentBss = 0x1000;
@@ -76,6 +78,12 @@ public class Partition {
 		for(Semaphore sem : this.semaphores)
 		{
 			code.append(sem.createSemaphore());
+		}
+		
+		//创建事件
+		for(Event evt : this.events)
+		{
+			code.append(evt.createEvent());
 		}
 		
 		//创建进程
@@ -140,6 +148,10 @@ public class Partition {
 			code.append(sem.genLocalId());
 		}
 		
+		//事件
+		for(Event event : this.events){
+			code.append(event.genLocalId());
+		}
 		
 		//进程ID
 		for(Process p: this.processes)
@@ -213,5 +225,11 @@ public class Partition {
 	}
 	public void setSemaphores(ArrayList<Semaphore> semaphores) {
 		this.semaphores = semaphores;
+	}
+	public ArrayList<Event> getEvents() {
+		return events;
+	}
+	public void setEvents(ArrayList<Event> events) {
+		this.events = events;
 	}
 }

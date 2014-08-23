@@ -313,6 +313,24 @@
 				</div>
 			</div>
 			
+		  	<div>
+				<table id="event" class="easyui-datagrid" title="Event in partition" data-options="rownumbers:true,fitColumns:true,iconCls:'icon-edit',singleSelect:true,toolbar:'#tb2',onClickRow:onClickRow_event">
+					<thead>
+						<tr>
+							<th data-options="field:'name',width:50,editor:'text'">Name</th>
+							<th data-options="<c:out value="${setEventCombobox}"/>">Set Event Process</th>
+							<th data-options="<c:out value="${resetEventCombobox}"/>">Reset Event Process</th>
+							<th data-options="<c:out value="${waitEventCombobox}"/>">Wait Event Process</th>
+						</tr>
+					</thead>
+				</table>
+				<div id="tb2" style="height:auto">
+					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="append_event()">Append</a>
+	        		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="removeit_event()">Remove</a>
+	        		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" onclick="accept_event()">Accept</a>
+				</div>
+			</div>
+			
 			</form>
 		</div>
 	</div>
@@ -322,11 +340,21 @@
 <script src="resources/script/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 <script>
+    
 	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/eclipse");
 	editor.getSession().setMode("ace/mode/xml");
 	editor.setValue(${partitionXml});
 	
+	$('#semaphore').datagrid({
+		data:${semaphoreData}
+	});
+	
+	$('#event').datagrid({
+		data:${eventData}
+	});
+	
+	//补充信号量属性的js
 	var editIndex = undefined;
     function endEditing(){
         if (editIndex == undefined){return true}
@@ -376,6 +404,61 @@
             $('#semaphore').datagrid('acceptChanges');
         }
     }
+    
+    //补充事件属性的js
+    var editIndex2 = undefined;
+    function endEditing_event(){
+        if (editIndex2 == undefined){return true}
+        if ($('#event').datagrid('validateRow', editIndex2)){
+            var ed = $('#event').datagrid('getEditor', {index:editIndex2,field:'setEvent'});
+            var  setEventProcess= $(ed.target).combobox('getText');
+            $('#event').datagrid('getRows')[editIndex2]['sevalue'] = setEventProcess;
+           
+            var ed2 = $('#event').datagrid('getEditor', {index:editIndex2,field:'resetEvent'});
+            var resetEventProcess = $(ed2.target).combobox('getText');
+            $('#event').datagrid('getRows')[editIndex2]['revalue'] = resetEventProcess;
+            
+            var ed3 = $('#event').datagrid('getEditor', {index:editIndex2,field:'waitEvent'});
+            var waitEventProcess = $(ed3.target).combobox('getText');
+            $('#event').datagrid('getRows')[editIndex2]['wevalue'] = waitEventProcess;
+            
+            $('#event').datagrid('endEdit', editIndex2);
+            editIndex2 = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickRow_event(index){
+        if (editIndex2 != index){
+            if (endEditing_event()){
+                $('#event').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                editIndex2 = index;
+            } else {
+                $('#event').datagrid('selectRow', editIndex2);
+            }
+        }
+    }
+    function append_event(){
+        if (endEditing_event()){
+            $('#event').datagrid('appendRow',{});
+            editIndex2 = $('#event').datagrid('getRows').length-1;
+            $('#event').datagrid('selectRow', editIndex2)
+                    .datagrid('beginEdit', editIndex2);
+        }
+    }
+    function removeit_event(){
+        if (editIndex2 == undefined){return}
+        $('#event').datagrid('cancelEdit', editIndex2)
+                .datagrid('deleteRow', editIndex2);
+        editIndex2 = undefined;
+    }
+    function accept_event(){
+        if (endEditing_event()){
+            $('#event').datagrid('acceptChanges');
+        }
+    }
 	
 	
 	function save(){
@@ -397,8 +480,11 @@
 		else{
 			var rows = $("#semaphore").datagrid('getRows');
 			alert(JSON.stringify(rows));
+			var rows_event = $("#event").datagrid('getRows');
+			alert(JSON.stringify(rows_event));
 			
 			$("#partition-form").append("<input type='hidden' name='semaphores' value='"+JSON.stringify(rows) +"'></input>");
+			$("#partition-form").append("<input type='hidden' name='events' value='"+JSON.stringify(rows_event) +"'></input>");
 			$("#partition-form").submit();
 		}
 	}
