@@ -16,10 +16,15 @@
     <div id="content">
     	<div id="top">
 		    <div id="menubar">
-			    <a href="#" class="easyui-menubutton" menu="#mm1" >Edit</a>
-			    <a href="#" class="easyui-menubutton" menu="#mm2" >Help</a>
+		        <a href="#" class="easyui-menubutton" menu="#mm1" >File</a>
+			    <a href="#" class="easyui-menubutton" menu="#mm2" >Edit</a>
+			    <a href="#" class="easyui-menubutton" menu="#mm3" >Help</a>
 			</div>
 			<div id="mm1" style="width:150px;">
+				<div>New</div>
+				<div>Exit</div>
+			</div>
+			<div id="mm2" style="width:150px;">
 			    <div iconCls="icon-undo">Undo</div>
 			    <div iconCls="icon-redo">Redo</div>
 			    <div class="menu-sep"></div>
@@ -30,7 +35,7 @@
 			    <div iconCls="icon-remove">Delete</div>
 			    <div>Select All</div>
 			</div>
-			<div id="mm2" style="width:100px;">
+			<div id="mm3" style="width:100px;">
 			    <div>Help</div>
 			    <div>Update</div>
 			    <div>About</div>

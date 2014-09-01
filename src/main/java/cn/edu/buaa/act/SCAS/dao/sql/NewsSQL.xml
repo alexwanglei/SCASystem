@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap        
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"        
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="News">
+	<typeAlias alias="News" type="cn.edu.buaa.act.SCAS.po.News" />
+
+	<!-- 添加 -->
+	<insert id="insertNews_sql" parameterClass="News">
+	<![CDATA[
+		INSERT INTO news(title,
+		slug,
+		text)
+		values(#title#,
+		#slug#,
+		#text#)
+	]]>
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY
+			AS "id"
+		</selectKey>
+	</insert>
+
+	<!-- 选择全部监视器 -->
+	<select id="getAllNews_sql" resultClass="News">
+		SELECT * FROM news 
+		ORDER BY id
+	</select>
+
+	<!-- 根据id删除监视器 -->
+	<delete id="deleteNewsById_sql" parameterClass="int">
+		DELETE FROM
+		news
+		WHERE id=#id#
+	</delete>
+
+	<!-- 更新监视器 -->
+	<update id="updateNews_sql" parameterClass="News">
+		UPDATE news
+		SET
+		title=#title#,
+		slug=#slug#,
+		text=#text#
+		WHERE
+		id=#id#
+	</update>
+	<!-- 根据id取得监视器 -->
+	<select id="getNewsById_sql" parameterClass="int" resultClass="News">
+		SELECT * FROM news
+		WHERE id=#id#
+	</select>
+	
+
+</sqlMap>

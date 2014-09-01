@@ -27,9 +27,11 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import cn.edu.buaa.act.SCAS.service.CodeGenerationService;
 import cn.edu.buaa.act.SCAS.service.FileManageService;
 import cn.edu.buaa.act.SCAS.service.ModelGenerationService;
+import cn.edu.buaa.act.SCAS.dao.NewsDao;
 import cn.edu.buaa.act.SCAS.po.AppCommunication;
 import cn.edu.buaa.act.SCAS.po.Application;
 import cn.edu.buaa.act.SCAS.po.Formula;
+import cn.edu.buaa.act.SCAS.po.News;
 import cn.edu.buaa.act.SCAS.po.Task;
 import cn.edu.buaa.act.SCAS.po.TaskCommunication;
 import cn.edu.buaa.act.SCAS.po.Variable;
@@ -73,7 +75,8 @@ public class IndexController {
 	private CodeGenerationService codeGenerationService;
 	@Autowired
 	private ModelGenerationService modelGenerationService;
-	
+	@Autowired
+	private NewsDao newsDao;
 	/**
 	 * 
 	 * @Description 首页
@@ -933,14 +936,11 @@ public class IndexController {
 	
 	
 	
-	@RequestMapping(value="/test",method=RequestMethod.POST)
+	@RequestMapping(value="/test",method=RequestMethod.GET)
 	public void test(HttpServletRequest request,HttpServletResponse response) throws DocumentException, IOException{
-		 String[] arr = request.getParameterValues("Bike");
-		 if(arr == null){
-			 logger.info("aaaa");
-		 }
-		 for(String s : arr){
-			 logger.info(s);
+		 List<News> newsList = newsDao.getAllNews();
+		 for(News item :newsList){
+			 logger.info(item.toString());
 		 }
 		
 
