@@ -1,118 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Tasks>
-  <Task Id="1" Name="task1">
+  <Task Id="1" Name="pitchDemand">
     <Formulas>
-      <Formula Id="1" Name="delta e calculation">
-        <Variable Name="delta e1" Type="double"/>
-        <Variable Name="delta e2" Type="double"/>
-        <Variable Name="delta e3" Type="double"/>
-        <Result Name="delta e" Type="double"/>
-      </Formula>
-      <Formula Id="2" Name="delta e1 calculation">
-        <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
-        <Variable Name="Uh1" Type="double"/>
-        <Variable Name="Uh2" Type="double"/>
-        <Variable Name="U0" Type="double"/>
-        <Result Name="delta e1" Type="double"/>
-      </Formula>
-      <Formula Id="3" Name="delta e2 calculation">
-        <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
-        <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
-        <Result Name="delta e2" Type="double"/>
-      </Formula>
-      <Formula Id="4" Name="delta e3 calculation">
-        <Variable Name="delta e3 delta f" Type="double"/>
-        <Variable Name="sat Uh2" Type="double"/>
-        <Result Name="delta e3" Type="double"/>
-      </Formula>
     </Formulas>
     <Inputs>
-      <Variable Name="Uh2" Type="double"/>
-      <Variable Name="Uh1" Type="double"/>
-      <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
-      <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
-      <Variable Name="delta e3 delta f" Type="double"/>
-      <Variable Name="U0" Type="double"/>
-      <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
-      <Variable Name="sat Uh2" Type="double"/>
     </Inputs>
     <Outputs>
-      <Variable Name="delta e" Type="double"/>
+      <Variable Name="pitch demand" Type="double"/>
     </Outputs>
   </Task>
-  <Task Id="2" Name="task2">
+  <Task Id="2" Name="stateIndicate">
     <Formulas>
-      <Formula Id="5" Name="Uh1 calculation">
-        <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
-        <Result Name="Uh1" Type="double"/>
-      </Formula>
-      <Formula Id="8" Name="U0 calculation">
-        <Variable Name="bGS" Type="double"/>
-        <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
-        <Variable Name="Uh1" Type="double"/>
-        <Variable Name="theta" Type="double" Unit="deg"/>
-        <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
-        <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
-        <Result Name="U0" Type="double"/>
-      </Formula>
-      <Formula Id="9" Name="bGS calculation">
-        <Variable Name="GSCapt" Type="int"/>
-        <Result Name="bGS" Type="int"/>
-      </Formula>
     </Formulas>
     <Inputs>
-      <Variable Name="GlIdeslope Beam Error" Type="double" Unit="deg"/>
-      <Variable Name="theta" Type="double" Unit="deg"/>
-      <Variable Name="GSCapt" Type="int"/>
-      <Variable Name="Vertical Acceleration" Type="double" Unit="ft/s/s"/>
-      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
-      <Variable Name="Altitude Rate" Type="double" Unit="ft/s"/>
     </Inputs>
     <Outputs>
-      <Variable Name="Uh1" Type="double"/>
-      <Variable Name="U0" Type="double"/>
+      <Variable Name="state" Type="double"/>
     </Outputs>
   </Task>
-  <Task Id="3" Name="task3">
+  <Task Id="3" Name="pitchCommand">
     <Formulas>
-      <Formula Id="6" Name="Uh2 calculation">
-        <Variable Name="hsat" Type="double"/>
-        <Variable Name="hsat derivative" Type="double"/>
-        <Result Name="Uh2" Type="double"/>
-      </Formula>
-      <Formula Id="7" Name="hsat calculation">
-        <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
-        <Result Name="hsat" Type="double"/>
-      </Formula>
     </Formulas>
     <Inputs>
-      <Variable Name="Rader Altitude" Type="double" Unit="ft"/>
-      <Variable Name="hsat derivative" Type="double"/>
+      <Variable Name="pitch demand" Type="double" />
+      <Variable Name="state" Type="double"/>
     </Inputs>
     <Outputs>
-      <Variable Name="Uh2" Type="double"/>
+      <Variable Name="pitch command" Type="double"/>
     </Outputs>
   </Task>
-  <Task Id="4" Name="task4">
+  <Task Id="4" Name="pitchControl">
     <Formulas>
-      <Formula Id="10" Name="delta e3 delta f calculation">
-        <Variable Name="Pitch Rate" Type="double" Unit="deg/s"/>
-        <Variable Name="Flap state" Type="int" Unit="deg"/>
-        <Result Name="delta e3 delta f" Type="double"/>
-      </Formula>
-      <Formula Id="11" Name="sat Uh2 calculation">
-        <Variable Name="Uh2" Type="double"/>
-        <Result Name="sat Uh2" Type="double"/>
-      </Formula>
     </Formulas>
     <Inputs>
-      <Variable Name="Uh2" Type="double"/>
-      <Variable Name="Pitch Rate" Type="double" Unit="deg/s"/>
-      <Variable Name="Flap state" Type="int" Unit="deg"/>
+      <Variable Name="pitch command" Type="double"/>
     </Inputs>
     <Outputs>
-      <Variable Name="sat Uh2" Type="double"/>
-      <Variable Name="delta e3 delta f" Type="double"/>
     </Outputs>
   </Task>
 </Tasks>
