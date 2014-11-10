@@ -1,5 +1,6 @@
 package cn.edu.buaa.act.SCAS.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.dom4j.DocumentException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
@@ -68,6 +72,7 @@ public class IndexController {
 
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 	
+
 
 	@Autowired
 	private FileManageService fileManageService;
@@ -936,14 +941,42 @@ public class IndexController {
 	
 	
 	
-	@RequestMapping(value="/test",method=RequestMethod.GET)
-	public void test(HttpServletRequest request,HttpServletResponse response) throws DocumentException, IOException{
-		 List<News> newsList = newsDao.getAllNews();
-		 for(News item :newsList){
-			 logger.info(item.toString());
-		 }
-		
-
+	@RequestMapping(value="/login",method=RequestMethod.POST)
+	public void test(HttpServletRequest request,HttpServletResponse response, String username, String password) throws DocumentException, IOException{
+		 //List<News> newsList = newsDao.getAllNews();
+		 logger.info("login");
+		 logger.info(username);
+		 logger.info(password);
+		 //登录成功返回
+		 response.getWriter().print("{}");
 		
 	}
+	
+	@RequestMapping(value="/upload",method=RequestMethod.POST)
+	public void upload(@RequestParam("uploadfile") MultipartFile uploadfile, HttpServletRequest request,HttpServletResponse response) throws DocumentException, IOException{
+		 logger.info("upload");
+		 //解析文件上传请求
+		 if(uploadfile.isEmpty()){
+			 logger.info("文件未上传");
+		 }
+		 else{
+			 logger.info("文件长度："+uploadfile.getSize());
+			 logger.info("文件类型："+uploadfile.getContentType());
+			 logger.info("文件名称："+uploadfile.getName());
+			 logger.info("文件原名："+uploadfile.getOriginalFilename());
+			 
+			 String uploadPath = this.getClass().getResource("/Upload").getPath();
+
+			 logger.info("上传路径："+uploadPath);
+			 FileUtils.copyInputStreamToFile(uploadfile.getInputStream(), new File(uploadPath, uploadfile.getOriginalFilename()));
+			 
+		 }
+		 //cg图像转stl处理
+		 
+		 
+		 
+		 response.getWriter().print("upload success");
+		
+	}
+	
 }
