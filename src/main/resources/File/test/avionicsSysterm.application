@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Applications>
+  <Application Id="1" Name="air data application">
+    <Tasks>
+      <Task Id="3"/>
+      <Task Id="4"/>
+      <Task Id="6"/>
+      <Task Id="8"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="Impact Pressure Variable" Type="double"/>
+      <Variable Name="Pressure Setting Variable" Type="double"/>
+      <Variable Name="Total Pressure Variable" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Corrected Static Pressure" Type="double"/>
+      <Variable Name="Pressure Setting Altitude" Type="double"/>
+    </Outputs>
+  </Application>
+  <Application Id="2" Name="navigation data application">
+    <Tasks>
+      <Task Id="1"/>
+      <Task Id="2"/>
+      <Task Id="5"/>
+      <Task Id="7"/>
+      <Task Id="9"/>
+      <Task Id="11"/>
+      <Task Id="12"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+      <Variable Name="Specific Force Variable" Type="double"/>
+      <Variable Name="Attitude Matrix Initial" Type="double"/>
+      <Variable Name="Gyroscope" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+      <Variable Name="Body Roll Rate" Type="double"/>
+      <Variable Name="Body Pitch Rate" Type="double"/>
+    </Outputs>
+  </Application>
+  <Application Id="3" Name="flight management application">
+    <Tasks>
+      <Task Id="10"/>
+      <Task Id="13"/>
+      <Task Id="14"/>
+      <Task Id="15"/>
+      <Task Id="16"/>
+      <Task Id="17"/>
+      <Task Id="18"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="Corrected Static Pressure" Type="double"/>
+      <Variable Name="Attitude Matrix" Type="double"/>
+      <Variable Name="Pressure Setting Altitude" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="MAG Heading" Type="double"/>
+      <Variable Name="Roll Attitude" Type="double"/>
+      <Variable Name="Baro Corrected Altitude" Type="double"/>
+      <Variable Name="Track Angle" Type="double"/>
+      <Variable Name="Pitch Attitude" Type="double"/>
+      <Variable Name="Altitude Rate" Type="double"/>
+    </Outputs>
+  </Application>
+  <Application Id="4" Name="flight control application">
+    <Tasks>
+      <Task Id="19"/>
+      <Task Id="20"/>
+    </Tasks>
+    <Inputs>
+      <Variable Name="MAG Heading" Type="double"/>
+      <Variable Name="Roll Attitude" Type="double"/>
+      <Variable Name="Baro Corrected Altitude" Type="double"/>
+      <Variable Name="Body Roll Rate" Type="double"/>
+      <Variable Name="Track Angle" Type="double"/>
+      <Variable Name="Pitch Attitude" Type="double"/>
+      <Variable Name="Body Pitch Rate" Type="double"/>
+      <Variable Name="Altitude Rate" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Pitch Servo Command Result" Type="double"/>
+      <Variable Name="Roll Servo Command Result" Type="double"/>
+    </Outputs>
+  </Application>
+</Applications>

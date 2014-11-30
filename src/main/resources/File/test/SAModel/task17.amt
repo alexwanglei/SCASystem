@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="17" Name="task17">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="Pressure Setting Altitude" DataType="double" Type="InterPartition" Connect="samplePort_3d"/>
+    <IO Id="2" ConceptName="Corrected Static Pressure Altitude" DataType="double" Type="IntraPartition" Connect="blackboard_2"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="3" ConceptName="Baro Corrected Altitude" DataType="double" Type="InterPartition" Connect="queuePort_6s"/>
+  </TaskOutputs>
+</SATask>

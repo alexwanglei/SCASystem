@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="16" Name="task16">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="Attitude Matrix" DataType="double" Type="InterPartition" Connect="queuePort_2d"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="2" ConceptName="Pitch Attitude" DataType="double" Type="InterPartition" Connect="queuePort_8s"/>
+  </TaskOutputs>
+</SATask>

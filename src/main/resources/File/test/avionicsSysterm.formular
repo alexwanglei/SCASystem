@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Formulas>
+	<Formula Id="12" Name="formula12">
+		<Variable Id="C60">Gyroscope</Variable>
+		<Result Id="C61">Gyroscope Geo</Result>
+	</Formula>
+	<Formula Id="36" Name="formula36">
+		<Variable Id="C27">Specific Force Variable</Variable>
+		<Result Id="C59">Geo Force</Result>
+	</Formula>
+	<Formula Id="18" Name="formula18">
+		<Variable Id="C24">Pressure Setting Variable</Variable>
+		<Result Id="C25">Pressure Setting Altitude</Result>
+	</Formula>
+	<Formula Id="32" Name="formula32">
+		<Variable Id="C1">Total Pressure Variable</Variable>
+		<Variable Id="C2">Impact Pressure Variable</Variable>
+		<Result Id="C22">Dynamic Pressure</Result>
+	</Formula>
+	<Formula Id="37" Name="formula37">
+		<Variable Id="C59">Geo Force</Variable>
+		<Result Id="C62">Geo Velocity</Result>
+	</Formula>
+	<Formula Id="30" Name="formula30">
+		<Variable Id="C2">Impact Pressure Variable</Variable>
+		<Variable Id="C22">Dynamic Pressure</Variable>
+		<Result Id="C15">Mach </Result>
+	</Formula>
+	<Formula Id="13" Name="formula13">
+		<Variable Id="C62">Geo Velocity</Variable>
+		<Result Id="C63">Geo Angular Velocity</Result>
+	</Formula>
+	<Formula Id="31" Name="formula31">
+		<Variable Id="C15">Mach </Variable>
+		<Variable Id="C2">Impact Pressure Variable</Variable>
+		<Result Id="C23">Corrected Static Pressure</Result>
+	</Formula>
+	<Formula Id="11" Name="formula11">
+		<Variable Id="C69">Earth Rotation Angular Velocity</Variable>
+		<Variable Id="C70">Attitude Matrix Initial</Variable>
+		<Variable Id="C61">Gyroscope Geo</Variable>
+		<Variable Id="C63">Geo Angular Velocity</Variable>
+		<Result Id="C71">Attitude Matrix</Result>
+	</Formula>
+	<Formula Id="8" Name="formula8">
+		<Variable Id="C23">Corrected Static Pressure</Variable>
+		<Result Id="C26">Corrected Static Pressure Altitude</Result>
+	</Formula>
+	<Formula Id="14" Name="formula14">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Variable Id="C60">Gyroscope</Variable>
+		<Variable Id="C69">Earth Rotation Angular Velocity</Variable>
+		<Variable Id="C63">Geo Angular Velocity</Variable>
+		<Result Id="C38">Body Roll Rate</Result>
+	</Formula>
+	<Formula Id="5" Name="formula5">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Variable Id="C60">Gyroscope</Variable>
+		<Variable Id="C69">Earth Rotation Angular Velocity</Variable>
+		<Variable Id="C63">Geo Angular Velocity</Variable>
+		<Result Id="C36">Body Pitch Rate</Result>
+	</Formula>
+	<Formula Id="10" Name="formula10">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Result Id="C49">MAG Heading</Result>
+	</Formula>
+	<Formula Id="28" Name="formula28">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Result Id="C30">Track Angle</Result>
+	</Formula>
+	<Formula Id="9" Name="formula9">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Result Id="C37">Roll Attitude</Result>
+	</Formula>
+	<Formula Id="4" Name="formula4">
+		<Variable Id="C71">Attitude Matrix</Variable>
+		<Result Id="C35">Pitch Attitude</Result>
+	</Formula>
+	<Formula Id="6" Name="formula6">
+		<Variable Id="C25">Pressure Setting Altitude</Variable>
+		<Variable Id="C26">Corrected Static Pressure Altitude</Variable>
+		<Result Id="C19">Baro Corrected Altitude</Result>
+	</Formula>
+	<Formula Id="7" Name="formula7">
+		<Variable Id="C26">Corrected Static Pressure Altitude</Variable>
+		<Result Id="C20">Altitude Rate</Result>
+	</Formula>
+	<Formula Id="26" Name="formula26">
+		<Variable Id="C37">Roll Attitude</Variable>
+		<Variable Id="C38">Body Roll Rate</Variable>
+		<Variable Id="C49">MAG Heading</Variable>
+		<Variable Id="C30">Track Angle</Variable>
+		<Result Id="CO2">Roll Servo Command Result</Result>
+	</Formula>
+	<Formula Id="0" Name="formula0">
+		<Variable Id="C35">Pitch Attitude</Variable>
+		<Variable Id="C36">Body Pitch Rate</Variable>
+		<Variable Id="C19">Baro Corrected Altitude</Variable>
+		<Variable Id="C20">Altitude Rate</Variable>
+		<Result Id="CO1">Pitch Servo Command Result</Result>
+	</Formula>
+</Formulas>

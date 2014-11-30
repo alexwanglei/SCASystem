@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="4" Name="task4">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="Impact Pressure Variable" DataType="double" Type="InterPartition" Connect="samplePort_1d"/>
+    <IO Id="2" ConceptName="Total Pressure Variable" DataType="double" Type="InterPartition" Connect="samplePort_3d"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="3" ConceptName="Dynamic Pressure" DataType="double" Type="IntraPartition" Connect="blackboard_1"/>
+  </TaskOutputs>
+</SATask>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="19" Name="task19">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="MAG Heading" DataType="double" Type="InterPartition" Connect="queuePort_1d"/>
+    <IO Id="2" ConceptName="Roll Attitude" DataType="double" Type="InterPartition" Connect="queuePort_2d"/>
+    <IO Id="3" ConceptName="Body Roll Rate" DataType="double" Type="InterPartition" Connect="queuePort_4d"/>
+    <IO Id="4" ConceptName="Track Angle" DataType="double" Type="InterPartition" Connect="queuePort_5d"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="5" ConceptName="Roll Servo Command Result" DataType="double" Type="InterPartition" Connect="queuePort_10s"/>
+  </TaskOutputs>
+</SATask>

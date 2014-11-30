@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SATask Id="18" Name="task18">
+  <Stack>400</Stack>
+  <Priorty/>
+  <Period/>
+  <TimeCapacity/>
+  <Deadline/>
+  <TaskInputs>
+    <IO Id="1" ConceptName="Corrected Static Pressure Altitude" DataType="double" Type="IntraPartition" Connect="blackboard_2"/>
+  </TaskInputs>
+  <TaskOutputs>
+    <IO Id="2" ConceptName="Altitude Rate" DataType="double" Type="InterPartition" Connect="queuePort_9s"/>
+  </TaskOutputs>
+</SATask>

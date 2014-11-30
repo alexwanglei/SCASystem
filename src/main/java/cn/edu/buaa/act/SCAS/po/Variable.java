@@ -15,7 +15,14 @@ public class Variable implements Cloneable{
 	
 	public Variable(Element e){
 		this.name = e.attributeValue("Name");
+		if(this.name==null){
+			this.name = e.getText();
+		}
+		
 		this.type = e.attributeValue("Type");
+		if(this.type == null){
+			this.type = "double";
+		}
 		if(e.attributeValue("Unit")!=null){
 			this.unit = e.attributeValue("Unit");
 		}

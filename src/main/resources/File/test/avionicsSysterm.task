@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Tasks>
+  <Task Id="1" Name="task1">
+    <Formulas>
+      <Formula Id="12" Name="formula12">
+        <Variable Name="Gyroscope" Type="double"/>
+        <Result Name="Gyroscope Geo" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Gyroscope" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Gyroscope Geo" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="2" Name="task2">
+    <Formulas>
+      <Formula Id="36" Name="formula36">
+        <Variable Name="Specific Force Variable" Type="double"/>
+        <Result Name="Geo Force" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Specific Force Variable" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Geo Force" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="3" Name="task3">
+    <Formulas>
+      <Formula Id="18" Name="formula18">
+        <Variable Name="Pressure Setting Variable" Type="double"/>
+        <Result Name="Pressure Setting Altitude" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Pressure Setting Variable" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Pressure Setting Altitude" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="4" Name="task4">
+    <Formulas>
+      <Formula Id="32" Name="formula32">
+        <Variable Name="Total Pressure Variable" Type="double"/>
+        <Variable Name="Impact Pressure Variable" Type="double"/>
+        <Result Name="Dynamic Pressure" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Impact Pressure Variable" Type="double"/>
+      <Variable Name="Total Pressure Variable" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Dynamic Pressure" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="5" Name="task5">
+    <Formulas>
+      <Formula Id="37" Name="formula37">
+        <Variable Name="Geo Force" Type="double"/>
+        <Result Name="Geo Velocity" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Geo Force" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Geo Velocity" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="6" Name="task6">
+    <Formulas>
+      <Formula Id="30" Name="formula30">
+        <Variable Name="Impact Pressure Variable" Type="double"/>
+        <Variable Name="Dynamic Pressure" Type="double"/>
+        <Result Name="Mach " Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Impact Pressure Variable" Type="double"/>
+      <Variable Name="Dynamic Pressure" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Mach " Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="7" Name="task7">
+    <Formulas>
+      <Formula Id="13" Name="formula13">
+        <Variable Name="Geo Velocity" Type="double"/>
+        <Result Name="Geo Angular Velocity" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Geo Velocity" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Geo Angular Velocity" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="8" Name="task8">
+    <Formulas>
+      <Formula Id="31" Name="formula31">
+        <Variable Name="Mach " Type="double"/>
+        <Variable Name="Impact Pressure Variable" Type="double"/>
+        <Result Name="Corrected Static Pressure" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Impact Pressure Variable" Type="double"/>
+      <Variable Name="Mach " Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Corrected Static Pressure" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="9" Name="task9">
+    <Formulas>
+      <Formula Id="11" Name="formula11">
+        <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+        <Variable Name="Attitude Matrix Initial" Type="double"/>
+        <Variable Name="Gyroscope Geo" Type="double"/>
+        <Variable Name="Geo Angular Velocity" Type="double"/>
+        <Result Name="Attitude Matrix" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Geo Angular Velocity" Type="double"/>
+      <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+      <Variable Name="Gyroscope Geo" Type="double"/>
+      <Variable Name="Attitude Matrix Initial" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="10" Name="task10">
+    <Formulas>
+      <Formula Id="8" Name="formula8">
+        <Variable Name="Corrected Static Pressure" Type="double"/>
+        <Result Name="Corrected Static Pressure Altitude" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Corrected Static Pressure" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Corrected Static Pressure Altitude" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="11" Name="task11">
+    <Formulas>
+      <Formula Id="14" Name="formula14">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Variable Name="Gyroscope" Type="double"/>
+        <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+        <Variable Name="Geo Angular Velocity" Type="double"/>
+        <Result Name="Body Roll Rate" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Geo Angular Velocity" Type="double"/>
+      <Variable Name="Attitude Matrix" Type="double"/>
+      <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+      <Variable Name="Gyroscope" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Body Roll Rate" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="12" Name="task12">
+    <Formulas>
+      <Formula Id="5" Name="formula5">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Variable Name="Gyroscope" Type="double"/>
+        <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+        <Variable Name="Geo Angular Velocity" Type="double"/>
+        <Result Name="Body Pitch Rate" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Geo Angular Velocity" Type="double"/>
+      <Variable Name="Attitude Matrix" Type="double"/>
+      <Variable Name="Earth Rotation Angular Velocity" Type="double"/>
+      <Variable Name="Gyroscope" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Body Pitch Rate" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="13" Name="task13">
+    <Formulas>
+      <Formula Id="10" Name="formula10">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Result Name="MAG Heading" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="MAG Heading" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="14" Name="task14">
+    <Formulas>
+      <Formula Id="28" Name="formula28">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Result Name="Track Angle" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Track Angle" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="15" Name="task15">
+    <Formulas>
+      <Formula Id="9" Name="formula9">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Result Name="Roll Attitude" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Roll Attitude" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="16" Name="task16">
+    <Formulas>
+      <Formula Id="4" Name="formula4">
+        <Variable Name="Attitude Matrix" Type="double"/>
+        <Result Name="Pitch Attitude" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Attitude Matrix" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Pitch Attitude" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="17" Name="task17">
+    <Formulas>
+      <Formula Id="6" Name="formula6">
+        <Variable Name="Pressure Setting Altitude" Type="double"/>
+        <Variable Name="Corrected Static Pressure Altitude" Type="double"/>
+        <Result Name="Baro Corrected Altitude" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Pressure Setting Altitude" Type="double"/>
+      <Variable Name="Corrected Static Pressure Altitude" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Baro Corrected Altitude" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="18" Name="task18">
+    <Formulas>
+      <Formula Id="7" Name="formula7">
+        <Variable Name="Corrected Static Pressure Altitude" Type="double"/>
+        <Result Name="Altitude Rate" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Corrected Static Pressure Altitude" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Altitude Rate" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="19" Name="task19">
+    <Formulas>
+      <Formula Id="26" Name="formula26">
+        <Variable Name="Roll Attitude" Type="double"/>
+        <Variable Name="Body Roll Rate" Type="double"/>
+        <Variable Name="MAG Heading" Type="double"/>
+        <Variable Name="Track Angle" Type="double"/>
+        <Result Name="Roll Servo Command Result" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="MAG Heading" Type="double"/>
+      <Variable Name="Roll Attitude" Type="double"/>
+      <Variable Name="Body Roll Rate" Type="double"/>
+      <Variable Name="Track Angle" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Roll Servo Command Result" Type="double"/>
+    </Outputs>
+  </Task>
+  <Task Id="20" Name="task20">
+    <Formulas>
+      <Formula Id="0" Name="formula0">
+        <Variable Name="Pitch Attitude" Type="double"/>
+        <Variable Name="Body Pitch Rate" Type="double"/>
+        <Variable Name="Baro Corrected Altitude" Type="double"/>
+        <Variable Name="Altitude Rate" Type="double"/>
+        <Result Name="Pitch Servo Command Result" Type="double"/>
+      </Formula>
+    </Formulas>
+    <Inputs>
+      <Variable Name="Baro Corrected Altitude" Type="double"/>
+      <Variable Name="Pitch Attitude" Type="double"/>
+      <Variable Name="Body Pitch Rate" Type="double"/>
+      <Variable Name="Altitude Rate" Type="double"/>
+    </Inputs>
+    <Outputs>
+      <Variable Name="Pitch Servo Command Result" Type="double"/>
+    </Outputs>
+  </Task>
+</Tasks>

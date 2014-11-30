@@ -144,8 +144,14 @@ public class FileManageService {
 		SAXReader saxReader = new SAXReader();
 		Document doc = saxReader.read(file);
 		Element root = doc.getRootElement();
-
-		List<Element> formulaList = root.elements("Formula");
+		List<Element> formulaList = null;
+		
+		if(root.elements("Formula").size() > 0 ){
+			formulaList = root.elements("Formula");
+		}else if(root.elements("formula").size() >0 ){
+			formulaList = root.elements("formula");
+		}
+		
 
 		for(Element e: formulaList){
 			Formula formula = new Formula(e);

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SAPartition Id="1" Name="air data application">
+  <SATasks xmlns:xi="http://www.w3.org/2003/XInclude">
+    <include href="task3.amt"/>
+    <include href="task4.amt"/>
+    <include href="task6.amt"/>
+    <include href="task8.amt"/>
+  </SATasks>
+  <IntraCommunications>
+    <Communication SrcTask="task4" DstTask="task6" MessageContainerId="1">Dynamic Pressure</Communication>
+    <Communication SrcTask="task6" DstTask="task8" MessageContainerId="2">Mach</Communication>
+  </IntraCommunications>
+  <MessageContainers>
+    <MessageContainer Id="1">
+      <Blackboard Name="blackboard_1" MessageSize=""/>
+    </MessageContainer>
+    <MessageContainer Id="2">
+      <Buffer Name="buffer_2" MessageSize="" BufferLength="" Discipline=""/>
+    </MessageContainer>
+  </MessageContainers>
+  <Semaphores/>
+  <Events/>
+  <ApplicationPorts>
+    <SamplePort Id="1" Name="samplePort_1d" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="2" Name="samplePort_2d" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="3" Name="samplePort_3d" Direction="DESTINATION" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="4" Name="samplePort_4s" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="5" Name="samplePort_5s" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+  </ApplicationPorts>
+  <PartitionPorts>
+    <SamplePort Id="1" Name="directAccessPort_1" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="2" Name="directAccessPort_2" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+    <SamplePort Id="3" Name="directAccessPort_3" Direction="SOURCE" MessageSize="" RefreshPeriod=""/>
+  </PartitionPorts>
+</SAPartition>
