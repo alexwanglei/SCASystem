@@ -11,6 +11,8 @@ public abstract class Port {
 	
 	private int messageSize;
 	
+	
+	
 public abstract String createPort();
 	
 	public abstract String genLocalID();

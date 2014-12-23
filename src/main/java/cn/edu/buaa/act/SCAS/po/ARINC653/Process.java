@@ -138,10 +138,11 @@ public class Process {
 		StringBuffer code = new StringBuffer("void "+this.name+"(void)\n{\n");
 		//接受队列，采样，黑板，缓冲区的变量，变量长度，有效参数
 		for(IOput i: this.inputs){
-			code.append("	"+i.getDataType()+" "+i.getConceptName().replaceAll(" ", "")+";\n");
+			code.append("	"+i.getDataType()+" "+i.getConceptName().replaceAll(" ", "")+"=0;\n");
 			int sn = i.getId();
 			code.append("	MESSAGE_SIZE_TYPE lendata"+sn+";\n");
 			if(i.getType()!=null&&i.getType().equals("Sample"))
+				
 			{
 				int num = i.getId();
 				code.append("	VALIDITY_TYPE validity"+num+ "=0;\n");

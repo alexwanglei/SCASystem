@@ -370,7 +370,7 @@
 		});
 	}
 	
-	//解析模块模型的文件
+	//解析分区模型的文件
 	function parseAmp(filename, title){
 		var href = "showPartitionModel?filename="+filename;
 		var content = '<iframe  frameborder="0" src="'+href+'" style="width:99%;height:99%;"></iframe>';

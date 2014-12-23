@@ -102,16 +102,16 @@ public class ModelGenerationService {
 					Element bufferEle = mcEle.addElement("Buffer");
 					String bufferName = "buffer_"+mcId++;
 					bufferEle.addAttribute("Name", bufferName);
-					bufferEle.addAttribute("MessageSize", "");
-					bufferEle.addAttribute("BufferLength", "");
-					bufferEle.addAttribute("Discipline", "");
+					bufferEle.addAttribute("MessageSize", "50");
+					bufferEle.addAttribute("BufferLength", "10");
+					bufferEle.addAttribute("Discipline", "FIFO");
 					app.getIOMcNameMap().put(tc.getVariable(), bufferName);
 				}
 				else if(tc.getType().equals("blackboard")){
 					Element blackboardEle = mcEle.addElement("Blackboard");
 					String blackboardName = "blackboard_"+mcId++;
 					blackboardEle.addAttribute("Name", blackboardName);
-					blackboardEle.addAttribute("MessageSize", "");
+					blackboardEle.addAttribute("MessageSize", "100");
 					app.getIOMcNameMap().put(tc.getVariable(), blackboardName);
 				}
 			}
@@ -135,8 +135,8 @@ public class ModelGenerationService {
 						String samplePortName = "samplePort_"+portId++ +"d";
 						samplePortEle.addAttribute("Name", samplePortName);
 						samplePortEle.addAttribute("Direction", "DESTINATION");
-						samplePortEle.addAttribute("MessageSize", "");
-						samplePortEle.addAttribute("RefreshPeriod", "");
+						samplePortEle.addAttribute("MessageSize", "8");
+						samplePortEle.addAttribute("RefreshPeriod", "4.0");
 						app.getPortNameMap().put(var, samplePortName);
 						//创建对应的直连端口
 						if(ecVariableSet.contains(var.getName())){
@@ -149,8 +149,8 @@ public class ModelGenerationService {
 						String queuePortName = "queuePort_"+portId++ +"d";
 						queuePortEle.addAttribute("Name", queuePortName);
 						queuePortEle.addAttribute("Direction", "DESTINATION");
-						queuePortEle.addAttribute("MessageSize", "");
-						queuePortEle.addAttribute("QueueLength", "");
+						queuePortEle.addAttribute("MessageSize", "120");
+						queuePortEle.addAttribute("QueueLength", "5");
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
 						app.getPortNameMap().put(var, queuePortName);
@@ -173,8 +173,8 @@ public class ModelGenerationService {
 						String samplePortName = "samplePort_"+portId++ +"s";
 						samplePortEle.addAttribute("Name", samplePortName);
 						samplePortEle.addAttribute("Direction", "SOURCE");
-						samplePortEle.addAttribute("MessageSize", "");
-						samplePortEle.addAttribute("RefreshPeriod", "");
+						samplePortEle.addAttribute("MessageSize", "8");
+						samplePortEle.addAttribute("RefreshPeriod", "4.0");
 						app.getPortNameMap().put(var, samplePortName);
 						//创建对应的直连端口
 						if(ecVariableSet.contains(var.getName())){
@@ -187,8 +187,8 @@ public class ModelGenerationService {
 						String queuePortName = "queuePort_"+portId++ + "s";
 						queuePortEle.addAttribute("Name", queuePortName);
 						queuePortEle.addAttribute("Direction", "SOURCE");
-						queuePortEle.addAttribute("MessageSize", "");
-						queuePortEle.addAttribute("QueueLength", "");
+						queuePortEle.addAttribute("MessageSize", "120");
+						queuePortEle.addAttribute("QueueLength", "100");
 						queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 						queuePortEle.addAttribute("Discipline", "FIFO");
 						app.getPortNameMap().put(var, queuePortName);
@@ -211,16 +211,16 @@ public class ModelGenerationService {
 					samplePortEle.addAttribute("Id", Integer.toString(daPort.getId()));
 					samplePortEle.addAttribute("Name", daPort.getName());
 					samplePortEle.addAttribute("Direction", daPort.getDirection());
-					samplePortEle.addAttribute("MessageSize", "");
-					samplePortEle.addAttribute("RefreshPeriod", "");
+					samplePortEle.addAttribute("MessageSize", "8");
+					samplePortEle.addAttribute("RefreshPeriod", "4.0");
 				}
 				else if(daPort.getType().equals("queue")){
 					Element queuePortEle = partPortsEle.addElement("QueuePort");
 					queuePortEle.addAttribute("Id", Integer.toString(daPort.getId()));
 					queuePortEle.addAttribute("Name", daPort.getName());
 					queuePortEle.addAttribute("Direction", daPort.getDirection());
-					queuePortEle.addAttribute("MessageSize", "");
-					queuePortEle.addAttribute("QueueLength", "");
+					queuePortEle.addAttribute("MessageSize", "120");
+					queuePortEle.addAttribute("QueueLength", "5");
 					queuePortEle.addAttribute("Protocol", "NOT_APPLICABLE");
 					queuePortEle.addAttribute("Discipline", "FIFO");
 				}
@@ -248,10 +248,13 @@ public class ModelGenerationService {
 				Element stackEle = saTaskEle.addElement("Stack");
 				stackEle.addText("400");
 				Element priortyEle = saTaskEle.addElement("Priorty");
+				priortyEle.addText("200");
 				Element periodEle = saTaskEle.addElement("Period");
+				periodEle.addText("1");
 				Element timeCapacityEle = saTaskEle.addElement("TimeCapacity");
+				timeCapacityEle.addText("1");
 				Element deadlineEle = saTaskEle.addElement("Deadline");
-				
+				deadlineEle.addText("SOFT");
 				Element taskInputsEle = saTaskEle.addElement("TaskInputs");
 				int ioId = 1;
 				for(Variable var : task.getInputs()){
